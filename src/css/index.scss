@@ -1,0 +1,13 @@
+
+// 主题颜色
+:root{
+  --eview-sheet-primary-color:#4290f7;
+}
+$theme-color-blue:--eview-sheet-primary-color;
+
+
+// 全局样式
+
+
+// 引入内容样式
+@import "./content";

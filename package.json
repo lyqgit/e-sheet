@@ -1,0 +1,36 @@
+{
+  "name": "e-sheet",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/counter.umd.cjs",
+  "module": "./dist/counter.js",
+  "types": "./index.d.ts",
+  "exports": {
+    "types": "./index.d.ts",
+    "import": "./dist/counter.js",
+    "require": "./dist/counter.umd.cjs"
+  },
+  "scripts": {
+    "build": "cross-env NODE_ENV=production rollup -c",
+    "dev": "cross-env NODE_ENV=development rollup -c -w"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.22.11",
+    "@babel/preset-env": "^7.22.10",
+    "@rollup/plugin-babel": "^6.0.3",
+    "@rollup/plugin-node-resolve": "^15.2.1",
+    "@rollup/plugin-strip": "^3.0.2",
+    "autoprefixer": "^10.4.15",
+    "cross-env": "^7.0.3",
+    "cssnano": "^6.0.1",
+    "node-sass": "^9.0.0",
+    "rollup": "^3.28.1",
+    "rollup-plugin-livereload": "^2.0.5",
+    "rollup-plugin-postcss": "^4.0.2",
+    "rollup-plugin-serve": "^2.0.2"
+  }
+}
