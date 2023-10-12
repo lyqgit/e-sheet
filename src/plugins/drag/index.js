@@ -20,16 +20,23 @@ export default class DragPlugin{
     expandWidth(col,dis){
         // console.log('dis',dis)
         const { contentGroup } = this.contentComponent
+        const { cellHeight } = this.options
+
         for(let i=0;i<contentGroup.length;i++){
             const tempRect = contentGroup[i]
             if(tempRect.col === col){
                 tempRect.width += dis
-                // console.log('tempRect.width',tempRect.width)
+
+                // console.log('dis',dis)
             }else if(tempRect.col>col){
                 tempRect.x += dis
                 tempRect.ltX += dis
             }
+            if(tempRect.col === col && tempRect.row === 1){
+                this.core.sheetWidth += dis
+            }
         }
+        this.core.freshScrollBar()
         this.core.fresh()
     }
 
@@ -37,6 +44,9 @@ export default class DragPlugin{
 
         this.canvasDom.addEventListener('mousedown',evtA=>{
 
+            if(!this.dragCell || !this.core.dragSign){
+                return
+            }
             let dragEndX = 0
             let dragStartX = evtA.pageX
             this.canvasDom.onmousemove = evtB=>{
@@ -56,7 +66,7 @@ export default class DragPlugin{
             const x = event.offsetX + offsetX
 
             if(this.dragCell && ((x<this.dragCell.ltX+this.dragCell.width - dragShowDis)||(x>this.dragCell.ltX + this.dragCell.width + dragShowDis + 1))){
-                console.log('离开拖拽')
+                // console.log('离开拖拽')
                 this.core.dragSign = false
             }
 
@@ -70,7 +80,7 @@ export default class DragPlugin{
                         this.layer.setCursor('col-resize')
                         this.core.dragSign = true
                         this.dragCell = tempHeader
-                        console.log('拖拽',this.core.dragSign)
+                        // console.log('拖拽',this.core.dragSign)
                     }
                 }
             }

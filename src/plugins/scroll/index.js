@@ -53,15 +53,6 @@ export default class ScrollPlugin{
         }
     }
 
-
-    customMove(x=0,y=0){
-        this.offsetX += x
-        this.leftDis -= x
-        this.offsetY += y
-        this.topDis -= y
-        this.contentMoveX()
-    }
-
     contentMoveX(){
         this.headerComponent.trendsDraw(this.offsetX)
         this.contentComponent.trendsDraw(this.offsetX,this.offsetY)
@@ -96,6 +87,12 @@ export default class ScrollPlugin{
                 })
             }
         }
+    }
+
+
+    unRegistryHorScroll(){
+        this.barHorContainerDom.remove()
+        this.horBarDom.remove()
     }
 
     // 注册横向滚动条

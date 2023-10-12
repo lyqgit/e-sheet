@@ -97,6 +97,7 @@ export default class AppExcel{
     }
 
     fresh(){
+
         const { offsetX,offsetY } = this.plugins.ScrollPlugin
 
         const { ContentComponent,HeaderComponent,SideComponent,WholeComponent } = this.components
@@ -104,6 +105,11 @@ export default class AppExcel{
         SideComponent.trendsDraw(offsetY)
         ContentComponent.trendsDraw(offsetX,offsetY)
         WholeComponent.draw()
+    }
+
+    freshScrollBar(){
+        this.plugins.ScrollPlugin.unRegistryHorScroll()
+        this.plugins.ScrollPlugin.registryHorScroll()
     }
 
     fps = 0;

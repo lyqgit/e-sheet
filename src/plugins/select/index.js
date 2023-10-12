@@ -73,7 +73,7 @@ export default class SelectPlugin{
 
         this.canvasDom.addEventListener('mousedown',event=>{
             // console.log('测试',event)
-            console.log('选中',this.core.dragSign)
+            // console.log('选中',this.core.dragSign)
             if(this.core.shiftKey || this.core.ctrlKey || this.core.dragSign){
                 return
             }

@@ -63,6 +63,7 @@ export default class InputPlugin{
             inputDom.style.top = y+cellHeight-offsetY+'px'
             inputDom.style.left = x+cellHeight-offsetX+'px'
             inputDom.style.display = 'inline-block'
+            inputDom.style.textAlign = 'center'
             inputDom.style.width = width+'px'
             inputDom.style.height = height+'px'
             inputDom.style.borderRadius = '6px'
