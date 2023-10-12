@@ -108,8 +108,7 @@ export default class AppExcel{
     }
 
     freshScrollBar(){
-        this.plugins.ScrollPlugin.unRegistryHorScroll()
-        this.plugins.ScrollPlugin.registryHorScroll()
+        this.plugins.ScrollPlugin.changeHorBarWidth()
     }
 
     fps = 0;

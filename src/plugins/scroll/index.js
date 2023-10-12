@@ -5,6 +5,7 @@ export default class ScrollPlugin{
     clientVerY = 0
     recordDeltaY = 0
     barTopDis = 0
+    barLeftDis = 0
     wheelStep = 10
 
     /**
@@ -95,6 +96,11 @@ export default class ScrollPlugin{
         this.horBarDom.remove()
     }
 
+    changeHorBarWidth(){
+        const proportion = (this.options.width - this.options.cellHeight - 10)/this.core.sheetWidth
+        this.horBarDom.style.width = (this.options.width - this.options.cellHeight-10)*proportion+'px'
+    }
+
     // 注册横向滚动条
     registryHorScroll(){
 
@@ -123,6 +129,8 @@ export default class ScrollPlugin{
         barDom.style.borderRadius = this.barHeight+'px'
         barDom.style.backgroundColor = 'rgb(201, 201, 201)'
 
+        barDom.style.transform = `translateX(${this.barLeftDis+'px'})`
+
         barContainerDom.appendChild(barDom)
 
         // console.log('proportion',proportion)
@@ -138,9 +146,6 @@ export default class ScrollPlugin{
         barDom.onmousedown = e=>{
             e.preventDefault()
 
-            if(!this.clientHorX){
-                this.clientHorX = e.pageX - e.offsetX
-            }
             document.onmousemove = eA=>{
                 barDom.style.backgroundColor = 'rgb(150, 150, 150)'
                 // console.log('eA',eA)
@@ -220,7 +225,9 @@ export default class ScrollPlugin{
 
     }
 
-    horMoveFunc(leftDis,proportion){
+    horMoveFunc(leftDis){
+
+        const proportion = (this.options.width - this.options.cellHeight - 10)/this.core.sheetWidth
 
         const leftBound = 0
 
@@ -230,16 +237,20 @@ export default class ScrollPlugin{
         if(leftDis <= leftBound){
             // barDom.style.left = 0+'px'
             this.horBarDom.style.transform = `translateX(0px)`
+            this.barLeftDis = 0
             this.leftDis = leftBound
             this.core.isScrollRightBound = false
         }else if(leftDis >= rightBound){
             // barDom.style.left = rightBound+'px'
             this.horBarDom.style.transform = `translateX(${rightBound+'px'})`
+            this.barLeftDis = rightBound
             this.leftDis = -(this.core.sheetWidth-(this.options.width - this.options.cellHeight))
             this.core.isScrollRightBound = true
         }else{
             // barDom.style.left = leftDis+'px'
             this.horBarDom.style.transform = `translateX(${leftDis+'px'})`
+            this.barLeftDis = Math.abs(leftDis)
+            console.log('this.barLeftDis',this.barLeftDis)
             this.leftDis = -leftDis/proportion
             this.core.offsetXLock = false
             this.core.isScrollRightBound = false
