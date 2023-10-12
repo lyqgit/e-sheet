@@ -1,5 +1,5 @@
 
-export default class SelectPlguin{
+export default class SelectPlugin{
 
     options = {}
 
@@ -24,15 +24,58 @@ export default class SelectPlguin{
         this.layer = layer
         this.core = core
         this.showClickHandler()
+        this.moreSelect()
     }
 
 
+    moreSelect(){
+        document.addEventListener('keydown',event=>{
+            // console.log('event',event)
+            this.core.shiftKey = event.shiftKey
+            this.core.ctrlKey = event.ctrlKey
+        })
+        document.addEventListener('keyup',event=>{
+            // console.log('event',event)
+            this.core.shiftKey = event.shiftKey
+            this.core.ctrlKey = event.ctrlKey
+        })
+        this.canvasDom.addEventListener('mousedown',this.moreShiftSelectClick)
+    }
+
+    moreShiftSelectClick=event=>{
+        // console.log('this.core',this.core)
+        if(this.core.shiftKey){
+            const { cellHeight } = this.options
+            const { offsetX,offsetY } = this.core.plugins.ScrollPlugin
+
+            const attrSecond = this.searchRectAddr(event.offsetX+offsetX - cellHeight,event.offsetY+offsetY - cellHeight)
+            this.contentComponent.setSecondClickCell(attrSecond)
+            this.core.fresh()
+        }
+
+    }
+
+    moreCtrlSelectClick=event=>{
+        // console.log('this.core',this.core)
+        if(this.core.shiftKey){
+            const { cellHeight } = this.options
+            const { offsetX,offsetY } = this.core.plugins.ScrollPlugin
+
+            const attrSecond = this.searchRectAddr(event.offsetX+offsetX - cellHeight,event.offsetY+offsetY - cellHeight)
+            this.contentComponent.setSecondClickCell(attrSecond)
+            this.core.fresh()
+        }
+
+    }
 
 
     showClickHandler(){
 
         this.canvasDom.addEventListener('mousedown',event=>{
             // console.log('测试',event)
+            if(this.core.shiftKey || this.core.ctrlKey){
+                return
+            }
             const { cellHeight,cellWidth } = this.options
             const { offsetX,offsetY,topDis,barVerContainerDom,barHorContainerDom } = this.core.plugins.ScrollPlugin
 

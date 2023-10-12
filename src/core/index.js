@@ -28,6 +28,9 @@ export default class AppExcel{
 
     plugins = {}
 
+    shiftKey = false
+    ctrlKey = false
+
 
     offsetYLock = false
     offsetXLock = false
