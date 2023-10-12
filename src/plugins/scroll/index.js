@@ -91,46 +91,7 @@ export default class ScrollPlugin{
                     // console.log('eA',eA)
                     const topDis = this.recordDeltaY
                     // console.log('leftDis',leftDis)
-                    this.verMoveFunc(null,null,proportion,this.recordDeltaY)
-
-                    // const topBound = 0
-                    //
-                    // const bottomBound = (this.options.height - this.options.cellHeight - 10 - (this.options.height - this.options.cellHeight)*proportion)
-                    //
-                    //
-                    // // bound
-                    // if(topDis <= topBound){
-                    //     // barDom.style.top = 0+'px'
-                    //     barDom.style.transform = `translateY(0px)`
-                    //     this.barTopDis = 0
-                    //     this.topDis = topBound
-                    //     this.core.isScrollBottomBound = false
-                    // }else if(topDis >= bottomBound){
-                    //     // barDom.style.top = bottomBound+'px'
-                    //     barDom.style.transform = `translateY(${bottomBound+'px'})`
-                    //     this.barTopDis = bottomBound
-                    //     this.topDis = -(this.options.cellHeight*this.options.row-(this.options.height - this.options.cellHeight))
-                    //     this.core.isScrollBottomBound = true
-                    // }else{
-                    //     // barDom.style.top = topDis+'px'
-                    //     barDom.style.transform = `translateY(${topDis+'px'})`
-                    //     this.barTopDis = topDis
-                    //     this.topDis =-topDis/proportion
-                    //     this.core.offsetYLock = false
-                    //     this.core.isScrollBottomBound = false
-                    // }
-                    // if(this.core.offsetYLock) {
-                    //     // console.log('临界点',this.topDis)
-                    //     return
-                    // }
-                    // this.offsetY = Math.abs(this.topDis)
-                    // this.contentMoveY()
-                    // // bound
-                    // if(topDis <= topBound){
-                    //     this.core.offsetYLock = true
-                    // }else if(topDis >= bottomBound){
-                    //     this.core.offsetYLock = true
-                    // }
+                    this.verMoveFunc(topDis,proportion,)
                 })
             }
         }
@@ -152,7 +113,7 @@ export default class ScrollPlugin{
         // bor-bar
         const barDom = document.createElement('div')
         this.horBarDom = barDom
-        const proportion = (this.options.width - this.options.cellHeight - 10)/(this.options.cellWidth*this.options.col)
+        const proportion = (this.options.width - this.options.cellHeight - 10)/this.core.sheetWidth
 
         barDom.style.width = (this.options.width - this.options.cellHeight-10)*proportion+'px'
         barDom.style.height = this.barHeight+'px'
@@ -185,48 +146,10 @@ export default class ScrollPlugin{
             document.onmousemove = eA=>{
                 barDom.style.backgroundColor = 'rgb(150, 150, 150)'
                 // console.log('eA',eA)
+                this.layer.clearCursor()
                 requestAnimationFrame(()=>{
-                    const leftDis = eA.pageX - this.clientHorX-e.offsetX
-
-
-                    const leftBound = 0
-
-                    const rightBound = (this.options.width - this.options.cellHeight - 10 - (this.options.width - this.options.cellHeight)*proportion)
-
-                    // bound
-                    if(leftDis <= leftBound){
-                        // barDom.style.left = 0+'px'
-                        barDom.style.transform = `translateX(0px)`
-                        this.leftDis = leftBound
-                        this.core.isScrollRightBound = false
-                    }else if(leftDis >= rightBound){
-                        // barDom.style.left = rightBound+'px'
-                        barDom.style.transform = `translateX(${rightBound+'px'})`
-                        this.leftDis = -(this.core.sheetWidth-(this.options.width - this.options.cellHeight))
-                        this.core.isScrollRightBound = true
-                    }else{
-                        // barDom.style.left = leftDis+'px'
-                        barDom.style.transform = `translateX(${leftDis+'px'})`
-                        this.leftDis = -leftDis/proportion
-                        this.core.offsetXLock = false
-                        this.core.isScrollRightBound = false
-                    }
-
-                    if(this.core.offsetXLock) {
-                        // console.log('临界点',this.topDis)
-                        return
-                    }
-
-                    this.offsetX = Math.abs(this.leftDis)
-                    // console.log('leftDis',leftDis)
-                    // console.log('offsetX',this.leftDis)
-                    this.contentMoveX()
-// bound
-                    if(leftDis <= leftBound){
-                        this.core.offsetXLock = true
-                    }else if(leftDis >= rightBound){
-                        this.core.offsetXLock = true
-                    }
+                    const leftDis = eA.pageX - (this.selectorDom.offsetLeft + this.options.cellHeight) -e.offsetX
+                    this.horMoveFunc(leftDis,proportion)
                 })
 
             }
@@ -285,10 +208,12 @@ export default class ScrollPlugin{
             document.onmousemove = eA=>{
 
                 barDom.style.backgroundColor = 'rgb(150, 150, 150)'
+                this.layer.clearCursor()
                 requestAnimationFrame(()=>{
                     // console.log('eA',eA)
                     // console.log('leftDis',leftDis)
-                    this.verMoveFunc(eA,e,proportion)
+                    const topDis = eA.pageY - (this.selectorDom.offsetTop + this.options.cellHeight) - e.offsetY
+                    this.verMoveFunc(topDis,proportion)
 
                 })
 
@@ -297,9 +222,49 @@ export default class ScrollPlugin{
 
     }
 
-    verMoveFunc(eA,e,proportion,wheelTopDis = null){
+    horMoveFunc(leftDis,proportion){
 
-        const topDis = wheelTopDis??(eA.pageY - (this.selectorDom.offsetTop + this.options.cellHeight) - e.offsetY)
+        const leftBound = 0
+
+        const rightBound = (this.options.width - this.options.cellHeight - 10 - (this.options.width - this.options.cellHeight)*proportion)
+
+        // bound
+        if(leftDis <= leftBound){
+            // barDom.style.left = 0+'px'
+            this.horBarDom.style.transform = `translateX(0px)`
+            this.leftDis = leftBound
+            this.core.isScrollRightBound = false
+        }else if(leftDis >= rightBound){
+            // barDom.style.left = rightBound+'px'
+            this.horBarDom.style.transform = `translateX(${rightBound+'px'})`
+            this.leftDis = -(this.core.sheetWidth-(this.options.width - this.options.cellHeight))
+            this.core.isScrollRightBound = true
+        }else{
+            // barDom.style.left = leftDis+'px'
+            this.horBarDom.style.transform = `translateX(${leftDis+'px'})`
+            this.leftDis = -leftDis/proportion
+            this.core.offsetXLock = false
+            this.core.isScrollRightBound = false
+        }
+
+        if(this.core.offsetXLock) {
+            // console.log('临界点',this.topDis)
+            return
+        }
+
+        this.offsetX = Math.abs(this.leftDis)
+        // console.log('leftDis',leftDis)
+        // console.log('offsetX',this.leftDis)
+        this.contentMoveX()
+        // bound
+        if(leftDis <= leftBound){
+            this.core.offsetXLock = true
+        }else if(leftDis >= rightBound){
+            this.core.offsetXLock = true
+        }
+    }
+
+    verMoveFunc(topDis,proportion){
 
         const topBound = 0
 

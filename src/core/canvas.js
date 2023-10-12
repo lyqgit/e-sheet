@@ -6,6 +6,8 @@ import base64Img from '../image/base64Img.js'
  */
 export default class Canvas{
 
+    canvasDom= null
+
     /**
      * @type {CanvasRenderingContext2D}
      */
@@ -29,13 +31,22 @@ export default class Canvas{
         this.ctx = canvasDom.getContext('2d')
         this.cellWidth = options.cellWidth
         this.cellHeight = options.cellHeight
+        this.canvasDom = canvasDom
 
-        canvasDom.addEventListener('mousemove',evt=>{
+        canvasDom.addEventListener('mousemove',_=>{
             // console.log('evt',evt)
-            canvasDom.style.cursor = `url(${base64Img.cell}) 18 18, cell`;
+            this.setCursor()
         })
     }
 
+
+    setCursor(){
+        this.canvasDom.style.cursor = `url(${base64Img.cell}) 18 18, cell`;
+    }
+
+    clearCursor(){
+        this.canvasDom.style.cursor = 'default';
+    }
 
     /**
      * @param {Array<number>} points

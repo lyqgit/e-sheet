@@ -7,6 +7,7 @@ import ContentComponent from './component/content/index.js'
 import ScrollPlugin from './plugins/scroll/index.js'
 import InputPlugin from './plugins/input/index.js'
 import SelectPlugin from './plugins/select/index.js'
+import DragPlugin from './plugins/drag/index.js'
 
 export default class eSheet{
     constructor(selector,options={},plugins=[]) {
@@ -21,13 +22,13 @@ export default class eSheet{
         }
         this.excelDom.style.position = 'relative'
         this.excelDom.style.overflow = 'hidden'
-        console.log('selector',selector)
+        // console.log('selector',selector)
 
         new AppExcel(
             this.excelDom,
             options,
             {ContentComponent,HeaderComponent,SideComponent,WholeComponent},
-            {ScrollPlugin,InputPlugin,SelectPlugin}
+            {ScrollPlugin,InputPlugin,SelectPlugin,DragPlugin}
         )
 
 
