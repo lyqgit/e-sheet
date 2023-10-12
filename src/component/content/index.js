@@ -32,14 +32,16 @@ export default class ContentComponent{
         let colWidth = 0
         let rowHeight = 0
 
-        this.core.sheetWidth += cellHeight
-        this.core.sheetHeight += cellHeight
+        // this.core.sheetWidth += cellHeight
+        // this.core.sheetHeight += cellHeight
 
         for(let i=0;i<row;i++){
             colWidth = 0
             this.core.sheetHeight += cellHeight
             for(let j=0;j<col;j++){
-                this.core.sheetWidth += cellWidth
+                if(i===0){
+                    this.core.sheetWidth += cellWidth
+                }
                 this.contentGroup.push({
                     row:i+1,
                     col:j+1,
@@ -59,7 +61,8 @@ export default class ContentComponent{
             }
             rowHeight += cellHeight
         }
-
+        // console.log('this.core.sheetWidth',this.core.sheetWidth)
+        // console.log('this.core.sheetHeight',this.core.sheetHeight)
         // this.initDraw()
         this.trendsDraw(0,0)
     }

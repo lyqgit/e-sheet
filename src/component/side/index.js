@@ -93,8 +93,8 @@ export default class SideComponent{
         const sideRectGroup = contentGroup.filter(item=>item.row>=lt.row && item.col === 1 && item.row <= rb.row)
         this.sideRectGroup = sideRectGroup
 
-        const startRow = parseInt((offsetY/cellHeight).toFixed(1))
-        const endRow = parseInt(((height - cellHeight + offsetY)/cellHeight).toFixed(1))
+        // const startRow = parseInt((offsetY/cellHeight).toFixed(1))
+        // const endRow = parseInt(((height - cellHeight + offsetY)/cellHeight).toFixed(1))
 
         this.layer.clearRect(0,cellHeight,cellHeight,height)
 
@@ -130,7 +130,7 @@ export default class SideComponent{
     }
 
     searchScreenAddr(offsetX = 0,offsetY = 0){
-
+        // console.log('offsetX',offsetX,offsetY)
         const { contentGroup } = this.core.components.ContentComponent
 
         let startX = 0;

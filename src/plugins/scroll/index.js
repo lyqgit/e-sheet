@@ -64,14 +64,14 @@ export default class ScrollPlugin{
     contentMoveX(){
         this.headerComponent.trendsDraw(this.offsetX)
         this.contentComponent.trendsDraw(this.offsetX,this.offsetY)
-        this.sideComponent.trendsDraw(Math.abs(this.topDis))
+        // this.sideComponent.trendsDraw(Math.abs(this.topDis))
         // this.wholeComponent.draw()
     }
 
     contentMoveY(){
         this.sideComponent.trendsDraw(this.offsetY)
         this.contentComponent.trendsDraw(this.offsetX,this.offsetY)
-        this.headerComponent.trendsDraw(Math.abs(this.leftDis))
+        // this.headerComponent.trendsDraw(Math.abs(this.leftDis))
         // this.wholeComponent.draw()
     }
 
@@ -91,45 +91,46 @@ export default class ScrollPlugin{
                     // console.log('eA',eA)
                     const topDis = this.recordDeltaY
                     // console.log('leftDis',leftDis)
+                    this.verMoveFunc(null,null,proportion,this.recordDeltaY)
 
-                    const topBound = 0
-
-                    const bottomBound = (this.options.height - this.options.cellHeight - 10 - (this.options.height - this.options.cellHeight)*proportion)
-
-
-                    // bound
-                    if(topDis <= topBound){
-                        // barDom.style.top = 0+'px'
-                        barDom.style.transform = `translateY(0px)`
-                        this.barTopDis = 0
-                        this.topDis = topBound
-                        this.core.isScrollBottomBound = false
-                    }else if(topDis >= bottomBound){
-                        // barDom.style.top = bottomBound+'px'
-                        barDom.style.transform = `translateY(${bottomBound+'px'})`
-                        this.barTopDis = bottomBound
-                        this.topDis = -(this.options.cellHeight*this.options.row-(this.options.height - this.options.cellHeight))
-                        this.core.isScrollBottomBound = true
-                    }else{
-                        // barDom.style.top = topDis+'px'
-                        barDom.style.transform = `translateY(${topDis+'px'})`
-                        this.barTopDis = topDis
-                        this.topDis =-topDis/proportion
-                        this.core.offsetYLock = false
-                        this.core.isScrollBottomBound = false
-                    }
-                    if(this.core.offsetYLock) {
-                        // console.log('临界点',this.topDis)
-                        return
-                    }
-                    this.offsetY = Math.abs(this.topDis)
-                    this.contentMoveY()
-                    // bound
-                    if(topDis <= topBound){
-                        this.core.offsetYLock = true
-                    }else if(topDis >= bottomBound){
-                        this.core.offsetYLock = true
-                    }
+                    // const topBound = 0
+                    //
+                    // const bottomBound = (this.options.height - this.options.cellHeight - 10 - (this.options.height - this.options.cellHeight)*proportion)
+                    //
+                    //
+                    // // bound
+                    // if(topDis <= topBound){
+                    //     // barDom.style.top = 0+'px'
+                    //     barDom.style.transform = `translateY(0px)`
+                    //     this.barTopDis = 0
+                    //     this.topDis = topBound
+                    //     this.core.isScrollBottomBound = false
+                    // }else if(topDis >= bottomBound){
+                    //     // barDom.style.top = bottomBound+'px'
+                    //     barDom.style.transform = `translateY(${bottomBound+'px'})`
+                    //     this.barTopDis = bottomBound
+                    //     this.topDis = -(this.options.cellHeight*this.options.row-(this.options.height - this.options.cellHeight))
+                    //     this.core.isScrollBottomBound = true
+                    // }else{
+                    //     // barDom.style.top = topDis+'px'
+                    //     barDom.style.transform = `translateY(${topDis+'px'})`
+                    //     this.barTopDis = topDis
+                    //     this.topDis =-topDis/proportion
+                    //     this.core.offsetYLock = false
+                    //     this.core.isScrollBottomBound = false
+                    // }
+                    // if(this.core.offsetYLock) {
+                    //     // console.log('临界点',this.topDis)
+                    //     return
+                    // }
+                    // this.offsetY = Math.abs(this.topDis)
+                    // this.contentMoveY()
+                    // // bound
+                    // if(topDis <= topBound){
+                    //     this.core.offsetYLock = true
+                    // }else if(topDis >= bottomBound){
+                    //     this.core.offsetYLock = true
+                    // }
                 })
             }
         }
@@ -201,7 +202,7 @@ export default class ScrollPlugin{
                     }else if(leftDis >= rightBound){
                         // barDom.style.left = rightBound+'px'
                         barDom.style.transform = `translateX(${rightBound+'px'})`
-                        this.leftDis = -(this.options.cellWidth*this.options.col-(this.options.width - this.options.cellHeight))
+                        this.leftDis = -(this.core.sheetWidth-(this.options.width - this.options.cellHeight))
                         this.core.isScrollRightBound = true
                     }else{
                         // barDom.style.left = leftDis+'px'
@@ -286,51 +287,62 @@ export default class ScrollPlugin{
                 barDom.style.backgroundColor = 'rgb(150, 150, 150)'
                 requestAnimationFrame(()=>{
                     // console.log('eA',eA)
-                    const topDis = eA.pageY - (this.selectorDom.offsetTop + this.options.cellHeight) - e.offsetY
                     // console.log('leftDis',leftDis)
+                    this.verMoveFunc(eA,e,proportion)
 
-                    const topBound = 0
-
-                    const bottomBound = (this.options.height - this.options.cellHeight - 10 - (this.options.height - this.options.cellHeight)*proportion)
-
-                    // bound
-                    if(topDis <= topBound){
-                        // barDom.style.top = 0+'px'
-                        barDom.style.transform = `translateY(0px)`
-                        this.barTopDis = 0
-                        this.topDis = topBound
-                        this.core.isScrollBottomBound = false
-                    }else if(topDis >= bottomBound){
-                        // barDom.style.top = bottomBound+'px'
-                        barDom.style.transform = `translateY(${bottomBound+'px'})`
-                        this.barTopDis = bottomBound
-                        this.topDis = -(this.core.sheetWidth-(this.options.height - this.options.cellHeight))
-                        this.core.isScrollBottomBound = true
-                    }else{
-                        // barDom.style.top = topDis+'px'
-                        barDom.style.transform = `translateY(${topDis+'px'})`
-                        this.barTopDis = topDis
-                        this.topDis =-topDis/proportion
-                        this.core.offsetYLock = false
-                        this.core.isScrollBottomBound = false
-                    }
-                    if(this.core.offsetYLock) {
-                        // console.log('临界点',this.topDis)
-                        return
-                    }
-                    this.offsetY = Math.abs(this.topDis)
-                    this.contentMoveY()
-                    // bound
-                    if(topDis <= topBound){
-                        this.core.offsetYLock = true
-                    }else if(topDis >= bottomBound){
-                        this.core.offsetYLock = true
-                    }
                 })
 
             }
         }
 
+    }
+
+    verMoveFunc(eA,e,proportion,wheelTopDis = null){
+
+        const topDis = wheelTopDis??(eA.pageY - (this.selectorDom.offsetTop + this.options.cellHeight) - e.offsetY)
+
+        const topBound = 0
+
+        const bottomBound = (this.options.height - this.options.cellHeight - 10 - (this.options.height - this.options.cellHeight)*proportion)
+
+
+        // console.log('this.core.offsetYLock',this.core.offsetYLock)
+        if(topDis <= topBound){
+            // barDom.style.top = 0+'px'
+            this.barVerContainerDom.style.transform = `translateY(0px)`
+            this.barTopDis = 0
+            this.topDis = topBound
+            this.core.isScrollBottomBound = false
+        }else if(topDis >= bottomBound){
+            // barDom.style.top = bottomBound+'px'
+            this.barVerContainerDom.style.transform = `translateY(${bottomBound+'px'})`
+            this.barTopDis = bottomBound
+            this.topDis = -(this.core.sheetHeight -(this.options.height - this.options.cellHeight))
+            this.core.isScrollBottomBound = true
+            // console.log('topDis',topDis)
+            // console.log('this.topDis',this.topDis)
+            // console.log('bottomBound',bottomBound)
+            // console.log('topDis>=bottomBound',topDis>=bottomBound)
+        }else{
+            // barDom.style.top = topDis+'px'
+            this.barVerContainerDom.style.transform = `translateY(${topDis+'px'})`
+            this.barTopDis = topDis
+            this.topDis =-topDis/proportion
+            this.core.offsetYLock = false
+            this.core.isScrollBottomBound = false
+        }
+        if(this.core.offsetYLock) {
+            // console.log('临界点',this.topDis)
+            return
+        }
+        this.offsetY = Math.abs(this.topDis)
+        this.contentMoveY()
+        // bound
+        if(topDis <= topBound){
+            this.core.offsetYLock = true
+        }else if(topDis >= bottomBound){
+            this.core.offsetYLock = true
+        }
     }
 
 }
