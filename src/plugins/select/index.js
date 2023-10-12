@@ -28,12 +28,73 @@ export default class SelectPlugin{
     }
 
 
+    copyText(text){
+        navigator.clipboard.writeText(text)
+    }
+
     moreSelect(){
+
+        document.addEventListener('paste',event=>{
+            const { clickCell,secondClickCell,clickRectShow } = this.contentComponent
+            // console.log('event',event.clipboardData.getData('text/plain'))
+            const json = JSON.parse(event.clipboardData.getData('text/plain'))
+            if(clickRectShow){
+                // 一个框
+                if(clickCell && !secondClickCell){
+                    let text = ''
+                    if(Array.isArray(json)){
+                        json.forEach(item=>{
+                            text += item.text
+                        })
+                    }else{
+                        // console.log('json',json)
+                        for(let i in json){
+                            if(!(['x','y'].includes(i))){
+                                if(json['mergeLabelGroup'].length > 0){
+                                    // 有合并，从左上角开始合并相同的长度
+                                    clickCell[i] = json[i]
+                                }else{
+                                    // 五合并，只更改样式和内容，不复制width和height
+                                    if(!(['width','height'].includes(i))){
+                                        clickCell[i] = json[i]
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                }
+                this.core.fresh()
+            }
+        })
+
         document.addEventListener('keydown',event=>{
             // console.log('event',event)
             this.core.shiftKey = event.shiftKey
             this.core.ctrlKey = event.ctrlKey
+            document.onkeydown = evt=>{
+                // console.log('evt',evt)
+                if(event.ctrlKey && evt.key === 'c'){
+                    // 复制
+
+                    const { clickCell,secondClickCell,clickRectShow,moreSelectedCell } = this.contentComponent
+                    if(clickRectShow){
+                        // 一个框
+                        if(clickCell && !secondClickCell){
+                            console.log('clickCell',clickCell)
+                            // this.layer.drawFillRect(clickCell.ltX+1,clickCell.ltY+1,clickCell.width-2,clickCell.height-2,'red',null)
+                            this.copyText(JSON.stringify(clickCell))
+                        }else if(secondClickCell){
+                            // 复制多个
+                            this.copyText(JSON.stringify(moreSelectedCell))
+                        }
+                    }
+
+
+                }
+            }
         })
+
         document.addEventListener('keyup',event=>{
             // console.log('event',event)
             this.core.shiftKey = event.shiftKey

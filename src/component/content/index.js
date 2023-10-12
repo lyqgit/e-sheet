@@ -7,12 +7,14 @@ export default class ContentComponent{
 
     clickRectShow = false
 
-    clickCell = {}
+    clickCell = null
 
-    secondClickCell = {}
+    secondClickCell = null
 
     isColSelect = false
     isRowSelect = false
+
+    moreSelectedCell = []
 
     /**
      * @type {Canvas}
@@ -56,9 +58,10 @@ export default class ContentComponent{
                     ltY:rowAbHeight,
                     mergeRow:0,
                     mergeCol:0,
-                    mergeLabel:'',
+                    mergeFinalLabel:'',
+                    mergeLabelGroup:[],
                     bgColor:'',
-                    textColor:'',
+                    fontColor:'',
                     label:String.fromCharCode(65 + j)+(i+1)
                 })
                 colWidth += cellWidth
@@ -71,6 +74,10 @@ export default class ContentComponent{
         // console.log('this.core.sheetHeight',this.core.sheetHeight)
         // this.initDraw()
         this.trendsDraw(0,0)
+    }
+
+    changeContentGroupByRectArr(selectedArr){
+        const firstCell = selectedArr[0]
     }
 
     showClickRect(attr,col=false,row=false){
@@ -88,6 +95,9 @@ export default class ContentComponent{
         this.clickRectShow = false
         this.isColSelect = false
         this.isRowSelect = false
+        this.secondClickCell = null
+        this.clickCell = null
+        this.moreSelectedCell = []
     }
 
     // draw canvas
@@ -282,6 +292,7 @@ export default class ContentComponent{
                 if((col>=ltCol && col<=rbCol) && (row>=ltRow && row<=rbRow)){
                     // console.log('x+cellHeight-offsetX',x+cellHeight-offsetX)
                     this.layer.drawFillRect(x+cellHeight-offsetX,y-offsetY+cellHeight,width,height,selectedBgColor,'destination-over')
+                    this.moreSelectedCell.push(contentGroup[i])
                 }
             }
             if(this.isRowSelect && this.isColSelect){

@@ -250,7 +250,7 @@ export default class ScrollPlugin{
             // barDom.style.left = leftDis+'px'
             this.horBarDom.style.transform = `translateX(${leftDis+'px'})`
             this.barLeftDis = Math.abs(leftDis)
-            console.log('this.barLeftDis',this.barLeftDis)
+            // console.log('this.barLeftDis',this.barLeftDis)
             this.leftDis = -leftDis/proportion
             this.core.offsetXLock = false
             this.core.isScrollRightBound = false

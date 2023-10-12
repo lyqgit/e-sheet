@@ -35,7 +35,6 @@ export default class InputPlugin{
 
     hideInput(){
         this.inputDom.style.display = 'none'
-        this.inputDom.value = ''
     }
 
     appendInput(){
@@ -60,6 +59,7 @@ export default class InputPlugin{
             this.contentComponent.hideClickRect()
             this.core.fresh()
 
+            inputDom.style.opacity = 1
             inputDom.style.top = y+cellHeight-offsetY+'px'
             inputDom.style.left = x+cellHeight-offsetX+'px'
             inputDom.style.display = 'inline-block'
@@ -67,11 +67,12 @@ export default class InputPlugin{
             inputDom.style.width = width+'px'
             inputDom.style.height = height+'px'
             inputDom.style.borderRadius = '6px'
+            // console.log('attrs',attrs)
             inputDom.value = text
             inputDom.focus()
             inputDom.onblur = ()=>{
                 attrs.text = inputDom.value
-                console.log('attrs.text',typeof attrs.text,inputDom.value)
+                this.inputDom.value = ''
                 this.core.fresh()
                 this.hideInput()
             }
