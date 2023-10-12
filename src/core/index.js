@@ -107,8 +107,36 @@ export default class AppExcel{
         WholeComponent.draw()
     }
 
+    freshContent(){
+        const { offsetX,offsetY } = this.plugins.ScrollPlugin
+
+        const { ContentComponent } = this.components
+        ContentComponent.trendsDraw(offsetX,offsetY)
+    }
+
     freshScrollBar(){
         this.plugins.ScrollPlugin.changeHorBarWidth()
+    }
+
+    /**
+     *
+     * @param {string} elName
+     * @param {Object} attr
+     * @param {Object} style
+     * @returns {HTMLElement}
+     */
+    h(elName,{attr,style} = {}){
+        const tempDom = document.createElement(elName)
+
+        for(let i in attr){
+            tempDom[i] = attr[i]
+        }
+
+        for(let i in attr){
+            tempDom.style[i] = style[i]
+        }
+
+        return tempDom
     }
 
     fps = 0;

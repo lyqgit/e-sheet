@@ -58,8 +58,10 @@ export default class ContentComponent{
                     ltY:rowAbHeight,
                     mergeRow:0,
                     mergeCol:0,
-                    mergeFinalLabel:'',
+                    mergeStartLabel:'',
+                    mergeEndLabel:'',
                     mergeLabelGroup:[],
+                    isMerge:false,
                     bgColor:'',
                     fontColor:'',
                     label:String.fromCharCode(65 + j)+(i+1)
@@ -252,9 +254,14 @@ export default class ContentComponent{
             }else{
                 // console.log('secondClickCell',this.secondClickCell)
                 if(!this.secondClickCell){
-                    this.layer.drawStrokeRect(this.clickCell.x+cellHeight-offsetX,this.clickCell.y-offsetY+cellHeight,this.clickCell.width,this.clickCell.height,selectedBorderBgColor,'destination-over',2)
-                }
-                if(this.secondClickCell){
+                    if(this.clickCell.isMerge){
+                        const {mergeWidth,mergeHeight} = this.countMergeWidthAndHeight(this.clickCell)
+                        this.layer.drawStrokeRect(this.clickCell.x+cellHeight-offsetX,this.clickCell.y-offsetY+cellHeight,mergeWidth,mergeHeight,selectedBorderBgColor,'destination-over',2)
+                    }else{
+                        this.layer.drawStrokeRect(this.clickCell.x+cellHeight-offsetX,this.clickCell.y-offsetY+cellHeight,this.clickCell.width,this.clickCell.height,selectedBorderBgColor,'destination-over',2)
+                    }
+
+                }else{
                     if(this.secondClickCell.x >= this.clickCell.x){
                         // 最后一个在右边
                         const isBottom = this.secondClickCell.y>this.clickCell.y
@@ -271,18 +278,27 @@ export default class ContentComponent{
         }
 
 
-
+        this.moreSelectedCell = []
         // console.log('x,y,x,y',ltCol,ltRow,rbCol,rbRow)
 
         for(let i=0;i<contentGroup.length;i++){
-            const {row,col,text,x,y,width,height} = contentGroup[i]
+            const tempRect = contentGroup[i]
+            const {row,col,text,x,y,width,height} = tempRect
 
             if((col>=startCol && col<=endCol) && (row>=startRow && row<=endRow)){
                 // 多个选中除了第一个之外的渲染
-                this.layer.drawStrokeRect(x-offsetX+cellHeight,y-offsetY+cellHeight,width,height,borderColor,'destination-over',1)
+                // 合并渲染从左上角开始
+                if(tempRect.isMerge && tempRect.label === tempRect.mergeStartLabel){
+                    const {mergeWidth,mergeHeight} = this.countMergeWidthAndHeight(tempRect)
+                    this.layer.drawStrokeRect(x-offsetX+cellHeight,y-offsetY+cellHeight,mergeWidth,mergeHeight,borderColor,'destination-over',1)
+                    this.layer.drawText(x-offsetX+cellHeight,y-offsetY+cellHeight,text,mergeWidth,mergeHeight,'destination-over')
+
+                }else if(!tempRect.isMerge){
+                    this.layer.drawStrokeRect(x-offsetX+cellHeight,y-offsetY+cellHeight,width,height,borderColor,'destination-over',1)
+                    this.layer.drawText(x-offsetX+cellHeight,y-offsetY+cellHeight,text,width,height,'destination-over')
+                }
                 // this.layer.drawFillRect(x-offsetX+cellHeight,y-offsetY+cellHeight,width,height,'#EBF4FF','destination-over',1)
                 // this.layer.drawFillRect(x-offsetX+cellHeight,y-offsetY+cellHeight,width,height,'red','destination-over')
-                this.layer.drawText(x-offsetX+cellHeight,y-offsetY+cellHeight,text,width,height,'destination-over')
             }
             if(this.secondClickCell){
                 const ltCol= this.secondClickCell.col>this.clickCell.col?this.clickCell.col:this.secondClickCell.col
@@ -291,8 +307,10 @@ export default class ContentComponent{
                 const rbRow= this.secondClickCell.row>this.clickCell.row?this.secondClickCell.row:this.clickCell.row
                 if((col>=ltCol && col<=rbCol) && (row>=ltRow && row<=rbRow)){
                     // console.log('x+cellHeight-offsetX',x+cellHeight-offsetX)
-                    this.layer.drawFillRect(x+cellHeight-offsetX,y-offsetY+cellHeight,width,height,selectedBgColor,'destination-over')
-                    this.moreSelectedCell.push(contentGroup[i])
+                    if(!tempRect.isMerge){
+                        this.layer.drawFillRect(x+cellHeight-offsetX,y-offsetY+cellHeight,width,height,selectedBgColor,'destination-over')
+                    }
+                    this.moreSelectedCell.push(tempRect)
                 }
             }
             if(this.isRowSelect && this.isColSelect){
@@ -335,6 +353,21 @@ export default class ContentComponent{
 
 
 
+    }
+
+    countMergeWidthAndHeight(tempRect){
+        let mergeWidth = 0
+        let mergeHeight = 0
+
+        tempRect.mergeLabelGroup.forEach(item=>{
+            if(tempRect.row === item.row){
+                mergeWidth += item.width
+            }
+            if(tempRect.col === item.col){
+                mergeHeight += item.height
+            }
+        })
+        return {mergeWidth,mergeHeight}
     }
 
 }

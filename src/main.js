@@ -8,6 +8,7 @@ import ScrollPlugin from './plugins/scroll/index.js'
 import InputPlugin from './plugins/input/index.js'
 import SelectPlugin from './plugins/select/index.js'
 import DragPlugin from './plugins/drag/index.js'
+import ContextmenuPlugin from './plugins/contextmenu/index.js'
 
 export default class eSheet{
     constructor(selector,options={},plugins=[]) {
@@ -21,14 +22,14 @@ export default class eSheet{
             throw new Error('选择器错误')
         }
         this.excelDom.style.position = 'relative'
-        this.excelDom.style.overflow = 'hidden'
+        // this.excelDom.style.overflow = 'hidden'
         // console.log('selector',selector)
 
         new AppExcel(
             this.excelDom,
             options,
             {ContentComponent,HeaderComponent,SideComponent,WholeComponent},
-            {ScrollPlugin,InputPlugin,DragPlugin,SelectPlugin}
+            {ScrollPlugin,InputPlugin,DragPlugin,SelectPlugin,ContextmenuPlugin,...plugins}
         )
 
 
