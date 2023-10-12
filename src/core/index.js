@@ -30,6 +30,7 @@ export default class AppExcel{
 
     shiftKey = false
     ctrlKey = false
+    dragSign = false
 
 
     offsetYLock = false

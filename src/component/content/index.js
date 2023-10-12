@@ -30,7 +30,9 @@ export default class ContentComponent{
         const { row,col,cellWidth,cellHeight } = options
 
         let colWidth = 0
+        let colAbWidth = cellHeight
         let rowHeight = 0
+        let rowAbHeight = 0
 
         // this.core.sheetWidth += cellHeight
         // this.core.sheetHeight += cellHeight
@@ -50,6 +52,8 @@ export default class ContentComponent{
                     height:cellHeight,
                     x:colWidth,
                     y:rowHeight,
+                    ltX:colAbWidth,
+                    ltY:rowAbHeight,
                     mergeRow:0,
                     mergeCol:0,
                     mergeLabel:'',
@@ -58,8 +62,10 @@ export default class ContentComponent{
                     label:String.fromCharCode(65 + j)+(i+1)
                 })
                 colWidth += cellWidth
+                colAbWidth += cellWidth
             }
             rowHeight += cellHeight
+            rowAbHeight += cellHeight
         }
         // console.log('this.core.sheetWidth',this.core.sheetWidth)
         // console.log('this.core.sheetHeight',this.core.sheetHeight)

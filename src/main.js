@@ -28,7 +28,7 @@ export default class eSheet{
             this.excelDom,
             options,
             {ContentComponent,HeaderComponent,SideComponent,WholeComponent},
-            {ScrollPlugin,InputPlugin,SelectPlugin,DragPlugin}
+            {ScrollPlugin,InputPlugin,DragPlugin,SelectPlugin}
         )
 
 

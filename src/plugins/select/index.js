@@ -73,7 +73,8 @@ export default class SelectPlugin{
 
         this.canvasDom.addEventListener('mousedown',event=>{
             // console.log('测试',event)
-            if(this.core.shiftKey || this.core.ctrlKey){
+            console.log('选中',this.core.dragSign)
+            if(this.core.shiftKey || this.core.ctrlKey || this.core.dragSign){
                 return
             }
             const { cellHeight,cellWidth } = this.options

@@ -35,16 +35,16 @@ export default class Canvas{
 
         canvasDom.addEventListener('mousemove',_=>{
             // console.log('evt',evt)
-            this.setCursor()
+            this.setCursor('cell')
         })
     }
 
 
-    setCursor(){
-        this.canvasDom.style.cursor = `url(${base64Img.cell}) 18 18, cell`;
+    setCursor(shape){
+        this.canvasDom.style.cursor = `url(${base64Img[shape]}) 18 18, ${shape}`;
     }
 
-    clearCursor(){
+    setCursorDefault(){
         this.canvasDom.style.cursor = 'default';
     }
 

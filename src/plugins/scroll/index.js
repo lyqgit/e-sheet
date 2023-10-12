@@ -49,6 +49,7 @@ export default class ScrollPlugin{
             this.horBarDom.style.backgroundColor = 'rgb(201, 201, 201)'
             this.verBarDom.style.backgroundColor = 'rgb(201, 201, 201)'
             this.core.canvasDom.onmousemove = null
+            this.core.dragSign = false
         }
     }
 
@@ -146,7 +147,7 @@ export default class ScrollPlugin{
             document.onmousemove = eA=>{
                 barDom.style.backgroundColor = 'rgb(150, 150, 150)'
                 // console.log('eA',eA)
-                this.layer.clearCursor()
+                this.layer.setCursorDefault()
                 requestAnimationFrame(()=>{
                     const leftDis = eA.pageX - (this.selectorDom.offsetLeft + this.options.cellHeight) -e.offsetX
                     this.horMoveFunc(leftDis,proportion)
@@ -208,7 +209,7 @@ export default class ScrollPlugin{
             document.onmousemove = eA=>{
 
                 barDom.style.backgroundColor = 'rgb(150, 150, 150)'
-                this.layer.clearCursor()
+                this.layer.setCursorDefault()
                 requestAnimationFrame(()=>{
                     // console.log('eA',eA)
                     // console.log('leftDis',leftDis)
