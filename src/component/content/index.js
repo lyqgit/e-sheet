@@ -278,6 +278,9 @@ export default class ContentComponent{
                     this.layer.drawFillRect(x+cellHeight-offsetX,y-offsetY+cellHeight,width,height,selectedBgColor,'destination-over')
                 }
             }
+            if(this.isRowSelect && this.isColSelect){
+                this.layer.drawFillRect(x-offsetX+cellHeight,y-offsetY+cellHeight,width,height,selectedBgColor,'destination-over')
+            }
         }
 
 
