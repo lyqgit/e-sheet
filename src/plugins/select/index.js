@@ -108,8 +108,26 @@ export default class SelectPlugin{
         if(this.core.shiftKey){
             const { cellHeight } = this.options
             const { offsetX,offsetY } = this.core.plugins.ScrollPlugin
+            const { clickCell } = this.contentComponent
 
-            const attrSecond = this.searchRectAddr(event.offsetX+offsetX - cellHeight,event.offsetY+offsetY - cellHeight)
+            let attrSecond = this.searchRectAddr(event.offsetX+offsetX - cellHeight,event.offsetY+offsetY - cellHeight)
+            if(attrSecond.isMerge){
+                let isRight = attrSecond.x>clickCell.x
+                let isBottom = attrSecond.y>clickCell.y
+
+                if(attrSecond.isMerge){
+                    if(isRight && !isBottom){
+                        // 第二个在右上角
+                        attrSecond = this.searchRectByColAndRow(attrSecond.col+attrSecond.mergeCol - 1,attrSecond.row)
+                    }else if(isRight && isBottom){
+                        // 第二个在右下角
+                        attrSecond = this.searchRectByColAndRow(attrSecond.col+attrSecond.mergeCol - 1,attrSecond.row+attrSecond.mergeRow - 1)
+                    }else if(!isRight && isBottom){
+                        // 第二个在左下角
+                        attrSecond = this.searchRectByColAndRow(attrSecond.col,attrSecond.row+attrSecond.mergeRow - 1)
+                    }
+                }
+            }
             this.contentComponent.setSecondClickCell(attrSecond)
             this.core.fresh()
         }
@@ -219,7 +237,7 @@ export default class SelectPlugin{
                             }
 
                             this.contentComponent.setSecondClickCell(attrSecond)
-                            console.log('attrSecond',attrSecond)
+                            // console.log('attrSecond',attrSecond)
                             this.core.fresh()
                         }
                     }
@@ -234,7 +252,7 @@ export default class SelectPlugin{
 
     searchRectByColAndRow(col,row){
         const { contentGroup } = this.contentComponent
-        console.log('col',col)
+        // console.log('col',col)
         const index = contentGroup.findIndex(item=>item.col === col && item.row === row)
         if(index !== -1){
             return contentGroup[index]

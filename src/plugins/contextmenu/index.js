@@ -22,6 +22,9 @@ export default class ContextmenuPlugin{
         mergeBtn.innerText='合并'
         mergeBtn.onclick = event=>{
             const { clickCell,moreSelectedCell } = this.contentComponent
+            if(moreSelectedCell.some(item=>item.isMerge)){
+                return
+            }
             let mergeWidth = clickCell.width
             let mergeHeight = clickCell.height
             clickCell.mergeLabelGroup = moreSelectedCell
