@@ -51,6 +51,7 @@ export default class ScrollPlugin{
             this.verBarDom.style.backgroundColor = 'rgb(201, 201, 201)'
             this.core.canvasDom.onmousemove = null
             this.core.dragSign = false
+            // console.log('松开鼠标',this.core.dragSign)
         }
     }
 
@@ -283,13 +284,13 @@ export default class ScrollPlugin{
         // console.log('this.core.offsetYLock',this.core.offsetYLock)
         if(topDis <= topBound){
             // barDom.style.top = 0+'px'
-            this.barVerContainerDom.style.transform = `translateY(0px)`
+            this.verBarDom.style.transform = `translateY(0px)`
             this.barTopDis = 0
             this.topDis = topBound
             this.core.isScrollBottomBound = false
         }else if(topDis >= bottomBound){
             // barDom.style.top = bottomBound+'px'
-            this.barVerContainerDom.style.transform = `translateY(${bottomBound+'px'})`
+            this.verBarDom.style.transform = `translateY(${bottomBound+'px'})`
             this.barTopDis = bottomBound
             this.topDis = -(this.core.sheetHeight -(this.options.height - this.options.cellHeight))
             this.core.isScrollBottomBound = true
@@ -299,7 +300,7 @@ export default class ScrollPlugin{
             // console.log('topDis>=bottomBound',topDis>=bottomBound)
         }else{
             // barDom.style.top = topDis+'px'
-            this.barVerContainerDom.style.transform = `translateY(${topDis+'px'})`
+            this.verBarDom.style.transform = `translateY(${topDis+'px'})`
             this.barTopDis = topDis
             this.topDis =-topDis/proportion
             this.core.offsetYLock = false

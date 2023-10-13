@@ -22,18 +22,31 @@ export default class DragPlugin{
         const { contentGroup } = this.contentComponent
         const { cellHeight } = this.options
 
+        // console.log('this.dragCell.width>=cellHeight',this.dragCell.width<cellHeight)
+
+        if(this.dragCell.width<cellHeight && dis<0){
+            return;
+        }
+
         for(let i=0;i<contentGroup.length;i++){
             const tempRect = contentGroup[i]
+
             if(tempRect.col === col){
                 tempRect.width += dis
+
 
                 // console.log('dis',dis)
             }else if(tempRect.col>col){
                 tempRect.x += dis
                 tempRect.ltX += dis
+
             }
             if(tempRect.col === col && tempRect.row === 1){
                 this.core.sheetWidth += dis
+            }
+
+            if(tempRect.isMerge && tempRect.mergeStartLabel === tempRect.label){
+                tempRect.mergeWidth += dis
             }
         }
         this.core.freshScrollBar()
@@ -43,6 +56,8 @@ export default class DragPlugin{
     registerDragEvent(){
 
         this.canvasDom.addEventListener('mousedown',evtA=>{
+
+            // console.log('开始拖拽',this.core.dragSign)
 
             if(!this.dragCell || !this.core.dragSign){
                 return
@@ -76,11 +91,14 @@ export default class DragPlugin{
                     const tempHeader = headerRectGroup[i]
 
                     if((x>tempHeader.ltX + tempHeader.width - dragShowDis) && (x<tempHeader.ltX + tempHeader.width + dragShowDis + 1)){
-                        this.dragCell = tempHeader
+                        // console.log('鼠标在拖拽之上',this.core.dragSign)
+                        if(!this.core.dragSign){
+                            this.dragCell = tempHeader
+                        }
                         this.layer.setCursor('col-resize')
                         this.core.dragSign = true
-                        this.dragCell = tempHeader
-                        // console.log('拖拽',this.core.dragSign)
+
+                        // console.log('拖拽标识',this.core.dragSign)
                     }
                 }
             }

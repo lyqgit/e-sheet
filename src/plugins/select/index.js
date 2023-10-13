@@ -186,7 +186,7 @@ export default class SelectPlugin{
                 }
             }else{
                 const attrFirst = this.searchRectAddr(event.offsetX+offsetX - cellHeight,event.offsetY+offsetY - cellHeight)
-                console.log('x,y',attrFirst)
+                // console.log('x,y',attrFirst)
                 // console.log('offsetY',offsetY)
                 // console.log('event.offsetY',event.offsetY)
                 if(attrFirst){
@@ -229,7 +229,7 @@ export default class SelectPlugin{
                         return tempContentRect
                     }else{
                         const index = contentGroup.findIndex(item=>item.label === tempContentRect.mergeStartLabel)
-                        console.log('索引',index,tempContentRect)
+                        // console.log('索引',index,tempContentRect)
                         return contentGroup[index]
                     }
                 }else{
