@@ -115,17 +115,15 @@ export default class SelectPlugin{
                 let isRight = attrSecond.x>clickCell.x
                 let isBottom = attrSecond.y>clickCell.y
 
-                if(attrSecond.isMerge){
-                    if(isRight && !isBottom){
-                        // 第二个在右上角
-                        attrSecond = this.searchRectByColAndRow(attrSecond.col+attrSecond.mergeCol - 1,attrSecond.row)
-                    }else if(isRight && isBottom){
-                        // 第二个在右下角
-                        attrSecond = this.searchRectByColAndRow(attrSecond.col+attrSecond.mergeCol - 1,attrSecond.row+attrSecond.mergeRow - 1)
-                    }else if(!isRight && isBottom){
-                        // 第二个在左下角
-                        attrSecond = this.searchRectByColAndRow(attrSecond.col,attrSecond.row+attrSecond.mergeRow - 1)
-                    }
+                if(isRight && !isBottom){
+                    // 第二个在右上角
+                    attrSecond = this.searchRectByColAndRow(attrSecond.col+attrSecond.mergeCol - 1,attrSecond.row)
+                }else if(isRight && isBottom){
+                    // 第二个在右下角
+                    attrSecond = this.searchRectByColAndRow(attrSecond.col+attrSecond.mergeCol - 1,attrSecond.row+attrSecond.mergeRow - 1)
+                }else if(!isRight && isBottom){
+                    // 第二个在左下角
+                    attrSecond = this.searchRectByColAndRow(attrSecond.col,attrSecond.row+attrSecond.mergeRow - 1)
                 }
             }
             this.contentComponent.setSecondClickCell(attrSecond)
@@ -203,7 +201,7 @@ export default class SelectPlugin{
                     this.contentComponent.showClickRect(attr,false,true)
                 }
             }else{
-                const attrFirst = this.searchRectAddr(event.offsetX+offsetX - cellHeight,event.offsetY+offsetY - cellHeight)
+                let attrFirst = this.searchRectAddr(event.offsetX+offsetX - cellHeight,event.offsetY+offsetY - cellHeight)
                 // console.log('x,y',attrFirst)
                 // console.log('offsetY',offsetY)
                 // console.log('event.offsetY',event.offsetY)
@@ -223,6 +221,8 @@ export default class SelectPlugin{
                             let isRight = attrSecond.x>attrFirst.x
                             let isBottom = attrSecond.y>attrFirst.y
 
+                            // attrSecond是合并单元格
+
                             if(attrSecond.isMerge){
                                 if(isRight && !isBottom){
                                     // 第二个在右上角
@@ -234,7 +234,53 @@ export default class SelectPlugin{
                                     // 第二个在左下角
                                     attrSecond = this.searchRectByColAndRow(attrSecond.col,attrSecond.row+attrSecond.mergeRow - 1)
                                 }
+                            }else{
+
+                                // attrSecond跨过合并单元格 在content渲染处更改左上角起点位置(要放到content的渲染函数处）
+                                // let startAndEndRect = null
+                                //
+                                // if(isRight && !isBottom){
+                                //     // 第二个在右上角
+                                //     startAndEndRect = this.searchRectIsMerge(attrFirst.x,attrSecond.y,attrSecond.x,attrFirst.y)
+                                // }else if(isRight && isBottom){
+                                //     // 第二个在右下角
+                                //     startAndEndRect = this.searchRectIsMerge(attrFirst.x,attrFirst.y,attrSecond.x,attrSecond.y)
+                                // }else if(!isRight && isBottom){
+                                //     // 第二个在左下角
+                                //     startAndEndRect = this.searchRectIsMerge(attrSecond.x,attrFirst.y,attrFirst.x,attrSecond.y)
+                                // }else{
+                                //     // 第二个在左上角
+                                //     startAndEndRect = this.searchRectIsMerge(attrSecond.x,attrSecond.y,attrFirst.x,attrFirst.y)
+                                // }
+                                //
+                                // if(startAndEndRect){
+                                //
+                                //     const { startRect,endRect } = startAndEndRect
+                                //
+                                //     const startArr = [startRect,attrFirst,attrSecond]
+                                //     const endArr = [endRect,attrFirst,attrSecond]
+                                //
+                                //
+                                //
+                                //     const startCol = startArr.sort((a,b)=>a.x-b.x)[0].col
+                                //     const startRow = startArr.sort((a,b)=>a.y-b.y)[0].row
+                                //     const endCol = endArr.sort((a,b)=>a.x-b.x)[endArr.length-1].col
+                                //     const endRow = endArr.sort((a,b)=>a.y-b.y)[endArr.length-1].row
+                                //
+                                //     console.log('startAndEndRect',startAndEndRect)
+                                //
+                                //     console.log('startCol,startRow',startCol,startRow,endCol,endRow)
+                                //
+                                //     attrFirst = this.searchRectByColAndRow(startCol,startRow)
+                                //     attrSecond = this.searchRectByColAndRow(endCol,endRow)
+                                //
+                                //     console.log('attrFirst+attrSecond',attrFirst,attrSecond)
+                                //     this.contentComponent.showClickRect(attrFirst)
+                                // }
+
                             }
+
+
 
                             this.contentComponent.setSecondClickCell(attrSecond)
                             // console.log('attrSecond',attrSecond)
@@ -247,6 +293,37 @@ export default class SelectPlugin{
             this.core.plugins.InputPlugin.hideInput()
 
         })
+
+    }
+
+
+    searchRectIsMerge(startX,startY,endX,endY){
+        const { contentGroup } = this.contentComponent
+
+        // console.log('startX,startY,endX,endY',startX,startY,endX,endY)
+
+        const res = contentGroup.find(item=>(item.x>=startX && item.x<=endX) && (item.y>=startY && item.y<=endY) && item.isMerge)
+        // console.log('res',res)
+        if(res){
+            return {
+                startRect: this.searchRectByLabel(res.mergeStartLabel),
+                endRect: this.searchRectByLabel(res.mergeEndLabel)
+            }
+        }else{
+            return null
+        }
+
+    }
+
+    searchRectByLabel(label){
+        const { contentGroup } = this.contentComponent
+        // console.log('col',col)
+        const index = contentGroup.findIndex(item=>item.label === label)
+        if(index !== -1){
+            return contentGroup[index]
+        }else{
+            return null
+        }
 
     }
 

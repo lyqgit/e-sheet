@@ -32,7 +32,7 @@ export default class ContentComponent{
         const { row,col,cellWidth,cellHeight } = options
 
         let colWidth = 0
-        let colAbWidth = cellHeight
+        let colAbWidth = 0
         let rowHeight = 0
         let rowAbHeight = cellHeight
 
@@ -41,6 +41,7 @@ export default class ContentComponent{
 
         for(let i=0;i<row;i++){
             colWidth = 0
+            colAbWidth = cellHeight
             this.core.sheetHeight += cellHeight
             for(let j=0;j<col;j++){
                 if(i===0){
@@ -227,6 +228,57 @@ export default class ContentComponent{
 
 
 
+        let attrFirst = null
+        let attrSecond = null
+
+        let startAndEndRect = null
+
+        if(this.secondClickCell){
+            attrFirst = this.clickCell
+            attrSecond = this.secondClickCell
+
+            let isRight = attrSecond.x>attrFirst.x
+            let isBottom = attrSecond.y>attrFirst.y
+
+            if(isRight && !isBottom){
+                // 第二个在右上角
+                startAndEndRect = this.searchRectIsMerge(attrFirst.x,attrSecond.y,attrSecond.x,attrFirst.y,attrFirst,attrSecond)
+            }else if(isRight && isBottom){
+                // 第二个在右下角
+                startAndEndRect = this.searchRectIsMerge(attrFirst.x,attrFirst.y,attrSecond.x,attrSecond.y,attrFirst,attrSecond)
+            }else if(!isRight && isBottom){
+                // 第二个在左下角
+                startAndEndRect = this.searchRectIsMerge(attrSecond.x,attrFirst.y,attrFirst.x,attrSecond.y,attrFirst,attrSecond)
+            }else{
+                // 第二个在左上角
+                startAndEndRect = this.searchRectIsMerge(attrSecond.x,attrSecond.y,attrFirst.x,attrFirst.y,attrFirst,attrSecond)
+            }
+
+            if(startAndEndRect) {
+
+                const {startRect, endRect} = startAndEndRect
+
+                const startArr = [startRect, attrFirst, attrSecond]
+                const endArr = [endRect, attrFirst, attrSecond]
+
+
+                const startCol = startArr.sort((a, b) => a.x - b.x)[0].col
+                const startRow = startArr.sort((a, b) => a.y - b.y)[0].row
+                const endCol = endArr.sort((a, b) => a.x - b.x)[endArr.length - 1].col
+                const endRow = endArr.sort((a, b) => a.y - b.y)[endArr.length - 1].row
+
+                console.log('startAndEndRect', startAndEndRect)
+
+                console.log('startCol,startRow', startCol, startRow, endCol, endRow)
+
+                attrFirst = this.searchRectByColAndRow(startCol, startRow)
+                attrSecond = this.searchRectByColAndRow(endCol, endRow)
+
+                console.log('attrFirst+attrSecond', attrFirst, attrSecond)
+
+
+            }
+        }
 
         // const lt = this.searchScreenAddr(offsetX,offsetY)
         // const rb = this.searchScreenAddr(offsetX+width-cellHeight,offsetY+height-cellHeight)
@@ -265,7 +317,7 @@ export default class ContentComponent{
                         this.layer.drawStrokeRect(this.clickCell.x+cellHeight-offsetX,this.clickCell.y-offsetY+cellHeight,this.clickCell.width,this.clickCell.height,selectedBorderBgColor,'destination-over',2)
                     }
 
-                }else{
+                }else if(!startAndEndRect){
                     if(this.secondClickCell.x >= this.clickCell.x){
                         // 最后一个在右边
                         const isBottom = this.secondClickCell.y>this.clickCell.y
@@ -275,6 +327,8 @@ export default class ContentComponent{
                         const isBottom = this.secondClickCell.y>this.clickCell.y
                         this.layer.drawStrokeRect(this.secondClickCell.x+cellHeight-offsetX,(isBottom?this.clickCell.y:this.secondClickCell.y)-offsetY+cellHeight,this.clickCell.x-this.secondClickCell.x+this.clickCell.width,Math.abs(this.secondClickCell.y-this.clickCell.y)+this.secondClickCell.height,selectedBorderBgColor,'destination-over',2)
                     }
+                }else if(startAndEndRect){
+                    this.layer.drawStrokeRect(attrFirst.x+cellHeight-offsetX,attrFirst.y-offsetY+cellHeight,attrSecond.x-attrFirst.x+attrSecond.width,attrSecond.y-attrFirst.y+attrSecond.height,selectedBorderBgColor,'destination-over',2)
                 }
 
 
@@ -283,6 +337,7 @@ export default class ContentComponent{
 
 
         this.moreSelectedCell = []
+
         // console.log('x,y,x,y',ltCol,ltRow,rbCol,rbRow)
 
         for(let i=0;i<contentGroup.length;i++){
@@ -305,17 +360,21 @@ export default class ContentComponent{
                 // this.layer.drawFillRect(x-offsetX+cellHeight,y-offsetY+cellHeight,width,height,'#EBF4FF','destination-over',1)
                 // this.layer.drawFillRect(x-offsetX+cellHeight,y-offsetY+cellHeight,width,height,'red','destination-over')
             }
+
+
             if(this.secondClickCell){
-                const ltCol= this.secondClickCell.col>this.clickCell.col?this.clickCell.col:this.secondClickCell.col
-                const ltRow= this.secondClickCell.row>this.clickCell.row?this.clickCell.row:this.secondClickCell.row
-                const rbCol= this.secondClickCell.col>this.clickCell.col?this.secondClickCell.col:this.clickCell.col
-                const rbRow= this.secondClickCell.row>this.clickCell.row?this.secondClickCell.row:this.clickCell.row
+
+                const ltCol= startAndEndRect?(attrSecond.col>attrFirst.col?attrFirst.col:attrSecond.col):(this.secondClickCell.col>this.clickCell.col?this.clickCell.col:this.secondClickCell.col)
+                const ltRow= startAndEndRect?(attrSecond.row>attrFirst.row?attrFirst.row:attrSecond.row):(this.secondClickCell.row>this.clickCell.row?this.clickCell.row:this.secondClickCell.row)
+                const rbCol= startAndEndRect?(attrSecond.col>attrFirst.col?attrSecond.col:attrFirst.col):(this.secondClickCell.col>this.clickCell.col?this.secondClickCell.col:this.clickCell.col)
+                const rbRow= startAndEndRect?(attrSecond.row>attrFirst.row?attrSecond.row:attrFirst.row):(this.secondClickCell.row>this.clickCell.row?this.secondClickCell.row:this.clickCell.row)
                 if((col>=ltCol && col<=rbCol) && (row>=ltRow && row<=rbRow)){
                     // console.log('x+cellHeight-offsetX',x+cellHeight-offsetX)
                     // this.layer.drawFillRect(x+cellHeight-offsetX,y-offsetY+cellHeight,width,height,selectedBgColor,'destination-over')
                     this.layer.drawFillRect(x+cellHeight-offsetX,y-offsetY+cellHeight,width,height,selectedBgColor,'destination-over')
                     this.moreSelectedCell.push(tempRect)
                 }
+
             }
             // else if(this.secondClickCell && this.secondClickCell.isMerge){
             //     // 选中的是合并的单元格
@@ -377,6 +436,54 @@ export default class ContentComponent{
             }
         })
         return {mergeWidth,mergeHeight}
+    }
+
+
+    searchRectIsMerge(startX,startY,endX,endY,attrFirst,attrSecond){
+        const { contentGroup } = this
+
+        // console.log('startX,startY,endX,endY',startX,startY,endX,endY)
+
+        const res = contentGroup.find(item=>
+            (
+                (item.x>=startX && item.x<=endX) && (item.y>=startY && item.y<=endY) && item.isMerge)
+                &&
+                ([attrFirst.row,attrSecond.row].includes(item.row) || [attrFirst.col,attrSecond.col].includes(item.col))
+            )
+        // console.log('res',res)
+        if(res){
+            return {
+                startRect: this.searchRectByLabel(res.mergeStartLabel),
+                endRect: this.searchRectByLabel(res.mergeEndLabel)
+            }
+        }else{
+            return null
+        }
+
+    }
+
+    searchRectByLabel(label){
+        const { contentGroup } = this
+        // console.log('col',col)
+        const index = contentGroup.findIndex(item=>item.label === label)
+        if(index !== -1){
+            return contentGroup[index]
+        }else{
+            return null
+        }
+
+    }
+
+    searchRectByColAndRow(col,row){
+        const { contentGroup } = this
+        // console.log('col',col)
+        const index = contentGroup.findIndex(item=>item.col === col && item.row === row)
+        if(index !== -1){
+            return contentGroup[index]
+        }else{
+            return null
+        }
+
     }
 
 }
