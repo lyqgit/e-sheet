@@ -258,10 +258,10 @@ export default class ContentComponent{
                 if(!this.secondClickCell){
                     if(this.clickCell.isMerge){
                         const {mergeWidth,mergeHeight} = this.countMergeWidthAndHeight(this.clickCell)
-                        // console.log('选中框',this.clickCell)
+                        // console.log('多个选中框',this.clickCell)
                         this.layer.drawStrokeRect(this.clickCell.x+cellHeight-offsetX,this.clickCell.y-offsetY+cellHeight,mergeWidth,mergeHeight,selectedBorderBgColor,'destination-over',2)
                     }else{
-                        // console.log('选中框',this.clickCell)
+                        // console.log('单个选中框',this.clickCell)
                         this.layer.drawStrokeRect(this.clickCell.x+cellHeight-offsetX,this.clickCell.y-offsetY+cellHeight,this.clickCell.width,this.clickCell.height,selectedBorderBgColor,'destination-over',2)
                     }
 
@@ -312,16 +312,16 @@ export default class ContentComponent{
                 const rbRow= this.secondClickCell.row>this.clickCell.row?this.secondClickCell.row:this.clickCell.row
                 if((col>=ltCol && col<=rbCol) && (row>=ltRow && row<=rbRow)){
                     // console.log('x+cellHeight-offsetX',x+cellHeight-offsetX)
-                    if(!tempRect.isMerge){
-                        // console.log('背景色',tempRect)
-                        this.layer.drawFillRect(x+cellHeight-offsetX,y-offsetY+cellHeight,width,height,selectedBgColor,'destination-over')
-                    }else if(tempRect.isMerge && tempRect.label === tempRect.mergeStartLabel){
-                        console.log('tempRect.mergeWidth',tempRect.mergeWidth)
-                        this.layer.drawFillRect(x+cellHeight-offsetX,y-offsetY+cellHeight,tempRect.mergeWidth,tempRect.mergeHeight,selectedBgColor,'destination-over')
-                    }
+                    // this.layer.drawFillRect(x+cellHeight-offsetX,y-offsetY+cellHeight,width,height,selectedBgColor,'destination-over')
+                    this.layer.drawFillRect(x+cellHeight-offsetX,y-offsetY+cellHeight,width,height,selectedBgColor,'destination-over')
                     this.moreSelectedCell.push(tempRect)
                 }
             }
+            // else if(this.secondClickCell && this.secondClickCell.isMerge){
+            //     // 选中的是合并的单元格
+            //     const {mergeWidth,mergeHeight} = this.countMergeWidthAndHeight(tempRect)
+            //     this.layer.drawFillRect(x+cellHeight-offsetX,y-offsetY+cellHeight,mergeWidth,mergeHeight,selectedBgColor,'destination-over')
+            // }
             if(this.isRowSelect && this.isColSelect){
                 this.layer.drawFillRect(x-offsetX+cellHeight,y-offsetY+cellHeight,width,height,selectedBgColor,'destination-over')
             }

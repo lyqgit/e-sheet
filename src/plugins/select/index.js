@@ -196,12 +196,30 @@ export default class SelectPlugin{
 
                     this.canvasDom.onmousemove = event=>{
                         const { offsetX,offsetY } = this.core.plugins.ScrollPlugin
-                        const attrSecond = this.searchRectAddr(event.offsetX+offsetX - cellHeight,event.offsetY+offsetY - cellHeight)
+                        let attrSecond = this.searchRectAddr(event.offsetX+offsetX - cellHeight,event.offsetY+offsetY - cellHeight)
                         // console.log('attr',attrSecond)
                         if(attrSecond && attrFirst.label === attrSecond.label){
                             this.contentComponent.setSecondClickCell(null)
                         } else if(attrSecond && attrSecond.label !== this.contentComponent.secondClickCell?.label ){
+
+                            let isRight = attrSecond.x>attrFirst.x
+                            let isBottom = attrSecond.y>attrFirst.y
+
+                            if(attrSecond.isMerge){
+                                if(isRight && !isBottom){
+                                    // 第二个在右上角
+                                    attrSecond = this.searchRectByColAndRow(attrSecond.col+attrSecond.mergeCol - 1,attrSecond.row)
+                                }else if(isRight && isBottom){
+                                    // 第二个在右下角
+                                    attrSecond = this.searchRectByColAndRow(attrSecond.col+attrSecond.mergeCol - 1,attrSecond.row+attrSecond.mergeRow - 1)
+                                }else if(!isRight && isBottom){
+                                    // 第二个在左下角
+                                    attrSecond = this.searchRectByColAndRow(attrSecond.col,attrSecond.row+attrSecond.mergeRow - 1)
+                                }
+                            }
+
                             this.contentComponent.setSecondClickCell(attrSecond)
+                            console.log('attrSecond',attrSecond)
                             this.core.fresh()
                         }
                     }
@@ -211,6 +229,18 @@ export default class SelectPlugin{
             this.core.plugins.InputPlugin.hideInput()
 
         })
+
+    }
+
+    searchRectByColAndRow(col,row){
+        const { contentGroup } = this.contentComponent
+        console.log('col',col)
+        const index = contentGroup.findIndex(item=>item.col === col && item.row === row)
+        if(index !== -1){
+            return contentGroup[index]
+        }else{
+            return null
+        }
 
     }
 

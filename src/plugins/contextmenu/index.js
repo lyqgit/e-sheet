@@ -28,21 +28,25 @@ export default class ContextmenuPlugin{
             clickCell.mergeEndLabel = moreSelectedCell[moreSelectedCell.length - 1].label
             clickCell.mergeStartLabel = clickCell.label
             clickCell.isMerge = true
+            clickCell.mergeRow = 1
+            clickCell.mergeCol = 1
             moreSelectedCell.forEach(item=> {
                 item.isMerge = true
                 item.mergeStartLabel = clickCell.label
                 item.mergeEndLabel = moreSelectedCell[moreSelectedCell.length - 1].label
                 if(clickCell.row === item.row && clickCell.label !== item.label){
                     mergeWidth+=item.width
+                    clickCell.mergeCol += 1
                 }
                 if(clickCell.col === item.col && clickCell.label !== item.label){
                     mergeHeight+=item.height
+                    clickCell.mergeRow += 1
                 }
 
             })
             clickCell.mergeWidth = mergeWidth
             clickCell.mergeHeight = mergeHeight
-            console.log('合并完成')
+            console.log('合并完成',clickCell)
             this.core.freshContent()
 
         }
