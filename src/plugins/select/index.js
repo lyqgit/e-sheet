@@ -78,14 +78,19 @@ export default class SelectPlugin{
             if(clickRectShow){
                 // 一个框
                     // 打印
-                console.log('json',json)
+                // console.log('json',json)
                 if(Array.isArray(json)){
 
                     const oriStartRect = json[0]
 
                     // 复制了多个
-                    json.forEach(item=>{
+                    for(let j=0;j<json.length;j++){
+                        const item = json[j]
                         const curRect = this.searchRectByColAndRow(clickCell.col+(item.col - oriStartRect.col),clickCell.row+(item.row - oriStartRect.row))
+                        if(!curRect){
+                            break;
+                        }
+
                         for(let i in item){
                             // 只更改样式和内容，不复制width和height
                             if(this.copyKey.includes(i)){
@@ -97,7 +102,7 @@ export default class SelectPlugin{
                             // 合并
                             this.copyRect(curRect,item)
                         }
-                    })
+                    }
                 }else{
                     // 复制单个，json是对象
                     // console.log('json',json)
