@@ -55,19 +55,21 @@ export default class InputPlugin{
             const { offsetX,offsetY } = this.core.plugins.ScrollPlugin
 
             const attrs = this.core.plugins.SelectPlugin.searchRectAddr(evt.offsetX+offsetX - cellHeight,evt.offsetY+offsetY - cellHeight)
-            const {x,y,width,height,text} = attrs
+            const {x,y,width,height,text,isMerge} = attrs
             this.contentComponent.hideClickRect()
             this.core.fresh()
 
             const {mergeWidth,mergeHeight} = this.contentComponent.countMergeWidthAndHeight(attrs)
+
+            console.log('attrs',attrs)
 
             inputDom.style.opacity = 1
             inputDom.style.top = y+cellHeight-offsetY+'px'
             inputDom.style.left = x+cellHeight-offsetX+'px'
             inputDom.style.display = 'inline-block'
             inputDom.style.textAlign = 'center'
-            inputDom.style.width = mergeWidth+'px'
-            inputDom.style.height = mergeHeight+'px'
+            inputDom.style.width = (isMerge?mergeWidth:width)+'px'
+            inputDom.style.height = (isMerge?mergeHeight:height)+'px'
             inputDom.style.borderRadius = '6px'
             // console.log('attrs',attrs)
             inputDom.value = text
