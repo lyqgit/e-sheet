@@ -61,14 +61,18 @@ export default class InputPlugin{
 
             const {mergeWidth,mergeHeight} = this.contentComponent.countMergeWidthAndHeight(attrs)
 
-            console.log('attrs',attrs)
+            // console.log('attrs',attrs)
+
+            let inputWidth = isMerge?mergeWidth:width
+
+            const textWidth = text.length*this.core.fontSize
 
             inputDom.style.opacity = 1
             inputDom.style.top = y+cellHeight-offsetY+'px'
             inputDom.style.left = x+cellHeight-offsetX+'px'
             inputDom.style.display = 'inline-block'
             inputDom.style.textAlign = 'center'
-            inputDom.style.width = (isMerge?mergeWidth:width)+'px'
+            inputDom.style.width = (inputWidth>textWidth?inputWidth:textWidth)+'px'
             inputDom.style.height = (isMerge?mergeHeight:height)+'px'
             inputDom.style.borderRadius = '6px'
             // console.log('attrs',attrs)

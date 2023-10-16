@@ -5,6 +5,7 @@
     <title>Title</title>
     <link rel="stylesheet" href="/css/index.css">
     <script src="/eSheet.umd.js"></script>
+    <script src="https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <style>
     html,body{
@@ -16,9 +17,13 @@
     body{
         padding-top: 20px;padding-left: 20px
     }
+    #file-xlsx{
+        margin-top: 30px;
+    }
 </style>
 <body>
     <div id="elt"></div>
+    <input type="file" id="file-xlsx" >上传excel
 </body>
 <script>
 
@@ -30,5 +35,27 @@
         height:800
     })
     // console.log(excel)
+
+    // excel.installXlsxData(JSON.parse(localStorage.getItem('sheet')))
+
+    document.querySelector('#file-xlsx').onchange = function (e) {
+        const file = e.target.files[0]
+        console.log('file',file)
+        console.log('XLSX',XLSX)
+// 用FileReader来完成数据流的转换
+        let reader = new FileReader();
+        reader.onload = function (e) {
+            let data = e.target.result;;
+//通过XLSX来解析出workbook（工作簿）也就导入的excel文件
+            let wb = XLSX.read(data, { type: "binary" });
+            console.log(wb);
+            excel.installXlsxData(wb['Sheets'])
+            // localStorage.setItem('sheet',JSON.stringify(wb['Sheets']))
+
+        };
+        //readAsBinaryString需要File 或 Blob 对象的参数
+        reader.readAsBinaryString(file);
+// console.log(XLSX.read(file, { type: "array" }));
+    }
 </script>
 </html>

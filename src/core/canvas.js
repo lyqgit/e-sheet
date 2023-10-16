@@ -95,7 +95,19 @@ export default class Canvas{
 
         ctx.textBaseline = "middle";
         ctx.textAlign = "center";
-        ctx.fillText(text,baseX,baseY)
+
+        const textObj = ctx.measureText(text);
+
+        let tempText = ''
+
+        if(textObj.width > rectWidth){
+            const txtNum = (rectWidth/12).toFixed(0)-1
+            tempText = text.slice(0,txtNum-1)+'...'
+        }else{
+            tempText = text
+        }
+
+        ctx.fillText(tempText,baseX,baseY)
     }
 
     /**

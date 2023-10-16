@@ -2,6 +2,14 @@ import Canvas from './canvas.js'
 
 export default class AppExcel{
 
+    fontSize = 12
+
+    workBook = {}
+
+    eSheetWorkBook = {
+        'Sheet1':[]
+    }
+
     row= 160
 
     col = 52
@@ -46,7 +54,7 @@ export default class AppExcel{
     borderColor = '#ECEDEE'
     borderCellBgColor = '#F9FBFD'
 
-    constructor(selectorDom,options={},components={},plugins={}) {
+    constructor(selectorDom,options={},components={},plugins={},data=null) {
 
         // 默认设置容器宽和高为600
         options.width = options.width??this.width;
@@ -74,6 +82,8 @@ export default class AppExcel{
         this.options = options
         // console.log('this.options',this.options)
 
+        this.initExcelData()
+
         // 装载组件
         this.installComponents(components);
         this.installPlugins(plugins);
@@ -81,6 +91,77 @@ export default class AppExcel{
 
 
         // requestAnimationFrame(this.draw);
+    }
+
+
+    initExcelData(sheetName = 'Sheet1'){
+
+        const { row,col,cellWidth,cellHeight } = this.options
+
+        let colWidth = 0
+        let colAbWidth = 0
+        let rowHeight = 0
+        let rowAbHeight = cellHeight
+        this.sheetWidth = 0
+        this.sheetHeight = 0
+
+        // this.core.sheetWidth += cellHeight
+        // this.core.sheetHeight += cellHeight
+        this.eSheetWorkBook[sheetName] = []
+
+        for(let i=0;i<row;i++){
+            colWidth = 0
+            colAbWidth = cellHeight
+            this.sheetHeight += cellHeight
+            for(let j=0;j<col;j++){
+                if(i===0){
+                    this.sheetWidth += cellWidth
+                }
+                this.eSheetWorkBook[sheetName].push({
+                    row:i+1,
+                    col:j+1,
+                    text:this.workBook[sheetName]?((this.workBook[sheetName][String.fromCharCode(65 + j)+(i+1)]?.v)??''):'',
+                    width:cellWidth,
+                    height:cellHeight,
+                    x:colWidth,
+                    y:rowHeight,
+                    ltX:colAbWidth,
+                    ltY:rowAbHeight,
+                    mergeWidth:0,
+                    mergeHeight:0,
+                    mergeRow:0,
+                    mergeCol:0,
+                    mergeStartLabel:'',
+                    mergeEndLabel:'',
+                    mergeLabelGroup:[],
+                    isMerge:false,
+                    bgColor:'',
+                    fontColor:'',
+                    label:String.fromCharCode(65 + j)+(i+1)
+                })
+                colWidth += cellWidth
+                colAbWidth += cellWidth
+            }
+            rowHeight += cellHeight
+            rowAbHeight += cellHeight
+        }
+
+    }
+
+
+    installXlsxData(oriData){
+
+        // console.log('oriData',oriData)
+
+        this.workBook = oriData
+
+        if(Object.keys(oriData).length === 0){
+            throw new Error('data is error')
+        }
+
+        this.initExcelData(Object.keys(oriData)[0])
+        this.components.ContentComponent.installContentData(Object.keys(oriData)[0])
+        this.freshContent()
     }
 
     // 装载固有组件

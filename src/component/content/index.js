@@ -33,57 +33,18 @@ export default class ContentComponent{
         this.options = options;
         this.layer = layer;
         this.core = core;
-
-        const { row,col,cellWidth,cellHeight } = options
-
-        let colWidth = 0
-        let colAbWidth = 0
-        let rowHeight = 0
-        let rowAbHeight = cellHeight
-
-        // this.core.sheetWidth += cellHeight
-        // this.core.sheetHeight += cellHeight
-
-        for(let i=0;i<row;i++){
-            colWidth = 0
-            colAbWidth = cellHeight
-            this.core.sheetHeight += cellHeight
-            for(let j=0;j<col;j++){
-                if(i===0){
-                    this.core.sheetWidth += cellWidth
-                }
-                this.contentGroup.push({
-                    row:i+1,
-                    col:j+1,
-                    text:String.fromCharCode(65 + j)+(i+1),
-                    width:cellWidth,
-                    height:cellHeight,
-                    x:colWidth,
-                    y:rowHeight,
-                    ltX:colAbWidth,
-                    ltY:rowAbHeight,
-                    mergeWidth:0,
-                    mergeHeight:0,
-                    mergeRow:0,
-                    mergeCol:0,
-                    mergeStartLabel:'',
-                    mergeEndLabel:'',
-                    mergeLabelGroup:[],
-                    isMerge:false,
-                    bgColor:'',
-                    fontColor:'',
-                    label:String.fromCharCode(65 + j)+(i+1)
-                })
-                colWidth += cellWidth
-                colAbWidth += cellWidth
-            }
-            rowHeight += cellHeight
-            rowAbHeight += cellHeight
-        }
+        this.installContentData()
         // console.log('this.core.sheetWidth',this.core.sheetWidth)
         // console.log('this.core.sheetHeight',this.core.sheetHeight)
         // this.initDraw()
         this.trendsDraw(0,0)
+    }
+
+
+    // Load Data
+    installContentData(sheetName='Sheet1'){
+        this.contentGroup = this.core.eSheetWorkBook[sheetName]
+        // console.log('sheetName',this.contentGroup)
     }
 
     changeContentGroupByRectArr(selectedArr){

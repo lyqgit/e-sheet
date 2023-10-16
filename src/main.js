@@ -11,6 +11,11 @@ import DragPlugin from './plugins/drag/index.js'
 import ContextmenuPlugin from './plugins/contextmenu/index.js'
 
 export default class eSheet{
+
+    excelDom = null
+
+    AppExcel = null
+
     constructor(selector,options={},plugins=[]) {
         if(Object.prototype.toString.call(selector) === '[object HTMLDivElement]'){
             this.excelDom = selector;
@@ -19,23 +24,22 @@ export default class eSheet{
         }
 
         if(!this.excelDom){
-            throw new Error('选择器错误')
+            throw new Error('the selector is error')
         }
         this.excelDom.style.position = 'relative'
         // this.excelDom.style.overflow = 'hidden'
         // console.log('selector',selector)
 
-        new AppExcel(
+        this.AppExcel = new AppExcel(
             this.excelDom,
             options,
             {ContentComponent,HeaderComponent,SideComponent,WholeComponent},
             {ScrollPlugin,InputPlugin,DragPlugin,SelectPlugin,ContextmenuPlugin,...plugins}
         )
 
+    }
 
-        // 装载插件
-
+    installXlsxData(oriData){
+        this.AppExcel.installXlsxData(oriData)
     }
 }
-
-// script引入自动注册到window上
