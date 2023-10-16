@@ -115,10 +115,6 @@ export default class SideComponent{
                 const topRow = startAndEndRect?attrFirst.row:(secondClickCell?.row>clickCell.row?clickCell.row:secondClickCell?.row);
                 const bottomRow = startAndEndRect?attrSecond.row:(secondClickCell?.row>clickCell.row?secondClickCell?.row:clickCell.row)
                 if(secondClickCell && tempSide.row>=topRow && tempSide.row <= bottomRow){
-                    if(startAndEndRect){
-                        console.log('topRow',topRow)
-                        console.log('bottomRow',bottomRow)
-                    }
                     this.layer.drawFillRect(0,tempSide.y+cellHeight-offsetY,cellHeight,tempSide.height,selectedBgColor,'destination-over')
                 }else if(clickCell.row === tempSide.row && !clickCell.isMerge){
                     this.layer.drawFillRect(0,tempSide.y+cellHeight-offsetY,cellHeight,tempSide.height,selectedBgColor,'destination-over')

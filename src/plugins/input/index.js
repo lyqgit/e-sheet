@@ -59,13 +59,15 @@ export default class InputPlugin{
             this.contentComponent.hideClickRect()
             this.core.fresh()
 
+            const {mergeWidth,mergeHeight} = this.contentComponent.countMergeWidthAndHeight(attrs)
+
             inputDom.style.opacity = 1
             inputDom.style.top = y+cellHeight-offsetY+'px'
             inputDom.style.left = x+cellHeight-offsetX+'px'
             inputDom.style.display = 'inline-block'
             inputDom.style.textAlign = 'center'
-            inputDom.style.width = width+'px'
-            inputDom.style.height = height+'px'
+            inputDom.style.width = mergeWidth+'px'
+            inputDom.style.height = mergeHeight+'px'
             inputDom.style.borderRadius = '6px'
             // console.log('attrs',attrs)
             inputDom.value = text

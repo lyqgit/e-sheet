@@ -127,9 +127,13 @@ export default class HeaderComponent{
                     // 多个
                     // console.log('tempHeader.col',tempHeader.col)
                     this.layer.drawFillRect(tempHeader.x+cellHeight-offsetX,0,tempHeader.width,tempHeader.height,selectedBgColor,'destination-over')
-                }else if(tempHeader.col === clickCell.col){
+                }else if(tempHeader.col === clickCell.col && !clickCell.isMerge){
                     this.layer.drawFillRect(tempHeader.x+cellHeight-offsetX,0,tempHeader.width,tempHeader.height,selectedBgColor,'destination-over')
 
+                }else if(clickCell.isMerge){
+                    if(clickCell.mergeLabelGroup.findIndex(item=>item.col === tempHeader.col) !== -1) {
+                        this.layer.drawFillRect(tempHeader.x + cellHeight - offsetX,0, tempHeader.width, tempHeader.height, selectedBgColor, 'destination-over')
+                    }
                 }else{
                     this.layer.drawFillRect(tempHeader.x+cellHeight-offsetX,0,tempHeader.width,tempHeader.height,borderCellBgColor,'destination-over')
                 }
