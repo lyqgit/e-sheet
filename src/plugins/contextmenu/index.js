@@ -21,22 +21,22 @@ export default class ContextmenuPlugin{
 
         mergeBtn.innerText='合并'
         mergeBtn.onclick = event=>{
-            const { clickCell,moreSelectedCell } = this.contentComponent
-            if(moreSelectedCell.some(item=>item.isMerge)){
+            const { clickCell,mergeSelectedCell } = this.contentComponent
+            if(mergeSelectedCell.some(item=>item.isMerge)){
                 return
             }
             let mergeWidth = clickCell.width
             let mergeHeight = clickCell.height
-            clickCell.mergeLabelGroup = moreSelectedCell
-            clickCell.mergeEndLabel = moreSelectedCell[moreSelectedCell.length - 1].label
+            clickCell.mergeLabelGroup = mergeSelectedCell
+            clickCell.mergeEndLabel = mergeSelectedCell[mergeSelectedCell.length - 1].label
             clickCell.mergeStartLabel = clickCell.label
             clickCell.isMerge = true
             clickCell.mergeRow = 1
             clickCell.mergeCol = 1
-            moreSelectedCell.forEach(item=> {
+            mergeSelectedCell.forEach(item=> {
                 item.isMerge = true
                 item.mergeStartLabel = clickCell.label
-                item.mergeEndLabel = moreSelectedCell[moreSelectedCell.length - 1].label
+                item.mergeEndLabel = mergeSelectedCell[mergeSelectedCell.length - 1].label
                 if(clickCell.row === item.row && clickCell.label !== item.label){
                     mergeWidth+=item.width
                     clickCell.mergeCol += 1
@@ -50,6 +50,7 @@ export default class ContextmenuPlugin{
             clickCell.mergeWidth = mergeWidth
             clickCell.mergeHeight = mergeHeight
             // console.log('合并完成',clickCell)
+            this.contentComponent.setSecondClickCell(null)
             this.core.freshContent()
 
         }

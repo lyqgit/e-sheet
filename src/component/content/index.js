@@ -15,6 +15,7 @@ export default class ContentComponent{
     isRowSelect = false
 
     moreSelectedCell = []
+    mergeSelectedCell = []
 
     startAndEndRect = null
     attrFirst = null
@@ -352,6 +353,7 @@ export default class ContentComponent{
 
 
         this.moreSelectedCell = []
+        this.mergeSelectedCell = []
 
         // console.log('x,y,x,y',ltCol,ltRow,rbCol,rbRow)
 
@@ -387,6 +389,9 @@ export default class ContentComponent{
                     // console.log('x+cellHeight-offsetX',x+cellHeight-offsetX)
                     // this.layer.drawFillRect(x+cellHeight-offsetX,y-offsetY+cellHeight,width,height,selectedBgColor,'destination-over')
                     this.layer.drawFillRect(x+cellHeight-offsetX,y-offsetY+cellHeight,width,height,selectedBgColor,'destination-over')
+                    if(!(tempRect.col === this.clickCell.col && tempRect.row === this.clickCell.row)){
+                        this.mergeSelectedCell.push(tempRect)
+                    }
                     this.moreSelectedCell.push(tempRect)
                 }
 
@@ -439,8 +444,8 @@ export default class ContentComponent{
     }
 
     countMergeWidthAndHeight(tempRect){
-        let mergeWidth = 0
-        let mergeHeight = 0
+        let mergeWidth = tempRect.width
+        let mergeHeight = tempRect.height
 
         tempRect.mergeLabelGroup.forEach(item=>{
             if(tempRect.row === item.row){

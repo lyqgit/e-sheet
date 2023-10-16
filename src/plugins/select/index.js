@@ -34,39 +34,85 @@ export default class SelectPlugin{
         navigator.clipboard.writeText(text)
     }
 
+    searchMergeArr(startCol,startRow,endCol,endRow){
+        const resArr = []
+        const { contentGroup } = this.contentComponent
+        contentGroup.forEach(item=>{
+            if(item.col>=startCol && item.col <= endCol && item.row>=startRow && item.row<=endRow){
+                resArr.push(item)
+            }
+        })
+        return resArr.splice(1,resArr.length)
+    }
+
+    copyRect(clickCell,json){
+        let mergeWidth = clickCell.width
+        let mergeHeight = clickCell.height
+        const mergerGroup = this.searchMergeArr(clickCell.col, clickCell.row, clickCell.col + json.mergeCol - 1, clickCell.row + json.mergeRow - 1)
+        // console.log('mergerGroup',mergerGroup)
+        clickCell.mergeLabelGroup = mergerGroup
+        clickCell.mergeEndLabel = mergerGroup[mergerGroup.length - 1].label
+        clickCell.mergeStartLabel = clickCell.label
+        clickCell.isMerge = true
+        mergerGroup.forEach(item=> {
+            item.isMerge = true
+            item.mergeStartLabel = clickCell.label
+            item.mergeEndLabel = mergerGroup[mergerGroup.length - 1].label
+            if(clickCell.row === item.row && clickCell.label !== item.label){
+                mergeWidth+=item.width
+            }
+            if(clickCell.col === item.col && clickCell.label !== item.label){
+                mergeHeight+=item.height
+            }
+        })
+        clickCell.mergeWidth = mergeWidth
+        clickCell.mergeHeight = mergeHeight
+    }
+
     moreSelect(){
 
         document.addEventListener('paste',event=>{
-            const { clickCell,secondClickCell,clickRectShow } = this.contentComponent
+            const { clickCell,secondClickCell,clickRectShow,contentGroup } = this.contentComponent
             // console.log('event',event.clipboardData.getData('text/plain'))
             const json = JSON.parse(event.clipboardData.getData('text/plain'))
             if(clickRectShow){
                 // 一个框
-                if(clickCell && !secondClickCell){
-                    let text = ''
-                    if(Array.isArray(json)){
-                        // 复制了多个
-                        json.forEach(item=>{
-                            text += item.text
-                        })
-                    }else{
-                        // 复制单个，json是对象
-                        // console.log('json',json)
-                        for(let i in json){
-                            if(json['mergeLabelGroup'].length > 0 && json['isMerge']){
-                                // 有合并，从左上角开始合并相同的长度
-                                if(this.copyKey.includes(i)){
-                                    clickCell[i] = json[i]
-                                }
-                            }else{
-                                // 无合并，只更改样式和内容，不复制width和height
-                                if(this.copyKey.includes(i)){
-                                    clickCell[i] = json[i]
-                                }
-                            }
+                    // 打印
+                console.log('json',json)
+                if(Array.isArray(json)){
 
+                    const oriStartRect = json[0]
+
+                    // 复制了多个
+                    json.forEach(item=>{
+                        const curRect = this.searchRectByColAndRow(clickCell.col+(item.col - oriStartRect.col),clickCell.row+(item.row - oriStartRect.row))
+                        for(let i in item){
+                            // 只更改样式和内容，不复制width和height
+                            if(this.copyKey.includes(i)){
+                                curRect[i] = item[i]
+                            }
+                        }
+
+                        if(item['mergeLabelGroup'].length > 0 && item['isMerge']){
+                            // 合并
+                            this.copyRect(curRect,item)
+                        }
+                    })
+                }else{
+                    // 复制单个，json是对象
+                    // console.log('json',json)
+                    for(let i in json){
+                        // 只更改样式和内容，不复制width和height
+                        if(this.copyKey.includes(i)){
+                            clickCell[i] = json[i]
                         }
                     }
+
+                    if(json['mergeLabelGroup'].length > 0 && json['isMerge']){
+                        // 合并
+                        this.copyRect(clickCell,json)
+                    }
+
                 }
                 this.core.fresh()
             }
@@ -85,11 +131,12 @@ export default class SelectPlugin{
                     if(clickRectShow){
                         // 一个框
                         if(clickCell && !secondClickCell){
-                            console.log('clickCell',clickCell)
+                            // console.log('clickCell',clickCell)
                             // this.layer.drawFillRect(clickCell.ltX+1,clickCell.ltY+1,clickCell.width-2,clickCell.height-2,'red',null)
                             this.copyText(JSON.stringify(clickCell))
                         }else if(secondClickCell){
                             // 复制多个
+                            // console.log('复制moreSelectedCell',moreSelectedCell)
                             this.copyText(JSON.stringify(moreSelectedCell))
                         }
                     }
