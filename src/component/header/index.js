@@ -87,7 +87,7 @@ export default class HeaderComponent{
         const { width,cellHeight } = this.options
         const { borderCellBgColor,selectedBorderBgColor,borderColor,selectedBgColor } = this.core
 
-        const { contentGroup,clickCell,clickRectShow,isRowSelect,secondClickCell } = this.core.components.ContentComponent
+        const { contentGroup,clickCell,clickRectShow,isRowSelect,secondClickCell,attrSecond,attrFirst,startAndEndRect } = this.core.components.ContentComponent
 
         // const startCol = parseInt((offsetX/cellWidth).toFixed(1))
         // const endCol = parseInt(((width - cellHeight +offsetX)/cellWidth).toFixed(1))
@@ -121,8 +121,8 @@ export default class HeaderComponent{
             this.layer.drawLine([tempHeader.x+cellHeight-offsetX,0,tempHeader.x+cellHeight-offsetX,cellHeight],'destination-over',borderColor)
             if(clickRectShow && !isRowSelect){
                 // console.log('secondClickCell',secondClickCell)
-                const leftCol = secondClickCell?.col>clickCell.col?clickCell.col:secondClickCell?.col
-                const rightCol = secondClickCell?.col>clickCell.col?secondClickCell?.col:clickCell.col
+                const leftCol = startAndEndRect?attrFirst.col:(secondClickCell?.col>clickCell.col?clickCell.col:secondClickCell?.col)
+                const rightCol = startAndEndRect?attrSecond.col:(secondClickCell?.col>clickCell.col?secondClickCell?.col:clickCell.col)
                 if(secondClickCell && tempHeader.col>=leftCol && tempHeader.col <= rightCol){
                     // 多个
                     // console.log('tempHeader.col',tempHeader.col)

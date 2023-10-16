@@ -16,6 +16,10 @@ export default class ContentComponent{
 
     moreSelectedCell = []
 
+    startAndEndRect = null
+    attrFirst = null
+    attrSecond = null
+
     /**
      * @type {Canvas}
      */
@@ -254,12 +258,20 @@ export default class ContentComponent{
                 startAndEndRect = this.searchRectIsMerge(attrSecond.x,attrSecond.y,attrFirst.x,attrFirst.y,attrFirst,attrSecond)
             }
 
+            this.startAndEndRect = startAndEndRect
+
             if(startAndEndRect) {
 
-                const {startRect, endRect} = startAndEndRect
+                const startRect = []
+                const endRect = []
 
-                const startArr = [startRect, attrFirst, attrSecond]
-                const endArr = [endRect, attrFirst, attrSecond]
+                startAndEndRect.forEach(item=>{
+                    startRect.push(this.searchRectByLabel(item.mergeStartLabel))
+                    endRect.push(this.searchRectByLabel(item.mergeEndLabel))
+                })
+
+                const startArr = startRect.concat([attrFirst, attrSecond])
+                const endArr = endRect.concat([attrFirst, attrSecond])
 
 
                 const startCol = startArr.sort((a, b) => a.x - b.x)[0].col
@@ -267,14 +279,17 @@ export default class ContentComponent{
                 const endCol = endArr.sort((a, b) => a.x - b.x)[endArr.length - 1].col
                 const endRow = endArr.sort((a, b) => a.y - b.y)[endArr.length - 1].row
 
-                console.log('startAndEndRect', startAndEndRect)
+                // console.log('startAndEndRect', startAndEndRect)
 
-                console.log('startCol,startRow', startCol, startRow, endCol, endRow)
+                // console.log('startCol,startRow', startCol, startRow, endCol, endRow)
 
                 attrFirst = this.searchRectByColAndRow(startCol, startRow)
                 attrSecond = this.searchRectByColAndRow(endCol, endRow)
 
-                console.log('attrFirst+attrSecond', attrFirst, attrSecond)
+
+                this.attrFirst = attrFirst
+                this.attrSecond = attrSecond
+                // console.log('attrFirst+attrSecond', attrFirst, attrSecond)
 
 
             }
@@ -444,19 +459,16 @@ export default class ContentComponent{
 
         // console.log('startX,startY,endX,endY',startX,startY,endX,endY)
 
-        const res = contentGroup.find(item=>
+        const res = contentGroup.filter(item=>
             (
                 (item.x>=startX && item.x<=endX) && (item.y>=startY && item.y<=endY) && item.isMerge)
                 &&
                 ([attrFirst.row,attrSecond.row].includes(item.row) || [attrFirst.col,attrSecond.col].includes(item.col))
             )
         // console.log('res',res)
-        if(res){
-            return {
-                startRect: this.searchRectByLabel(res.mergeStartLabel),
-                endRect: this.searchRectByLabel(res.mergeEndLabel)
-            }
-        }else{
+        if(res.length > 0){
+            return res
+        }else {
             return null
         }
 

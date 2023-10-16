@@ -82,7 +82,7 @@ export default class SideComponent{
 
     trendsDraw(offsetY = 0){
         const { height,cellHeight } = this.options
-        const { contentGroup,clickCell,clickRectShow,isColSelect,secondClickCell } = this.core.components.ContentComponent
+        const { contentGroup,clickCell,clickRectShow,isColSelect,secondClickCell,attrSecond,attrFirst,startAndEndRect } = this.core.components.ContentComponent
         const { borderCellBgColor,selectedBorderBgColor,borderColor,selectedBgColor } = this.core
 
         const lt = this.searchScreenAddr(0,offsetY)
@@ -112,9 +112,13 @@ export default class SideComponent{
             // }
 
             if(clickRectShow && !isColSelect){
-                const topRow = secondClickCell?.row>clickCell.row?clickCell.row:secondClickCell?.row
-                const bottomRow = secondClickCell?.row>clickCell.row?secondClickCell?.row:clickCell.row
+                const topRow = startAndEndRect?attrFirst.row:(secondClickCell?.row>clickCell.row?clickCell.row:secondClickCell?.row);
+                const bottomRow = startAndEndRect?attrSecond.row:(secondClickCell?.row>clickCell.row?secondClickCell?.row:clickCell.row)
                 if(secondClickCell && tempSide.row>=topRow && tempSide.row <= bottomRow){
+                    if(startAndEndRect){
+                        console.log('topRow',topRow)
+                        console.log('bottomRow',bottomRow)
+                    }
                     this.layer.drawFillRect(0,tempSide.y+cellHeight-offsetY,cellHeight,tempSide.height,selectedBgColor,'destination-over')
                 }else if(clickCell.row === tempSide.row && !clickCell.isMerge){
                     this.layer.drawFillRect(0,tempSide.y+cellHeight-offsetY,cellHeight,tempSide.height,selectedBgColor,'destination-over')

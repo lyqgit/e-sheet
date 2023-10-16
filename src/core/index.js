@@ -101,9 +101,9 @@ export default class AppExcel{
         const { offsetX,offsetY } = this.plugins.ScrollPlugin
 
         const { ContentComponent,HeaderComponent,SideComponent,WholeComponent } = this.components
+        ContentComponent.trendsDraw(offsetX,offsetY)
         HeaderComponent.trendsDraw(offsetX)
         SideComponent.trendsDraw(offsetY)
-        ContentComponent.trendsDraw(offsetX,offsetY)
         WholeComponent.draw()
     }
 
