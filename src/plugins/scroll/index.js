@@ -51,6 +51,7 @@ export default class ScrollPlugin{
             this.verBarDom.style.backgroundColor = 'rgb(201, 201, 201)'
             this.core.canvasDom.onmousemove = null
             this.core.dragSign = false
+            this.core.lockDrag = false
             // console.log('松开鼠标',this.core.dragSign)
         }
     }

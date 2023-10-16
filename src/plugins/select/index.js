@@ -14,6 +14,8 @@ export default class SelectPlugin{
     clickContext = null
     inputDom = null
 
+    copyKey = ['text','mergeWidth','mergeHeight','mergeRow','mergeCol','isMerge','bgColor','fontColor']
+
     constructor(selectorDom,layer,options={},components={},core) {
         this.contentComponent = components.ContentComponent
         this.headerComponent = components.HeaderComponent
@@ -43,21 +45,23 @@ export default class SelectPlugin{
                 if(clickCell && !secondClickCell){
                     let text = ''
                     if(Array.isArray(json)){
+                        // 复制了多个
                         json.forEach(item=>{
                             text += item.text
                         })
                     }else{
+                        // 复制单个，json是对象
                         // console.log('json',json)
                         for(let i in json){
-                            if(!(['x','y'].includes(i))){
-                                if(json['mergeLabelGroup'].length > 0){
-                                    // 有合并，从左上角开始合并相同的长度
+                            if(json['mergeLabelGroup'].length > 0 && json['isMerge']){
+                                // 有合并，从左上角开始合并相同的长度
+                                if(this.copyKey.includes(i)){
                                     clickCell[i] = json[i]
-                                }else{
-                                    // 五合并，只更改样式和内容，不复制width和height
-                                    if(!(['width','height'].includes(i))){
-                                        clickCell[i] = json[i]
-                                    }
+                                }
+                            }else{
+                                // 无合并，只更改样式和内容，不复制width和height
+                                if(this.copyKey.includes(i)){
+                                    clickCell[i] = json[i]
                                 }
                             }
 

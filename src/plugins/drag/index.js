@@ -22,9 +22,11 @@ export default class DragPlugin{
         const { contentGroup } = this.contentComponent
         const { cellHeight } = this.options
 
+        this.layer.setCursor('col-resize')
         // console.log('this.dragCell.width>=cellHeight',this.dragCell.width<cellHeight)
 
-        if(this.dragCell.width<cellHeight && dis<0){
+        if(!this.dragCell || ((this.dragCell.width+dis)<cellHeight && dis<0)){
+            this.dragCell = null
             return;
         }
 
@@ -59,12 +61,17 @@ export default class DragPlugin{
 
             // console.log('开始拖拽',this.core.dragSign)
 
+            this.core.lockDrag = true
+
             if(!this.dragCell || !this.core.dragSign){
                 return
             }
             let dragEndX = 0
             let dragStartX = evtA.pageX
             this.canvasDom.onmousemove = evtB=>{
+                if(!this.dragCell){
+                    return false
+                }
                 dragEndX = evtB.pageX
                 this.expandWidth(this.dragCell.col,dragEndX-dragStartX)
                 dragStartX = dragEndX
@@ -85,6 +92,9 @@ export default class DragPlugin{
                 this.core.dragSign = false
             }
 
+            if(this.core.lockDrag){
+                return
+            }
             // console.log('col',event.offsetX)
             if(event.offsetY <= cellHeight){
                 for(let i=0;i<headerRectGroup.length;i++){

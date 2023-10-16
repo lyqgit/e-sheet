@@ -49,7 +49,7 @@ export default class ContextmenuPlugin{
             })
             clickCell.mergeWidth = mergeWidth
             clickCell.mergeHeight = mergeHeight
-            console.log('合并完成',clickCell)
+            // console.log('合并完成',clickCell)
             this.core.freshContent()
 
         }
