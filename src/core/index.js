@@ -135,7 +135,7 @@ export default class AppExcel{
                     mergeEndLabel:'',
                     mergeLabelGroup:[],
                     isMerge:false,
-                    bgColor:'blue',
+                    bgColor:'',
                     fontColor:'',
                     label:String.fromCharCode(65 + j)+(i+1)
                 })
@@ -205,9 +205,10 @@ export default class AppExcel{
      * @param {string} elName
      * @param {Object} attr
      * @param {Object} style
+     * @param {HTMLElement} childDom
      * @returns {HTMLElement}
      */
-    h(elName,{attr,style} = {}){
+    h(elName,{attr,style} = {},childDom=null){
         const tempDom = document.createElement(elName)
 
         for(let i in attr){
@@ -216,6 +217,10 @@ export default class AppExcel{
 
         for(let i in attr){
             tempDom.style[i] = style[i]
+        }
+
+        if(childDom){
+            tempDom.appendChild(childDom)
         }
 
         return tempDom

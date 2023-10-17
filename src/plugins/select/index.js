@@ -77,6 +77,9 @@ export default class SelectPlugin{
 
         document.addEventListener('paste',event=>{
             const { clickCell,secondClickCell,clickRectShow,contentGroup } = this.contentComponent
+            const domParser = new DOMParser();
+            const table = domParser.parseFromString(event.clipboardData.getData('text/html'),'text/html')
+            console.log('table',table.querySelector('table'))
             console.log('event-html',event.clipboardData.getData('text/html'))
             console.log('event-text',event.clipboardData.getData('text/plain'))
             const json = JSON.parse(event.clipboardData.getData('text/plain'))

@@ -44,7 +44,7 @@ export default class InputPlugin{
         inputDom.style.display = 'none' //'inline-block'
         inputDom.style.position = 'absolute'
         inputDom.style.outline = 'none'
-        inputDom.style.border = '2px solid blue'
+        inputDom.style.border = '2px solid '+this.core.selectedBorderBgColor
         inputDom.style.boxSizing = 'border-box'
 
         this.selectorDom.appendChild(inputDom)
