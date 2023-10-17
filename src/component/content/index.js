@@ -286,7 +286,7 @@ export default class ContentComponent{
                 // console.log('secondClickCell',this.secondClickCell)
                 if(!this.secondClickCell){
                     if(this.clickCell.isMerge){
-                        const {mergeWidth,mergeHeight} = this.countMergeWidthAndHeight(this.clickCell)
+                        const {mergeWidth,mergeHeight} = this.clickCell
                         // console.log('多个选中框',this.clickCell)
                         this.layer.drawStrokeRect(this.clickCell.x+cellHeight-offsetX,this.clickCell.y-offsetY+cellHeight,mergeWidth,mergeHeight,selectedBorderBgColor,'destination-over',2)
                     }else{
@@ -326,7 +326,7 @@ export default class ContentComponent{
                 // 多个选中除了第一个之外的渲染
                 // 合并渲染从左上角开始
                 if(tempRect.isMerge && tempRect.label === tempRect.mergeStartLabel){
-                    const {mergeWidth,mergeHeight} = this.countMergeWidthAndHeight(tempRect)
+                    const {mergeWidth,mergeHeight} = tempRect
                     // console.log('背景色',tempRect)
                     this.layer.drawStrokeRect(x-offsetX+cellHeight,y-offsetY+cellHeight,mergeWidth,mergeHeight,borderColor,'destination-over',1)
                     this.layer.drawText(x-offsetX+cellHeight,y-offsetY+cellHeight,text,mergeWidth,mergeHeight,'destination-over')

@@ -131,7 +131,8 @@ export default class HeaderComponent{
                     this.layer.drawFillRect(tempHeader.x+cellHeight-offsetX,0,tempHeader.width,tempHeader.height,selectedBgColor,'destination-over')
 
                 }else if(clickCell.isMerge){
-                    if(clickCell.mergeLabelGroup.findIndex(item=>item.col === tempHeader.col) !== -1) {
+                    const isMergeinArr = this.findClickCellRowArr(clickCell)
+                    if(isMergeinArr.findIndex(item=>item === tempHeader.col) !== -1) {
                         this.layer.drawFillRect(tempHeader.x + cellHeight - offsetX,0, tempHeader.width, tempHeader.height, selectedBgColor, 'destination-over')
                     }
                 }else{
@@ -146,6 +147,15 @@ export default class HeaderComponent{
         }
 
 
+    }
+
+    findClickCellRowArr(clickCell){
+        const isMergeinArr = []
+        const len = clickCell.col+clickCell.mergeCol-1
+        for(let i=clickCell.col;i<=len;i++){
+            isMergeinArr.push(i)
+        }
+        return isMergeinArr
     }
 
     searchScreenAddr(offsetX = 0,offsetY = 0){

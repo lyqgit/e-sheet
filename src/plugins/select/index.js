@@ -50,19 +50,23 @@ export default class SelectPlugin{
         let mergeHeight = clickCell.height
         const mergerGroup = this.searchMergeArr(clickCell.col, clickCell.row, clickCell.col + json.mergeCol - 1, clickCell.row + json.mergeRow - 1)
         // console.log('mergerGroup',mergerGroup)
-        clickCell.mergeLabelGroup = mergerGroup
+        // clickCell.mergeLabelGroup = mergerGroup
         clickCell.mergeEndLabel = mergerGroup[mergerGroup.length - 1].label
         clickCell.mergeStartLabel = clickCell.label
         clickCell.isMerge = true
+        // clickCell.mergeRow = 1
+        // clickCell.mergeCol = 1
         mergerGroup.forEach(item=> {
             item.isMerge = true
             item.mergeStartLabel = clickCell.label
             item.mergeEndLabel = mergerGroup[mergerGroup.length - 1].label
             if(clickCell.row === item.row && clickCell.label !== item.label){
                 mergeWidth+=item.width
+                // clickCell.mergeCol += 1
             }
             if(clickCell.col === item.col && clickCell.label !== item.label){
                 mergeHeight+=item.height
+                // clickCell.mergeRow += 1
             }
         })
         clickCell.mergeWidth = mergeWidth
@@ -73,7 +77,8 @@ export default class SelectPlugin{
 
         document.addEventListener('paste',event=>{
             const { clickCell,secondClickCell,clickRectShow,contentGroup } = this.contentComponent
-            // console.log('event',event.clipboardData.getData('text/plain'))
+            console.log('event-html',event.clipboardData.getData('text/html'))
+            console.log('event-text',event.clipboardData.getData('text/plain'))
             const json = JSON.parse(event.clipboardData.getData('text/plain'))
             if(clickRectShow){
                 // 一个框
@@ -123,39 +128,54 @@ export default class SelectPlugin{
             }
         })
 
-        document.addEventListener('keydown',event=>{
-            // console.log('event',event)
-            this.core.shiftKey = event.shiftKey
-            this.core.ctrlKey = event.ctrlKey
-            document.onkeydown = evt=>{
-                // console.log('evt',evt)
-                if(event.ctrlKey && evt.key === 'c'){
-                    // 复制
+        document.addEventListener('copy',event=>{
+            // console.log('copy')
+            event.preventDefault()
+            const { clickCell,secondClickCell,clickRectShow,moreSelectedCell } = this.contentComponent
+            if(clickRectShow){
+                // 一个框
+                // console.log('moreSelectedCell',moreSelectedCell)
+                if(clickCell && !secondClickCell){
 
-                    const { clickCell,secondClickCell,clickRectShow,moreSelectedCell } = this.contentComponent
-                    if(clickRectShow){
-                        // 一个框
-                        if(clickCell && !secondClickCell){
-                            // console.log('clickCell',clickCell)
-                            // this.layer.drawFillRect(clickCell.ltX+1,clickCell.ltY+1,clickCell.width-2,clickCell.height-2,'red',null)
-                            this.copyText(JSON.stringify(clickCell))
-                        }else if(secondClickCell){
-                            // 复制多个
-                            // console.log('复制moreSelectedCell',moreSelectedCell)
-                            this.copyText(JSON.stringify(moreSelectedCell))
-                        }
+                    const table = this.core.h('table')
+
+                    if(clickCell.isMerge){
+
+                    }else{
+                        const tr = this.core.h('tr')
+                        const td = this.core.h('td')
+                        td.innerText = clickCell.text
+                        td.style.backgroundColor = clickCell.bgColor
+                        tr.appendChild(td)
+                        table.appendChild(tr)
+                        // console.log('table',table.outerHTML)
+                        event.clipboardData.setData('text/html', table.outerHTML);
                     }
-
-
+                    // console.log('clickCell',clickCell)
+                    // this.copyText(JSON.stringify(clickCell))
+                    // event.clipboardData.setData('text/plain', JSON.stringify(clickCell));
+                    // event.clipboardData.setData('text/html', '<b>Hello, world!</b>');
+                }else if(secondClickCell){
+                    // 复制多个
+                    // console.log('复制moreSelectedCell',moreSelectedCell)
+                    // this.copyText(JSON.stringify(moreSelectedCell))
                 }
+                // this.copyText('<html><body><table><tr><td style="color:red">测试</td></tr></table></body></html>')
             }
+
         })
 
-        document.addEventListener('keyup',event=>{
-            // console.log('event',event)
-            this.core.shiftKey = event.shiftKey
-            this.core.ctrlKey = event.ctrlKey
-        })
+        // document.addEventListener('keydown',event=>{
+        //     // console.log('event',event)
+        //     // this.core.shiftKey = event.shiftKey
+        //     // this.core.ctrlKey = event.ctrlKey
+        // })
+        //
+        // document.addEventListener('keyup',event=>{
+        //     // console.log('event',event)
+        //     this.core.shiftKey = event.shiftKey
+        //     this.core.ctrlKey = event.ctrlKey
+        // })
         this.canvasDom.addEventListener('mousedown',this.moreShiftSelectClick)
     }
 

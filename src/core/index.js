@@ -135,7 +135,7 @@ export default class AppExcel{
                     mergeEndLabel:'',
                     mergeLabelGroup:[],
                     isMerge:false,
-                    bgColor:'',
+                    bgColor:'blue',
                     fontColor:'',
                     label:String.fromCharCode(65 + j)+(i+1)
                 })
@@ -161,7 +161,7 @@ export default class AppExcel{
 
         this.initExcelData(Object.keys(oriData)[0])
         this.components.ContentComponent.installContentData(Object.keys(oriData)[0])
-        this.freshContent()
+        this.fresh()
     }
 
     // 装载固有组件

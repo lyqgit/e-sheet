@@ -119,7 +119,8 @@ export default class SideComponent{
                 }else if(clickCell.row === tempSide.row && !clickCell.isMerge){
                     this.layer.drawFillRect(0,tempSide.y+cellHeight-offsetY,cellHeight,tempSide.height,selectedBgColor,'destination-over')
                 }else if(clickCell.isMerge){
-                    if(clickCell.mergeLabelGroup.findIndex(item=>item.row === tempSide.row) !== -1){
+                    const isMergeinArr = this.findClickCellRowArr(clickCell)
+                    if(isMergeinArr.findIndex(item=>item === tempSide.row) !== -1){
                         this.layer.drawFillRect(0,tempSide.y+cellHeight-offsetY,cellHeight,tempSide.height,selectedBgColor,'destination-over')
                     }
                 }else{
@@ -131,6 +132,16 @@ export default class SideComponent{
             }
         }
 
+    }
+
+
+    findClickCellRowArr(clickCell){
+        const isMergeinArr = []
+        const len = clickCell.row+clickCell.mergeRow-1
+        for(let i=clickCell.row;i<=len;i++){
+            isMergeinArr.push(i)
+        }
+        return isMergeinArr
     }
 
     searchScreenAddr(offsetX = 0,offsetY = 0){
