@@ -160,16 +160,22 @@ export default class SelectPlugin{
             if(clickRectShow){
                 // 一个框
                 // console.log('moreSelectedCell',moreSelectedCell)
+
+                const table = h('table')
+
+                const oriTr = h('tr')
+                const oriTd = h('td')
+
                 if(clickCell && !secondClickCell){
 
-                    const table = h('table')
+
 
                     if(clickCell.isMerge){
                         const finalRow = clickCell.row+clickCell.mergeRow
                         for(let i=clickCell.row;i<finalRow;i++){
-                            const tr = h('tr')
+                            const tr = oriTr.cloneNode()
                             if(i === clickCell.row){
-                                const td = h('td')
+                                const td = oriTd.cloneNode()
                                 this.setTdAttrs(td,clickCell)
                                 tr.appendChild(td)
                                 // console.log('td',td)
@@ -178,39 +184,39 @@ export default class SelectPlugin{
                             table.appendChild(tr)
                         }
                         // console.log('clickCell',clickCell)
-                        event.clipboardData.setData('text/html', table.outerHTML);
                     }else{
-                        const tr = h('tr')
-                        const td = h('td')
+                        const tr = oriTr.cloneNode()
+                        const td = oriTd.cloneNode()
                         this.setTdAttrs(td,clickCell)
                         tr.appendChild(td)
                         table.appendChild(tr)
                         // console.log('table',table.outerHTML)
-                        event.clipboardData.setData('text/html', table.outerHTML);
                     }
                     // console.log('clickCell',clickCell)
                 }else if(secondClickCell){
-                    const table = h('table')
                     let tempRow = 0
                     let tr = null
                     for(let i=0;i<moreSelectedCell.length;i++){
                         const tempRect = moreSelectedCell[i]
                         if(tempRow !== tempRect.row){
                             tempRow = tempRect.row
-                            tr = h('tr')
+                            tr = oriTr.cloneNode()
                             table.appendChild(tr)
                         }
 
                         if((tempRect.isMerge && tempRect.label === tempRect.mergeStartLabel) || !tempRect.isMerge){
-                            const td = h('td')
+                            const td = oriTd.cloneNode()
                             this.setTdAttrs(td,tempRect)
                             tr.appendChild(td)
                         }
                     }
                     // 复制多个
                     // console.log('复制moreSelectedCell',moreSelectedCell)
-                    event.clipboardData.setData('text/html', table.outerHTML);
                 }
+                event.clipboardData.setData('text/html', table.outerHTML);
+
+                oriTr.remove()
+                oriTd.remove()
                 // this.copyText('<html><body><table><tr><td style="color:red">测试</td></tr></table></body></html>')
             }
 
