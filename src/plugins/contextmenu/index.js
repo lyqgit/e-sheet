@@ -27,7 +27,7 @@ export default class ContextmenuPlugin{
             }
             let mergeWidth = clickCell.width
             let mergeHeight = clickCell.height
-            clickCell.mergeLabelGroup = mergeSelectedCell
+            // clickCell.mergeLabelGroup = mergeSelectedCell
             clickCell.mergeEndLabel = mergeSelectedCell[mergeSelectedCell.length - 1].label
             clickCell.mergeStartLabel = clickCell.label
             clickCell.isMerge = true

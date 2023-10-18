@@ -73,72 +73,82 @@ export default class SelectPlugin{
         clickCell.mergeHeight = mergeHeight
     }
 
+    /**
+     * @param {Object} cell
+     * @param {Object} attr
+     * @param {Array<string>} notInclude
+     */
+    setCellAttr(cell,attr,notInclude=['row','col','x','y','ltX','ltY','mergeStartLabel','mergeEndLabel','label']){
+        for(let k in attr){
+            if(!notInclude.includes(k)){
+                cell[k] = attr[k]
+            }
+        }
+        if(attr['isMerge']){
+            cell['mergeStartLabel'] = String.fromCharCode(65 + cell.col - 1)+(cell.row)
+            cell['mergeEndLabel'] = String.fromCharCode(65 + cell.col+cell.mergeCol - 2)+(cell.row+cell.mergeRow-1)
+            console.log('cell',cell)
+        }
+    }
+
     moreSelect(){
 
         document.addEventListener('paste',event=>{
             const { clickCell,secondClickCell,clickRectShow,contentGroup } = this.contentComponent
-            const domParser = new DOMParser();
-            const html = domParser.parseFromString(event.clipboardData.getData('text/html'),'text/html')
-            console.log('table',html.querySelector('table'))
-            console.log('event-html',event.clipboardData.getData('text/html'))
-            console.log('event-text',event.clipboardData.getData('text/plain'))
 
-            const trs = html.querySelector('table').querySelectorAll('tr')
-            for(let i=0;i<trs.length;i++){
-                const tempTr = trs[i]
-                const tds = tempTr.querySelectorAll('td')
-                for(let j=0;j<tds.length;j++){
-
-                }
-            }
-
-            return
-            const json = JSON.parse(event.clipboardData.getData('text/plain'))
             if(clickRectShow){
                 // 一个框
-                    // 打印
-                // console.log('json',json)
-                if(Array.isArray(json)){
-
-                    const oriStartRect = json[0]
-
-                    // 复制了多个
-                    for(let j=0;j<json.length;j++){
-                        const item = json[j]
-                        const curRect = this.searchRectByColAndRow(clickCell.col+(item.col - oriStartRect.col),clickCell.row+(item.row - oriStartRect.row))
-                        if(!curRect){
-                            break;
+                const domParser = new DOMParser();
+                const html = domParser.parseFromString(event.clipboardData.getData('text/html'),'text/html')
+                console.log('table',html.querySelector('table'))
+                // console.log('event-html',event.clipboardData.getData('text/html'))
+                // console.log('event-text',event.clipboardData.getData('text/plain'))
+                let colDiff = 0
+                let rowDiff = 0
+                const trs = html.querySelector('table').querySelectorAll('tr')
+                for(let i=0;i<trs.length;i++){
+                    const tempTr = trs[i]
+                    const tds = tempTr.querySelectorAll('td')
+                    for(let j=0;j<tds.length;j++){
+                        const tempTd = JSON.parse(tds[j].getAttribute('data-json'))
+                        if(j === 0 && i===0){
+                            colDiff = clickCell.col - tempTd.col
+                            rowDiff = clickCell.row - tempTd.row
                         }
 
-                        for(let i in item){
-                            // 只更改样式和内容，不复制width和height
-                            if(this.copyKey.includes(i)){
-                                curRect[i] = item[i]
+                        const tempSearchRect =  this.searchRectByColAndRow(tempTd.col+colDiff,tempTd.row+rowDiff)
+                        if(tempTd.isMerge){
+                            const rowLen = tempSearchRect.row+tempTd.mergeRow
+                            const colLen = tempSearchRect.col+tempTd.mergeCol
+                            for(let i=tempSearchRect.row;i<rowLen;i++){
+                                for(let j=tempSearchRect.col;j<colLen;j++){
+                                    if(i===tempSearchRect.row&&j===tempSearchRect.col){
+                                        this.setCellAttr(tempSearchRect,tempTd)
+                                    }else{
+                                        const tempMergeRect = this.searchRectByColAndRow(j,i)
+                                        tempMergeRect.isMerge = true
+                                        tempMergeRect.mergeStartLabel = tempSearchRect.mergeStartLabel
+                                        tempMergeRect.mergeEndLabel = tempSearchRect.mergeEndLabel
+                                        // console.log('tempMergeRect',tempMergeRect)
+                                    }
+                                }
                             }
+                            // console.log('有合并----')
+                            // console.log('tempSearchRect',tempSearchRect)
+                        }else{
+                            // console.log('没合并····')
+                            // console.log('tempSearchRect',tempSearchRect)
+                            // console.log('clickCell',clickCell)
+                            // console.log('tempTd',tempTd)
+                            // console.log('colDiff',colDiff)
+                            // console.log('rowDiff',rowDiff)
+                            this.setCellAttr(tempSearchRect,tempTd)
                         }
 
-                        if(item['mergeLabelGroup'].length > 0 && item['isMerge']){
-                            // 合并
-                            this.copyRect(curRect,item)
-                        }
                     }
-                }else{
-                    // 复制单个，json是对象
-                    // console.log('json',json)
-                    for(let i in json){
-                        // 只更改样式和内容，不复制width和height
-                        if(this.copyKey.includes(i)){
-                            clickCell[i] = json[i]
-                        }
-                    }
-
-                    if(json['mergeLabelGroup'].length > 0 && json['isMerge']){
-                        // 合并
-                        this.copyRect(clickCell,json)
-                    }
-
                 }
                 this.core.fresh()
+
             }
         })
 
@@ -231,13 +241,14 @@ export default class SelectPlugin{
         td.style.width = clickCell.width+'px'
         td.style.height = clickCell.height+'px'
         td.style.textAlign = clickCell.textAlign
-        td.setAttribute('data-row',clickCell.row)
-        td.setAttribute('data-col',clickCell.col)
-        td.setAttribute('data-merge-row',clickCell.mergeRow)
-        td.setAttribute('data-merge-col',clickCell.mergeCol)
-        td.setAttribute('data-bg-color',clickCell.bgColor)
-        td.setAttribute('data-font-color',clickCell.fontColor)
-        td.setAttribute('data-is-merge',clickCell.isMerge)
+        // td.setAttribute('data-row',clickCell.row)
+        // td.setAttribute('data-col',clickCell.col)
+        // td.setAttribute('data-merge-row',clickCell.mergeRow)
+        // td.setAttribute('data-merge-col',clickCell.mergeCol)
+        // td.setAttribute('data-bg-color',clickCell.bgColor)
+        // td.setAttribute('data-font-color',clickCell.fontColor)
+        // td.setAttribute('data-is-merge',clickCell.isMerge)
+        td.setAttribute('data-json',JSON.stringify(clickCell))
     }
 
     moreShiftSelectClick=event=>{

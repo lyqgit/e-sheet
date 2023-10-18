@@ -55,12 +55,9 @@ export default class InputPlugin{
             const { offsetX,offsetY } = this.core.plugins.ScrollPlugin
 
             const attrs = this.core.plugins.SelectPlugin.searchRectAddr(evt.offsetX+offsetX - cellHeight,evt.offsetY+offsetY - cellHeight)
-            const {x,y,width,height,text,isMerge} = attrs
+            const {x,y,width,height,text,isMerge,mergeWidth,mergeHeight} = attrs
             this.contentComponent.hideClickRect()
             this.core.fresh()
-
-            const {mergeWidth,mergeHeight} = this.contentComponent.countMergeWidthAndHeight(attrs)
-
             // console.log('attrs',attrs)
 
             let inputWidth = isMerge?mergeWidth:width
