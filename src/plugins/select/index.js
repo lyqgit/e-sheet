@@ -78,10 +78,21 @@ export default class SelectPlugin{
         document.addEventListener('paste',event=>{
             const { clickCell,secondClickCell,clickRectShow,contentGroup } = this.contentComponent
             const domParser = new DOMParser();
-            const table = domParser.parseFromString(event.clipboardData.getData('text/html'),'text/html')
-            console.log('table',table.querySelector('table'))
+            const html = domParser.parseFromString(event.clipboardData.getData('text/html'),'text/html')
+            console.log('table',html.querySelector('table'))
             console.log('event-html',event.clipboardData.getData('text/html'))
             console.log('event-text',event.clipboardData.getData('text/plain'))
+
+            const trs = html.querySelector('table').querySelectorAll('tr')
+            for(let i=0;i<trs.length;i++){
+                const tempTr = trs[i]
+                const tds = tempTr.querySelectorAll('td')
+                for(let j=0;j<tds.length;j++){
+
+                }
+            }
+
+            return
             const json = JSON.parse(event.clipboardData.getData('text/plain'))
             if(clickRectShow){
                 // 一个框
@@ -135,51 +146,98 @@ export default class SelectPlugin{
             // console.log('copy')
             event.preventDefault()
             const { clickCell,secondClickCell,clickRectShow,moreSelectedCell } = this.contentComponent
+            const { h } = this.core
             if(clickRectShow){
                 // 一个框
                 // console.log('moreSelectedCell',moreSelectedCell)
                 if(clickCell && !secondClickCell){
 
-                    const table = this.core.h('table')
+                    const table = h('table')
 
                     if(clickCell.isMerge){
+                        const finalRow = clickCell.row+clickCell.mergeRow
+                        for(let i=clickCell.row;i<finalRow;i++){
+                            const tr = h('tr')
+                            if(i === clickCell.row){
+                                const td = h('td')
+                                this.setTdAttrs(td,clickCell)
+                                tr.appendChild(td)
+                                // console.log('td',td)
+                            }
 
+                            table.appendChild(tr)
+                        }
+                        // console.log('clickCell',clickCell)
+                        event.clipboardData.setData('text/html', table.outerHTML);
                     }else{
-                        const tr = this.core.h('tr')
-                        const td = this.core.h('td')
-                        td.innerText = clickCell.text
-                        td.style.backgroundColor = clickCell.bgColor
+                        const tr = h('tr')
+                        const td = h('td')
+                        this.setTdAttrs(td,clickCell)
                         tr.appendChild(td)
                         table.appendChild(tr)
                         // console.log('table',table.outerHTML)
                         event.clipboardData.setData('text/html', table.outerHTML);
                     }
                     // console.log('clickCell',clickCell)
-                    // this.copyText(JSON.stringify(clickCell))
-                    // event.clipboardData.setData('text/plain', JSON.stringify(clickCell));
-                    // event.clipboardData.setData('text/html', '<b>Hello, world!</b>');
                 }else if(secondClickCell){
+                    const table = h('table')
+                    let tempRow = 0
+                    let tr = null
+                    for(let i=0;i<moreSelectedCell.length;i++){
+                        const tempRect = moreSelectedCell[i]
+                        if(tempRow !== tempRect.row){
+                            tempRow = tempRect.row
+                            tr = h('tr')
+                            table.appendChild(tr)
+                        }
+
+                        if((tempRect.isMerge && tempRect.label === tempRect.mergeStartLabel) || !tempRect.isMerge){
+                            const td = h('td')
+                            this.setTdAttrs(td,tempRect)
+                            tr.appendChild(td)
+                        }
+                    }
                     // 复制多个
                     // console.log('复制moreSelectedCell',moreSelectedCell)
-                    // this.copyText(JSON.stringify(moreSelectedCell))
+                    event.clipboardData.setData('text/html', table.outerHTML);
                 }
                 // this.copyText('<html><body><table><tr><td style="color:red">测试</td></tr></table></body></html>')
             }
 
         })
 
-        // document.addEventListener('keydown',event=>{
-        //     // console.log('event',event)
-        //     // this.core.shiftKey = event.shiftKey
-        //     // this.core.ctrlKey = event.ctrlKey
-        // })
+        document.addEventListener('keydown',event=>{
+            // console.log('event',event)
+            this.core.shiftKey = event.shiftKey
+            this.core.ctrlKey = event.ctrlKey
+        })
         //
-        // document.addEventListener('keyup',event=>{
-        //     // console.log('event',event)
-        //     this.core.shiftKey = event.shiftKey
-        //     this.core.ctrlKey = event.ctrlKey
-        // })
+        document.addEventListener('keyup',event=>{
+            // console.log('event',event)
+            this.core.shiftKey = event.shiftKey
+            this.core.ctrlKey = event.ctrlKey
+        })
         this.canvasDom.addEventListener('mousedown',this.moreShiftSelectClick)
+    }
+
+    setTdAttrs(td,clickCell){
+        if(clickCell.isMerge){
+            td.rowSpan = clickCell.mergeRow
+            td.colSpan = clickCell.mergeCol
+        }
+        td.innerText = clickCell.text
+        td.style.backgroundColor = clickCell.bgColor
+        td.style.color = clickCell.fontColor
+        td.style.width = clickCell.width+'px'
+        td.style.height = clickCell.height+'px'
+        td.style.textAlign = clickCell.textAlign
+        td.setAttribute('data-row',clickCell.row)
+        td.setAttribute('data-col',clickCell.col)
+        td.setAttribute('data-merge-row',clickCell.mergeRow)
+        td.setAttribute('data-merge-col',clickCell.mergeCol)
+        td.setAttribute('data-bg-color',clickCell.bgColor)
+        td.setAttribute('data-font-color',clickCell.fontColor)
+        td.setAttribute('data-is-merge',clickCell.isMerge)
     }
 
     moreShiftSelectClick=event=>{

@@ -137,6 +137,7 @@ export default class AppExcel{
                     isMerge:false,
                     bgColor:'',
                     fontColor:'',
+                    textAlign:'center',
                     label:String.fromCharCode(65 + j)+(i+1)
                 })
                 colWidth += cellWidth
