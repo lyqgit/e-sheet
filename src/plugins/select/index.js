@@ -78,7 +78,7 @@ export default class SelectPlugin{
      * @param {Object} attr
      * @param {Array<string>} notInclude
      */
-    setCellAttr(cell,attr,notInclude=['row','col','x','y','ltX','ltY','mergeStartLabel','mergeEndLabel','label']){
+    setCellAttr(cell,attr,notInclude=['row','col','x','y','ltX','ltY','mergeStartLabel','mergeEndLabel','label','isFromExcel']){
         for(let k in attr){
             if(!notInclude.includes(k)){
                 cell[k] = attr[k]
@@ -100,36 +100,66 @@ export default class SelectPlugin{
                 // 一个框
                 const domParser = new DOMParser();
                 const html = domParser.parseFromString(event.clipboardData.getData('text/html'),'text/html')
-                console.log('table',html.querySelector('table'))
+                // console.log('table',html.querySelector('table'))
                 // console.log('event-html',event.clipboardData.getData('text/html'))
                 // console.log('event-text',event.clipboardData.getData('text/plain'))
                 let colDiff = 0
                 let rowDiff = 0
                 const trs = html.querySelector('table').querySelectorAll('tr')
+                const tdCount = html.querySelector('table').querySelectorAll('td').length
+                let endSearchRect = null
                 for(let i=0;i<trs.length;i++){
                     const tempTr = trs[i]
                     const tds = tempTr.querySelectorAll('td')
                     for(let j=0;j<tds.length;j++){
-                        const tempTd = JSON.parse(tds[j].getAttribute('data-json'))
-                        if(j === 0 && i===0){
-                            colDiff = clickCell.col - tempTd.col
-                            rowDiff = clickCell.row - tempTd.row
-                        }
 
-                        const tempSearchRect =  this.searchRectByColAndRow(tempTd.col+colDiff,tempTd.row+rowDiff)
+                        const tempTdDom = tds[j]
+
+                        const tempTd = tds[j].getAttribute('data-json')
+                            ?JSON.parse(tds[j].getAttribute('data-json'))
+                            :{
+                                mergeRow:tempTdDom.rowSpan>1?tempTdDom.rowSpan:0,
+                                mergeCol:tempTdDom.colSpan>1?tempTdDom.colSpan:0,
+                                isMerge:((tempTdDom.colSpan && tempTdDom.colSpan>1)||(tempTdDom.rowSpan && tempTdDom.rowSpan>1)),
+                                text:tempTdDom.innerText,
+                                isFromExcel:true
+                            }
+                        const tempSearchRect =  this.searchRectByColAndRow(clickCell.col+j,clickCell.row+i)
+                        if(i===trs.length-1 && j===tds.length-1){
+                            endSearchRect = tempSearchRect
+                        }
                         if(tempTd.isMerge){
+                            // console.log('tempTd',tempTd)
                             const rowLen = tempSearchRect.row+tempTd.mergeRow
                             const colLen = tempSearchRect.col+tempTd.mergeCol
+                            // console.log('rowLen',rowLen)
+                            // console.log('colLen',colLen)
+                            // console.log('tempSearchRect.row',tempSearchRect.row)
+                            // console.log('tempSearchRect.col',tempSearchRect.col)
+                            // console.log('tempSearchRect',tempSearchRect)
                             for(let i=tempSearchRect.row;i<rowLen;i++){
                                 for(let j=tempSearchRect.col;j<colLen;j++){
                                     if(i===tempSearchRect.row&&j===tempSearchRect.col){
                                         this.setCellAttr(tempSearchRect,tempTd)
+                                        if(tempTd.isFromExcel){
+                                            tempSearchRect.mergeWidth += tempSearchRect.width
+                                            tempSearchRect.mergeHeight += tempSearchRect.height
+                                        }
                                     }else{
                                         const tempMergeRect = this.searchRectByColAndRow(j,i)
                                         tempMergeRect.isMerge = true
                                         tempMergeRect.mergeStartLabel = tempSearchRect.mergeStartLabel
                                         tempMergeRect.mergeEndLabel = tempSearchRect.mergeEndLabel
+                                        if(tempTd.isFromExcel){
+                                            if(tempMergeRect.col === tempSearchRect.col){
+                                                tempSearchRect.mergeWidth += tempMergeRect.width
+                                            }
+                                            if(tempMergeRect.row === tempSearchRect.row){
+                                                tempSearchRect.mergeHeight += tempMergeRect.height
+                                            }
+                                        }
                                         // console.log('tempMergeRect',tempMergeRect)
+                                        // console.log('tempMergeRect.isMerge',tempMergeRect.isMerge)
                                     }
                                 }
                             }
@@ -142,11 +172,19 @@ export default class SelectPlugin{
                             // console.log('tempTd',tempTd)
                             // console.log('colDiff',colDiff)
                             // console.log('rowDiff',rowDiff)
-                            this.setCellAttr(tempSearchRect,tempTd)
+                            // console.log('tempTd',tempTd.isMerge)
+                            if(!tempSearchRect.isMerge){
+                                this.setCellAttr(tempSearchRect,tempTd)
+                            }
                         }
 
                     }
                 }
+                if(tdCount === 0){
+                    endSearchRect = null
+                }
+                console.log('endSearchRect',endSearchRect)
+                this.contentComponent.setSecondClickCell(endSearchRect)
                 this.core.fresh()
 
             }
