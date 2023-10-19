@@ -55,7 +55,7 @@ export default class InputPlugin{
             const { offsetX,offsetY } = this.core.plugins.ScrollPlugin
 
             const attrs = this.core.plugins.SelectPlugin.searchRectAddr(evt.offsetX+offsetX - cellHeight,evt.offsetY+offsetY - cellHeight)
-            const {x,y,width,height,text,isMerge,mergeWidth,mergeHeight} = attrs
+            const {x,y,width,height,text,isMerge,mergeWidth,mergeHeight,bgColor} = attrs
             this.contentComponent.hideClickRect()
             this.core.fresh()
             // console.log('attrs',attrs)
@@ -72,6 +72,7 @@ export default class InputPlugin{
             inputDom.style.width = (inputWidth>textWidth?inputWidth:textWidth)+'px'
             inputDom.style.height = (isMerge?mergeHeight:height)+'px'
             inputDom.style.borderRadius = '6px'
+            inputDom.style.backgroundColor = bgColor??''
             // console.log('attrs',attrs)
             inputDom.value = text
             inputDom.focus()
