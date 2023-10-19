@@ -101,8 +101,12 @@ export default class SelectPlugin{
                 const domParser = new DOMParser();
                 const html = domParser.parseFromString(event.clipboardData.getData('text/html'),'text/html')
                 const css = html.querySelector('style')?html.querySelector('style').sheet.cssRules:[]
-                console.log('table',html.querySelector('style'))
+                // console.log('table',html.querySelector('style'))
                 console.log('table',html.querySelector('table'))
+                const table = html.querySelector('table')
+                if(!table){
+                    return
+                }
                 // console.log('event-html',event.clipboardData.getData('text/html'))
                 // console.log('event-text',event.clipboardData.getData('text/plain'))
                 let colDiff = 0
@@ -117,7 +121,8 @@ export default class SelectPlugin{
 
                         const tempTdDom = tds[j]
 
-                        console.log(tempTdDom.currentStyle,'tempTdDom')
+                        // console.log(tempTdDom.rowSpan,'tempTdDom.rowSpan')
+                        // console.log(tempTdDom.colSpan,'tempTdDom.colSpan')
 
                         let tempTd = {}
 
@@ -138,8 +143,8 @@ export default class SelectPlugin{
                             }
 
                             tempTd = {
-                                mergeRow:tempTdDom.rowSpan>1?tempTdDom.rowSpan:0,
-                                mergeCol:tempTdDom.colSpan>1?tempTdDom.colSpan:0,
+                                mergeRow:tempTdDom.rowSpan>1?tempTdDom.rowSpan:(tempTdDom.colSpan>1?1:0),
+                                mergeCol:tempTdDom.colSpan>1?tempTdDom.colSpan:(tempTdDom.rowSpan>1?1:0),
                                 isMerge:((tempTdDom.colSpan && tempTdDom.colSpan>1)||(tempTdDom.rowSpan && tempTdDom.rowSpan>1)),
                                 text:tempTdDom.innerText,
                                 isFromExcel:true,
@@ -147,7 +152,7 @@ export default class SelectPlugin{
                                 fontColor
                             }
                         }
-
+                        // console.log('tempTd',tempTd)
 
                         const tempSearchRect =  this.searchRectByColAndRow(clickCell.col+j,clickCell.row+i)
                         if(i===trs.length-1 && j===tds.length-1){
@@ -164,11 +169,12 @@ export default class SelectPlugin{
                             // console.log('tempSearchRect',tempSearchRect)
                             for(let i=tempSearchRect.row;i<rowLen;i++){
                                 for(let j=tempSearchRect.col;j<colLen;j++){
+                                    // console.log('合并',this.searchRectByColAndRow(j,i))
                                     if(i===tempSearchRect.row&&j===tempSearchRect.col){
                                         this.setCellAttr(tempSearchRect,tempTd)
                                         if(tempTd.isFromExcel){
-                                            tempSearchRect.mergeWidth += tempSearchRect.width
-                                            tempSearchRect.mergeHeight += tempSearchRect.height
+                                            tempSearchRect.mergeWidth = tempSearchRect.width
+                                            tempSearchRect.mergeHeight = tempSearchRect.height
                                         }
                                     }else{
                                         const tempMergeRect = this.searchRectByColAndRow(j,i)
@@ -177,13 +183,13 @@ export default class SelectPlugin{
                                         tempMergeRect.mergeEndLabel = tempSearchRect.mergeEndLabel
                                         if(tempTd.isFromExcel){
                                             if(tempMergeRect.col === tempSearchRect.col){
-                                                tempSearchRect.mergeWidth += tempMergeRect.width
-                                            }
-                                            if(tempMergeRect.row === tempSearchRect.row){
                                                 tempSearchRect.mergeHeight += tempMergeRect.height
                                             }
+                                            if(tempMergeRect.row === tempSearchRect.row){
+                                                tempSearchRect.mergeWidth += tempMergeRect.width
+                                            }
                                         }
-                                        // console.log('tempMergeRect',tempMergeRect)
+                                        console.log('tempMergeRect',tempMergeRect)
                                         // console.log('tempMergeRect.isMerge',tempMergeRect.isMerge)
                                     }
                                 }
@@ -606,7 +612,7 @@ export default class SelectPlugin{
 
     searchSideRectAddr(oriY){
 
-        console.log('oriY',oriY)
+        // console.log('oriY',oriY)
 
         const { sideRectGroup } = this.sideComponent
 

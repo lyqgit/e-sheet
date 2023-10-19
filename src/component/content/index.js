@@ -325,12 +325,22 @@ export default class ContentComponent{
             if((col>=startCol && col<=endCol) && (row>=startRow && row<=endRow)){
                 // 多个选中除了第一个之外的渲染
                 // 合并渲染从左上角开始
-                if(tempRect.isMerge && tempRect.label === tempRect.mergeStartLabel){
-                    const {mergeWidth,mergeHeight} = tempRect
-                    // console.log('背景色',tempRect)
-                    this.layer.drawStrokeRect(x-offsetX+cellHeight,y-offsetY+cellHeight,mergeWidth,mergeHeight,borderColor,'destination-over',1)
-                    this.layer.drawText(x-offsetX+cellHeight,y-offsetY+cellHeight,text,mergeWidth,mergeHeight,'destination-over',tempRect.fontColor)
-                    this.layer.drawFillRect(x-offsetX+cellHeight,y-offsetY+cellHeight,mergeWidth,mergeHeight,tempRect.bgColor?tempRect.bgColor:nonSelectBgColor,'destination-over',1)
+                if(tempRect.isMerge){
+                    if(tempRect.label === tempRect.mergeStartLabel){
+                        const {mergeWidth,mergeHeight} = tempRect
+                        // console.log('背景色',tempRect)
+                        this.layer.drawStrokeRect(x-offsetX+cellHeight,y-offsetY+cellHeight,mergeWidth,mergeHeight,borderColor,'destination-over',1)
+                        this.layer.drawText(x-offsetX+cellHeight,y-offsetY+cellHeight,text,mergeWidth,mergeHeight,'destination-over',tempRect.fontColor)
+                        this.layer.drawFillRect(x-offsetX+cellHeight,y-offsetY+cellHeight,mergeWidth,mergeHeight,tempRect.bgColor?tempRect.bgColor:nonSelectBgColor,'destination-over',1)
+                    }else{
+                        // 如果左上角不在屏幕内，渲染左上角
+                        const tempMergeStartRect = this.searchRectByLabel(tempRect.mergeStartLabel)
+                        if(!((tempMergeStartRect.col>=startCol && tempMergeStartRect.col<=endCol) && (tempMergeStartRect.row>=startRow && tempMergeStartRect.row<=endRow))){
+                            this.layer.drawStrokeRect(tempMergeStartRect.x-offsetX+cellHeight,tempMergeStartRect.y-offsetY+cellHeight,tempMergeStartRect.mergeWidth,tempMergeStartRect.mergeHeight,borderColor,'destination-over',1)
+                            this.layer.drawText(tempMergeStartRect.x-offsetX+cellHeight,tempMergeStartRect.y-offsetY+cellHeight,tempMergeStartRect.text,tempMergeStartRect.mergeWidth,tempMergeStartRect.mergeHeight,'destination-over',tempMergeStartRect.fontColor)
+                            this.layer.drawFillRect(tempMergeStartRect.x-offsetX+cellHeight,tempMergeStartRect.y-offsetY+cellHeight,tempMergeStartRect.mergeWidth,tempMergeStartRect.mergeHeight,tempMergeStartRect.bgColor?tempMergeStartRect.bgColor:nonSelectBgColor,'destination-over',1)
+                        }
+                    }
 
                 }else if(!tempRect.isMerge){
                     this.layer.drawStrokeRect(x-offsetX+cellHeight,y-offsetY+cellHeight,width,height,borderColor,'destination-over',1)
