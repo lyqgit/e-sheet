@@ -136,8 +136,8 @@ export default class AppExcel{
                     mergeEndLabel:'',
                     mergeLabelGroup:[],
                     isMerge:false,
-                    bgColor:'',
-                    fontColor:'',
+                    bgColor:null,
+                    fontColor:null,
                     textAlign:'center',
                     label:String.fromCharCode(65 + j)+(i+1)
                 })

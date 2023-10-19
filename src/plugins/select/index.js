@@ -100,7 +100,9 @@ export default class SelectPlugin{
                 // 一个框
                 const domParser = new DOMParser();
                 const html = domParser.parseFromString(event.clipboardData.getData('text/html'),'text/html')
-                // console.log('table',html.querySelector('table'))
+                const css = html.querySelector('style')?html.querySelector('style').sheet.cssRules:[]
+                console.log('table',html.querySelector('style'))
+                console.log('table',html.querySelector('table'))
                 // console.log('event-html',event.clipboardData.getData('text/html'))
                 // console.log('event-text',event.clipboardData.getData('text/plain'))
                 let colDiff = 0
@@ -115,15 +117,38 @@ export default class SelectPlugin{
 
                         const tempTdDom = tds[j]
 
-                        const tempTd = tds[j].getAttribute('data-json')
-                            ?JSON.parse(tds[j].getAttribute('data-json'))
-                            :{
+                        console.log(tempTdDom.currentStyle,'tempTdDom')
+
+                        let tempTd = {}
+
+                        if(tds[j].getAttribute('data-json')){
+                            tempTd = JSON.parse(tds[j].getAttribute('data-json'))
+                        }else{
+
+                            let bgColor = ''
+                            let fontColor = ''
+                            let textAlign = ''
+
+                            for(let ci=0,cn=css.length;ci<cn;ci++){
+                                if(tempTdDom.className === css[ci].selectorText.replace('.','')){
+                                    bgColor = css[ci].style.backgroundColor!==''?css[ci].style.backgroundColor:null
+                                    fontColor = css[ci].style.color!==''?css[ci].style.color:null
+                                    textAlign = css[ci].style.textAlign!==''?css[ci].style.textAlign:'center'
+                                }
+                            }
+
+                            tempTd = {
                                 mergeRow:tempTdDom.rowSpan>1?tempTdDom.rowSpan:0,
                                 mergeCol:tempTdDom.colSpan>1?tempTdDom.colSpan:0,
                                 isMerge:((tempTdDom.colSpan && tempTdDom.colSpan>1)||(tempTdDom.rowSpan && tempTdDom.rowSpan>1)),
                                 text:tempTdDom.innerText,
-                                isFromExcel:true
+                                isFromExcel:true,
+                                bgColor,
+                                fontColor
                             }
+                        }
+
+
                         const tempSearchRect =  this.searchRectByColAndRow(clickCell.col+j,clickCell.row+i)
                         if(i===trs.length-1 && j===tds.length-1){
                             endSearchRect = tempSearchRect

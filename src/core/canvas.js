@@ -81,20 +81,22 @@ export default class Canvas{
      * @param {string} text
      * @param {number} cellWidth
      * @param {number} cellHeight
+     * @param {Color} color
+     * @param {string} textAlign
      */
-    drawText(x,y,text,rectWidth,rectHeight,globalCompositeOperation){
+    drawText(x,y,text,rectWidth,rectHeight,globalCompositeOperation,color,textAlign='center'){
         const { ctx,cellWidth,cellHeight } = this
         ctx.globalCompositeOperation = globalCompositeOperation??'source-over'
         rectWidth = rectWidth??cellWidth
         rectHeight = rectHeight??cellHeight
 
         ctx.font = '12px Calibri'
-        ctx.fillStyle= "black";
+        ctx.fillStyle= color??"black";
         const baseX = x+rectWidth/2
         const baseY = y+rectHeight/2
 
         ctx.textBaseline = "middle";
-        ctx.textAlign = "center";
+        ctx.textAlign = textAlign!==''?textAlign:"center";
 
         const textObj = ctx.measureText(text);
 
