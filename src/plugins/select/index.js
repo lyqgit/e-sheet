@@ -95,6 +95,7 @@ export default class SelectPlugin{
 
         document.addEventListener('paste',event=>{
             const { clickCell,secondClickCell,clickRectShow,contentGroup } = this.contentComponent
+            const { h } = this.core
 
             if(clickRectShow){
                 // 一个框
@@ -102,21 +103,52 @@ export default class SelectPlugin{
                 const html = domParser.parseFromString(event.clipboardData.getData('text/html'),'text/html')
                 const css = html.querySelector('style')?html.querySelector('style').sheet.cssRules:[]
                 // console.log('table',html.querySelector('style'))
-                console.log('table',html.querySelector('table'))
+                // console.log('table',html.querySelector('table'))
                 const table = html.querySelector('table')
                 if(!table){
                     return
                 }
+
                 // console.log('event-html',event.clipboardData.getData('text/html'))
                 // console.log('event-text',event.clipboardData.getData('text/plain'))
-                let colDiff = 0
-                let rowDiff = 0
                 const trs = html.querySelector('table').querySelectorAll('tr')
-                const tdCount = html.querySelector('table').querySelectorAll('td').length
-                let endSearchRect = null
+
+                const tableArr = []
+
+                trs.forEach(_=>{
+                    tableArr.push([])
+                })
+
+                // console.log('tableArr',tableArr)
+
+                const tdDom = h('td')
+
                 for(let i=0;i<trs.length;i++){
-                    const tempTr = trs[i]
-                    const tds = tempTr.querySelectorAll('td')
+                    const tds = trs[i].querySelectorAll('td')
+                    for(let j=0;j<tds.length;j++){
+                        const tempTdDom = tds[j]
+                        tableArr[i].push(tempTdDom)
+                        if(tempTdDom.colSpan > 1){
+                            (new Array(tempTdDom.colSpan-1)).fill(0).map(_=>
+                                tableArr[i].push(tdDom.cloneNode())
+                            )
+
+                        }
+
+                        if(tempTdDom.rowSpan > 1){
+                            for(let k=1,kn=tempTdDom.rowSpan;k<kn;k++){
+                                tableArr[i+k].push(tdDom.cloneNode())
+                            }
+                        }
+
+                    }
+                }
+                // console.log('tableArr',tableArr)
+
+                const tdCount = tableArr.length
+                let endSearchRect = null
+                for(let i=0;i<tableArr.length;i++){
+                    const tds = tableArr[i]
                     for(let j=0;j<tds.length;j++){
 
                         const tempTdDom = tds[j]
@@ -152,9 +184,9 @@ export default class SelectPlugin{
                                 fontColor
                             }
                         }
-                        // console.log('tempTd',tempTd)
+                        console.log('tempTd',tempTd)
 
-                        const tempSearchRect =  this.searchRectByColAndRow(clickCell.col+j,clickCell.row+i)
+                        const tempSearchRect = this.searchRectByColAndRow(clickCell.col+j,clickCell.row+i)
                         if(i===trs.length-1 && j===tds.length-1){
                             endSearchRect = tempSearchRect
                         }
