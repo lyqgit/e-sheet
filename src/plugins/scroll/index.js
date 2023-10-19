@@ -102,6 +102,10 @@ export default class ScrollPlugin{
         const proportion = (this.options.width - this.options.cellHeight - 10)/this.core.sheetWidth
         this.horBarDom.style.width = (this.options.width - this.options.cellHeight-10)*proportion+'px'
     }
+    changeVerBarHeight(){
+        const proportion = (this.options.height - this.options.cellHeight - 10)/this.core.sheetHeight
+        this.verBarDom.style.height = (this.options.height - this.options.cellHeight-10)*proportion+'px'
+    }
 
     // 注册横向滚动条
     registryHorScroll(){

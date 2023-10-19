@@ -117,7 +117,7 @@ export default class HeaderComponent{
                 label = String.fromCharCode(65 + col)
             }
             // console.log('label',label,j)
-            this.layer.drawText(tempHeader.x+cellHeight-offsetX,0,label,tempHeader.width,tempHeader.height,'destination-over')
+            this.layer.drawText(tempHeader.x+cellHeight-offsetX,0,label,tempHeader.width,cellHeight,'destination-over')
             this.layer.drawLine([tempHeader.x+cellHeight-offsetX,0,tempHeader.x+cellHeight-offsetX,cellHeight],'destination-over',borderColor)
             if(clickRectShow && !isRowSelect){
                 // console.log('secondClickCell',secondClickCell)
@@ -126,21 +126,21 @@ export default class HeaderComponent{
                 if(secondClickCell && tempHeader.col>=leftCol && tempHeader.col <= rightCol){
                     // 多个
                     // console.log('tempHeader.col',tempHeader.col)
-                    this.layer.drawFillRect(tempHeader.x+cellHeight-offsetX,0,tempHeader.width,tempHeader.height,selectedBgColor,'destination-over')
+                    this.layer.drawFillRect(tempHeader.x+cellHeight-offsetX,0,tempHeader.width,cellHeight,selectedBgColor,'destination-over')
                 }else if(tempHeader.col === clickCell.col && !clickCell.isMerge){
-                    this.layer.drawFillRect(tempHeader.x+cellHeight-offsetX,0,tempHeader.width,tempHeader.height,selectedBgColor,'destination-over')
+                    this.layer.drawFillRect(tempHeader.x+cellHeight-offsetX,0,tempHeader.width,cellHeight,selectedBgColor,'destination-over')
 
                 }else if(clickCell.isMerge){
                     const isMergeinArr = this.findClickCellRowArr(clickCell)
                     if(isMergeinArr.findIndex(item=>item === tempHeader.col) !== -1) {
-                        this.layer.drawFillRect(tempHeader.x + cellHeight - offsetX,0, tempHeader.width, tempHeader.height, selectedBgColor, 'destination-over')
+                        this.layer.drawFillRect(tempHeader.x + cellHeight - offsetX,0, tempHeader.width, cellHeight, selectedBgColor, 'destination-over')
                     }
                 }else{
-                    this.layer.drawFillRect(tempHeader.x+cellHeight-offsetX,0,tempHeader.width,tempHeader.height,borderCellBgColor,'destination-over')
+                    this.layer.drawFillRect(tempHeader.x+cellHeight-offsetX,0,tempHeader.width,cellHeight,borderCellBgColor,'destination-over')
                 }
 
             }else{
-                this.layer.drawFillRect(tempHeader.x+cellHeight-offsetX,0,tempHeader.width,tempHeader.height,borderCellBgColor,'destination-over')
+                this.layer.drawFillRect(tempHeader.x+cellHeight-offsetX,0,tempHeader.width,cellHeight,borderCellBgColor,'destination-over')
             }
 
 

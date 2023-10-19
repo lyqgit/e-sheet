@@ -40,6 +40,7 @@ export default class AppExcel{
     ctrlKey = false
     dragSign = false
     lockDrag = false
+    dragSignDirectionIsHor = false
 
 
     offsetYLock = false
@@ -199,6 +200,7 @@ export default class AppExcel{
 
     freshScrollBar(){
         this.plugins.ScrollPlugin.changeHorBarWidth()
+        this.plugins.ScrollPlugin.changeVerBarHeight()
     }
 
     /**

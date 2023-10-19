@@ -55,6 +55,44 @@ export default class DragPlugin{
         this.core.fresh()
     }
 
+    expandHeight(row,dis){
+        // console.log('dis',dis)
+        const { contentGroup } = this.contentComponent
+        const { cellHeight } = this.options
+
+        this.layer.setCursor('col-resize')
+        // console.log('this.dragCell.width>=cellHeight',this.dragCell.width<cellHeight)
+
+        if(!this.dragCell || ((this.dragCell.height+dis)<cellHeight && dis<0)){
+            this.dragCell = null
+            return;
+        }
+
+        for(let i=0;i<contentGroup.length;i++){
+            const tempRect = contentGroup[i]
+
+            if(tempRect.row === row){
+                tempRect.height += dis
+
+
+                // console.log('dis',dis)
+            }else if(tempRect.row>row){
+                tempRect.y += dis
+                tempRect.ltY += dis
+
+            }
+            if(tempRect.row === row && tempRect.col === 1){
+                this.core.sheetHeight += dis
+            }
+
+            if(tempRect.isMerge && tempRect.mergeStartLabel === tempRect.label){
+                tempRect.mergeHeight += dis
+            }
+        }
+        this.core.freshScrollBar()
+        this.core.fresh()
+    }
+
     registerDragEvent(){
 
         this.canvasDom.addEventListener('mousedown',evtA=>{
@@ -68,13 +106,22 @@ export default class DragPlugin{
             }
             let dragEndX = 0
             let dragStartX = evtA.pageX
+            let dragEndY = 0
+            let dragStartY = evtA.pageY
             this.canvasDom.onmousemove = evtB=>{
                 if(!this.dragCell){
                     return false
                 }
-                dragEndX = evtB.pageX
-                this.expandWidth(this.dragCell.col,dragEndX-dragStartX)
-                dragStartX = dragEndX
+                if(this.core.dragSignDirectionIsHor){
+                    dragEndX = evtB.pageX
+                    this.expandWidth(this.dragCell.col,dragEndX-dragStartX)
+                    dragStartX = dragEndX
+                }else{
+                    dragEndY = evtB.pageY
+                    this.expandHeight(this.dragCell.row,dragEndY-dragStartY)
+                    dragStartY = dragEndY
+                }
+
             }
 
         })
@@ -82,12 +129,19 @@ export default class DragPlugin{
         this.canvasDom.addEventListener('mousemove',event=>{
             // 横向
             const { headerRectGroup } = this.headerComponent
+            const { sideRectGroup } = this.sideComponent
             const { offsetX,offsetY } = this.core.plugins.ScrollPlugin
             const { cellHeight } = this.options
             const { dragShowDis } = this
             const x = event.offsetX + offsetX
+            const y = event.offsetY + offsetY
 
             if(this.dragCell && ((x<this.dragCell.ltX+this.dragCell.width - dragShowDis)||(x>this.dragCell.ltX + this.dragCell.width + dragShowDis + 1))){
+                // console.log('离开拖拽')
+                this.core.dragSign = false
+            }
+
+            if(this.dragCell && ((y<this.dragCell.ltY+this.dragCell.height - dragShowDis)||(x>this.dragCell.ltY + this.dragCell.height + dragShowDis + 1))){
                 // console.log('离开拖拽')
                 this.core.dragSign = false
             }
@@ -97,6 +151,7 @@ export default class DragPlugin{
             }
             // console.log('col',event.offsetX)
             if(event.offsetY <= cellHeight){
+                // 横向
                 for(let i=0;i<headerRectGroup.length;i++){
                     const tempHeader = headerRectGroup[i]
 
@@ -107,6 +162,26 @@ export default class DragPlugin{
                         }
                         this.layer.setCursor('col-resize')
                         this.core.dragSign = true
+                        this.core.dragSignDirectionIsHor = true
+
+                        // console.log('拖拽标识',this.core.dragSign)
+                    }
+                }
+            }
+
+            if(event.offsetX <= cellHeight){
+                // 纵向
+                for(let i=0;i<sideRectGroup.length;i++){
+                    const tempSide = sideRectGroup[i]
+
+                    if((y>tempSide.ltY + tempSide.height - dragShowDis) && (y<tempSide.ltY + tempSide.height + dragShowDis + 1)){
+                        // console.log('鼠标在拖拽之上',this.core.dragSign)
+                        if(!this.core.dragSign){
+                            this.dragCell = tempSide
+                        }
+                        this.layer.setCursor('col-resize')
+                        this.core.dragSign = true
+                        this.core.dragSignDirectionIsHor = false
 
                         // console.log('拖拽标识',this.core.dragSign)
                     }

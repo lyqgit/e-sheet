@@ -78,7 +78,7 @@ export default class SelectPlugin{
      * @param {Object} attr
      * @param {Array<string>} notInclude
      */
-    setCellAttr(cell,attr,notInclude=['row','col','x','y','ltX','ltY','mergeStartLabel','mergeEndLabel','label','isFromExcel']){
+    setCellAttr(cell,attr,notInclude=['row','col','x','y','ltX','ltY','mergeStartLabel','mergeEndLabel','label','isFromExcel','width','height']){
         for(let k in attr){
             if(!notInclude.includes(k)){
                 cell[k] = attr[k]
@@ -87,7 +87,7 @@ export default class SelectPlugin{
         if(attr['isMerge']){
             cell['mergeStartLabel'] = String.fromCharCode(65 + cell.col - 1)+(cell.row)
             cell['mergeEndLabel'] = String.fromCharCode(65 + cell.col+cell.mergeCol - 2)+(cell.row+cell.mergeRow-1)
-            console.log('cell',cell)
+            // console.log('cell',cell)
         }
     }
 
@@ -183,7 +183,7 @@ export default class SelectPlugin{
                 if(tdCount === 0){
                     endSearchRect = null
                 }
-                console.log('endSearchRect',endSearchRect)
+                // console.log('endSearchRect',endSearchRect)
                 this.contentComponent.setSecondClickCell(endSearchRect)
                 this.core.fresh()
 
@@ -261,9 +261,17 @@ export default class SelectPlugin{
         })
 
         document.addEventListener('keydown',event=>{
-            // console.log('event',event)
+            // console.log('event',event.code)
+            // console.log('event.shiftKey',event.shiftKey)
+            // console.log('event.ctrlKey',event.ctrlKey)
             this.core.shiftKey = event.shiftKey
             this.core.ctrlKey = event.ctrlKey
+
+            if(event.shiftKey && event.ctrlKey && event.code === 'KeyZ'){
+                // console.log('前进')
+            }else if(event.ctrlKey && event.code === 'z'){
+                // 后撤
+            }
         })
         //
         document.addEventListener('keyup',event=>{
