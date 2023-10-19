@@ -151,6 +151,9 @@ export default class DragPlugin{
             }
             // console.log('col',event.offsetX)
             if(event.offsetY <= cellHeight){
+                if(event.offsetX > cellHeight){
+                    this.layer.setCursor('s-resize')
+                }
                 // 横向
                 for(let i=0;i<headerRectGroup.length;i++){
                     const tempHeader = headerRectGroup[i]
@@ -170,6 +173,9 @@ export default class DragPlugin{
             }
 
             if(event.offsetX <= cellHeight){
+                if(event.offsetY > cellHeight){
+                    this.layer.setCursor('e-resize')
+                }
                 // 纵向
                 for(let i=0;i<sideRectGroup.length;i++){
                     const tempSide = sideRectGroup[i]
@@ -179,7 +185,7 @@ export default class DragPlugin{
                         if(!this.core.dragSign){
                             this.dragCell = tempSide
                         }
-                        this.layer.setCursor('col-resize')
+                        this.layer.setCursor('row-resize')
                         this.core.dragSign = true
                         this.core.dragSignDirectionIsHor = false
 
