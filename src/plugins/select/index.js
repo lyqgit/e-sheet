@@ -387,14 +387,14 @@ export default class SelectPlugin{
                 this.contentComponent.showClickRect({},true,true)
             }else if(event.offsetY<=cellHeight && event.offsetX>cellHeight){
                 // 顶部
-                const attr = this.searchHeaderRectAddr(event.offsetX-cellHeight)
+                const attr = this.searchHeaderRectAddr(event.offsetX+offsetX-cellHeight)
                 if(attr){
                     this.contentComponent.setSecondClickCell(null)
                     this.contentComponent.showClickRect(attr,true)
                 }
             }else if(event.offsetY>cellHeight && event.offsetX<=cellHeight){
                 // 左侧
-                const attr = this.searchSideRectAddr(event.offsetY-cellHeight)
+                const attr = this.searchSideRectAddr(event.offsetY+offsetY-cellHeight)
                 // console.log('测试',attr)
                 if(attr){
                     this.contentComponent.setSecondClickCell(null)
