@@ -163,6 +163,7 @@ export default class AppExcel{
 
         this.initExcelData(Object.keys(oriData)[0])
         this.components.ContentComponent.installContentData(Object.keys(oriData)[0])
+        this.components.ContentComponent.hideClickRect()
         this.fresh()
     }
 
