@@ -83,7 +83,7 @@ export default class SideComponent{
     trendsDraw(offsetY = 0){
         const { height,cellHeight } = this.options
         const { contentGroup,clickCell,clickRectShow,isColSelect,secondClickCell,attrSecond,attrFirst,startAndEndRect } = this.core.components.ContentComponent
-        const { borderCellBgColor,selectedBorderBgColor,borderColor,selectedBgColor } = this.core
+        const { borderCellBgColor,selectedBorderBgColor,borderColor,selectedBgColor,nonSelectBgColor } = this.core
 
         const lt = this.searchScreenAddr(0,offsetY)
         const rb = this.searchScreenAddr(cellHeight,height-cellHeight+offsetY)
@@ -130,6 +130,8 @@ export default class SideComponent{
             }else{
                 this.layer.drawFillRect(0,tempSide.y+cellHeight-offsetY,cellHeight,tempSide.height,borderCellBgColor,'destination-over')
             }
+            this.layer.drawFillRect(0,tempSide.y+cellHeight-offsetY,cellHeight,tempSide.height,nonSelectBgColor,'destination-over')
+
         }
 
     }

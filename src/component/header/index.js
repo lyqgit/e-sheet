@@ -85,7 +85,7 @@ export default class HeaderComponent{
 
     trendsDraw(offsetX = 0){
         const { width,cellHeight } = this.options
-        const { borderCellBgColor,selectedBorderBgColor,borderColor,selectedBgColor } = this.core
+        const { borderCellBgColor,nonSelectBgColor,borderColor,selectedBgColor } = this.core
 
         const { contentGroup,clickCell,clickRectShow,isRowSelect,secondClickCell,attrSecond,attrFirst,startAndEndRect } = this.core.components.ContentComponent
 
@@ -144,6 +144,7 @@ export default class HeaderComponent{
             }
 
 
+            this.layer.drawFillRect(tempHeader.x+cellHeight-offsetX,0,tempHeader.width,cellHeight,nonSelectBgColor,'destination-over')
         }
 
 
