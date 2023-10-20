@@ -52,6 +52,11 @@ export default class InputPlugin{
         this.canvasDom.addEventListener('dblclick',evt=>{
 
             const { cellHeight } = this.options
+
+            if(evt.offsetX<=cellHeight || evt.offsetY<=cellHeight){
+                return
+            }
+
             const { offsetX,offsetY } = this.core.plugins.ScrollPlugin
 
             const attrs = this.core.plugins.SelectPlugin.searchRectAddr(evt.offsetX+offsetX - cellHeight,evt.offsetY+offsetY - cellHeight)

@@ -17,6 +17,43 @@ export default class DragPlugin{
         this.registerDragEvent()
     }
 
+
+    expandWidthNoDrag(col,dis){
+        const { contentGroup } = this.contentComponent
+
+        for(let i=0;i<contentGroup.length;i++){
+            const tempRect = contentGroup[i]
+
+            if(tempRect.col < col){
+                continue;
+            }
+
+            if(tempRect.col === col){
+                tempRect.width += dis
+                // console.log('dis',dis)
+            }else if(tempRect.col>col){
+                tempRect.x += dis
+                tempRect.ltX += dis
+            }
+            if(tempRect.col === col && tempRect.row === 1){
+                this.core.sheetWidth += dis
+            }
+
+            if(tempRect.isMerge && tempRect.mergeStartLabel === tempRect.label && tempRect.col===col){
+                tempRect.mergeWidth += dis
+            }
+
+            if(tempRect.isMerge && tempRect.mergeStartLabel !== tempRect.label && tempRect.col===col){
+                const mergeStartRect = this.contentComponent.searchRectByLabel(tempRect.mergeStartLabel)
+                if(mergeStartRect.row === tempRect.row){
+                    mergeStartRect.mergeWidth += dis
+                }
+            }
+        }
+        this.core.freshScrollBar()
+        this.core.fresh()
+    }
+
     expandWidth(col,dis){
         // console.log('dis',dis)
         const { contentGroup } = this.contentComponent

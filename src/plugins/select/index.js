@@ -27,6 +27,47 @@ export default class SelectPlugin{
         this.core = core
         this.showClickHandler()
         this.moreSelect()
+        this.displayColTextRegister()
+    }
+
+
+    displayAllTextByCol(col,width){
+
+        const { contentGroup } = this.contentComponent
+
+        const allCol = contentGroup.filter(item=>item.col === col)
+        const allColTextWidth = allCol.map(item=>this.layer.ctx.measureText(item.text).width)
+        allColTextWidth.push(width)
+
+        const maxWidth = allColTextWidth.sort((a,b)=>a-b)[allColTextWidth.length-1]
+        // console.log('maxWidth',maxWidth)
+        this.core.plugins.DragPlugin.expandWidthNoDrag(col,maxWidth-width)
+    }
+
+    displayColTextRegister(){
+        this.canvasDom.addEventListener('dblclick',evt=>{
+
+            const { cellHeight } = this.options
+            const { offsetX,offsetY } = this.core.plugins.ScrollPlugin
+
+            const x = evt.offsetX + offsetX
+
+            if(evt.offsetY<=cellHeight){
+                let clickHeaderRect = null
+
+                const { headerRectGroup } = this.headerComponent
+                for(let i=0;i<headerRectGroup.length;i++){
+                    const tempHeader = headerRectGroup[i]
+                    if(x>tempHeader.ltX && x<(tempHeader.ltX+tempHeader.width)){
+                        clickHeaderRect = tempHeader
+                        break
+                    }
+                }
+                // console.log('clickHeaderRect',clickHeaderRect)
+                this.displayAllTextByCol(clickHeaderRect.col,clickHeaderRect.width)
+
+            }
+        })
     }
 
 
@@ -91,6 +132,23 @@ export default class SelectPlugin{
         }
     }
 
+
+    /**
+     * @param {HTMLElement} table
+     */
+    tableDomToArr(table){
+        const tableArr = []
+        const trs = table.querySelectorAll('tr')
+        for(let i=0;i<trs.length;i++){
+            tableArr[i] = []
+            const tds = trs[i].querySelectorAll('td')
+            for(let j=0;j<tds.length;j++){
+                tableArr[i].push(tds[j])
+            }
+        }
+        return tableArr
+    }
+
     moreSelect(){
 
         document.addEventListener('paste',event=>{
@@ -113,35 +171,37 @@ export default class SelectPlugin{
                 // console.log('event-text',event.clipboardData.getData('text/plain'))
                 const trs = html.querySelector('table').querySelectorAll('tr')
 
-                const tableArr = []
-
-                trs.forEach(_=>{
-                    tableArr.push([])
-                })
+                const tableArr = this.tableDomToArr(html.querySelector('table'))
 
                 // console.log('tableArr',tableArr)
 
                 const tdDom = h('td')
 
-                for(let i=0;i<trs.length;i++){
-                    const tds = trs[i].querySelectorAll('td')
+                for(let i=0;i<tableArr.length;i++){
+                    const tds = tableArr[i]
+                    // console.log('tds.length',tds.length)
                     for(let j=0;j<tds.length;j++){
                         const tempTdDom = tds[j]
-                        tableArr[i].push(tempTdDom)
-                        if(tempTdDom.colSpan > 1){
-                            (new Array(tempTdDom.colSpan-1)).fill(0).map(_=>
-                                tableArr[i].push(tdDom.cloneNode())
-                            )
 
+                        if(!tempTdDom){
+                            tableArr[i].push(tdDom.cloneNode())
                         }
 
                         if(tempTdDom.rowSpan > 1){
                             for(let k=1,kn=tempTdDom.rowSpan;k<kn;k++){
-                                tableArr[i+k].push(tdDom.cloneNode())
+                                tableArr[i+k].splice(j,0,tdDom.cloneNode())
                             }
                         }
 
+                        if(tempTdDom.colSpan > 1){
+                            (new Array(tempTdDom.colSpan-1)).fill(0).forEach(_=>{
+                                    tableArr[i].splice(j+1,0,tdDom.cloneNode())
+                            })
+                        }
+
+
                     }
+                    // console.log('tableArr--td-arr',tableArr[i])
                 }
                 // console.log('tableArr',tableArr)
 
@@ -179,6 +239,8 @@ export default class SelectPlugin{
                                 }
                             }
 
+                            font = fontSize+' '+fontFamily
+
                             tempTd = {
                                 mergeRow:tempTdDom.rowSpan>1?tempTdDom.rowSpan:(tempTdDom.colSpan>1?1:0),
                                 mergeCol:tempTdDom.colSpan>1?tempTdDom.colSpan:(tempTdDom.rowSpan>1?1:0),
@@ -187,7 +249,7 @@ export default class SelectPlugin{
                                 isFromExcel:true,
                                 bgColor,
                                 fontColor,
-                                font:fontSize+' '+fontFamily
+                                font
                             }
                         }
                         // console.log('tempTd',tempTd)
@@ -320,6 +382,7 @@ export default class SelectPlugin{
                     // 复制多个
                     // console.log('复制moreSelectedCell',moreSelectedCell)
                 }
+                // console.log('复制的table',table)
                 event.clipboardData.setData('text/html', table.outerHTML);
 
                 oriTr.remove()
