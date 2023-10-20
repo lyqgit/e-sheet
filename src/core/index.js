@@ -138,6 +138,7 @@ export default class AppExcel{
                     isMerge:false,
                     bgColor:null,
                     fontColor:null,
+                    font:null,
                     textAlign:'center',
                     label:String.fromCharCode(65 + j)+(i+1)
                 })

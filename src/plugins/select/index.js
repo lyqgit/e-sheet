@@ -102,7 +102,7 @@ export default class SelectPlugin{
                 const domParser = new DOMParser();
                 const html = domParser.parseFromString(event.clipboardData.getData('text/html'),'text/html')
                 const css = html.querySelector('style')?html.querySelector('style').sheet.cssRules:[]
-                // console.log('table',html.querySelector('style'))
+                console.log('table',html.querySelector('style'))
                 // console.log('table',html.querySelector('table'))
                 const table = html.querySelector('table')
                 if(!table){
@@ -165,12 +165,17 @@ export default class SelectPlugin{
                             let bgColor = ''
                             let fontColor = ''
                             let textAlign = ''
+                            let font = ''
+                            let fontSize = ''
+                            let fontFamily = ''
 
                             for(let ci=0,cn=css.length;ci<cn;ci++){
                                 if(tempTdDom.className === css[ci].selectorText.replace('.','')){
                                     bgColor = css[ci].style.backgroundColor!==''?css[ci].style.backgroundColor:null
                                     fontColor = css[ci].style.color!==''?css[ci].style.color:null
                                     textAlign = css[ci].style.textAlign!==''?css[ci].style.textAlign:'center'
+                                    fontSize = css[ci].style.fontSize!==''?css[ci].style.fontSize.replace('pt','px'):'12px'
+                                    fontFamily = css[ci].style.fontFamily!==''?css[ci].style.fontFamily:null
                                 }
                             }
 
@@ -181,7 +186,8 @@ export default class SelectPlugin{
                                 text:tempTdDom.innerText,
                                 isFromExcel:true,
                                 bgColor,
-                                fontColor
+                                fontColor,
+                                font:fontSize+' '+fontFamily
                             }
                         }
                         console.log('tempTd',tempTd)
