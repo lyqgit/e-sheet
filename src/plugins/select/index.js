@@ -102,7 +102,7 @@ export default class SelectPlugin{
                 const domParser = new DOMParser();
                 const html = domParser.parseFromString(event.clipboardData.getData('text/html'),'text/html')
                 const css = html.querySelector('style')?html.querySelector('style').sheet.cssRules:[]
-                console.log('table',html.querySelector('style'))
+                // console.log('table',html.querySelector('style'))
                 // console.log('table',html.querySelector('table'))
                 const table = html.querySelector('table')
                 if(!table){
@@ -190,7 +190,7 @@ export default class SelectPlugin{
                                 font:fontSize+' '+fontFamily
                             }
                         }
-                        console.log('tempTd',tempTd)
+                        // console.log('tempTd',tempTd)
 
                         const tempSearchRect = this.searchRectByColAndRow(clickCell.col+j,clickCell.row+i)
                         if(i===trs.length-1 && j===tds.length-1){
@@ -227,7 +227,7 @@ export default class SelectPlugin{
                                                 tempSearchRect.mergeWidth += tempMergeRect.width
                                             }
                                         }
-                                        console.log('tempMergeRect',tempMergeRect)
+                                        // console.log('tempMergeRect',tempMergeRect)
                                         // console.log('tempMergeRect.isMerge',tempMergeRect.isMerge)
                                     }
                                 }

@@ -21,7 +21,7 @@ export default class DragPlugin{
         // console.log('dis',dis)
         const { contentGroup } = this.contentComponent
         const { cellHeight } = this.options
-
+        // console.log('col',col)
         this.layer.setCursor('col-resize')
         // console.log('this.dragCell.width>=cellHeight',this.dragCell.width<cellHeight)
 
@@ -33,22 +33,30 @@ export default class DragPlugin{
         for(let i=0;i<contentGroup.length;i++){
             const tempRect = contentGroup[i]
 
+            if(tempRect.col < col){
+                continue;
+            }
+
             if(tempRect.col === col){
                 tempRect.width += dis
-
-
                 // console.log('dis',dis)
             }else if(tempRect.col>col){
                 tempRect.x += dis
                 tempRect.ltX += dis
-
             }
             if(tempRect.col === col && tempRect.row === 1){
                 this.core.sheetWidth += dis
             }
 
-            if(tempRect.isMerge && tempRect.mergeStartLabel === tempRect.label){
+            if(tempRect.isMerge && tempRect.mergeStartLabel === tempRect.label && tempRect.col===col){
                 tempRect.mergeWidth += dis
+            }
+
+            if(tempRect.isMerge && tempRect.mergeStartLabel !== tempRect.label && tempRect.col===col){
+                const mergeStartRect = this.contentComponent.searchRectByLabel(tempRect.mergeStartLabel)
+                if(mergeStartRect.row === tempRect.row){
+                    mergeStartRect.mergeWidth += dis
+                }
             }
         }
         this.core.freshScrollBar()
@@ -85,8 +93,15 @@ export default class DragPlugin{
                 this.core.sheetHeight += dis
             }
 
-            if(tempRect.isMerge && tempRect.mergeStartLabel === tempRect.label){
+            if(tempRect.isMerge && tempRect.mergeStartLabel === tempRect.label && tempRect.row===row){
                 tempRect.mergeHeight += dis
+            }
+
+            if(tempRect.isMerge && tempRect.mergeStartLabel !== tempRect.label && tempRect.row===row){
+                const mergeStartRect = this.contentComponent.searchRectByLabel(tempRect.mergeStartLabel)
+                if(mergeStartRect.col === tempRect.col){
+                    mergeStartRect.mergeHeight += dis
+                }
             }
         }
         this.core.freshScrollBar()
