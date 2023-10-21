@@ -25,3 +25,7 @@ dist-ssr
 
 # lock
 pnpm-lock.yaml
+
+# server
+server/multi-person-collaboration/target
+server/multi-person-collaboration/Cargo.lock
