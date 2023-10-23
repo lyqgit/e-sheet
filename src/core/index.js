@@ -113,10 +113,20 @@ export default class AppExcel{
 
         this.ws = new WebSocket(addr)
 
-        const ws = this.ws
+        this.wsOpenCallback()
 
-        ws.onopen = function (evt) {
-            console.log('evt---onopen',evt)
+        this.wsCloseCallback()
+
+        this.wsMsgCallback()
+
+    }
+
+    wsMsgCallback(){
+        this.ws.onmessage = evt=>{
+            console.log('evt---onmessage',evt)
+
+            const { DragPlugin } = this.plugins
+            const { ContentComponent } = this.components
 
             /**
              * 0.同步数据
@@ -126,20 +136,12 @@ export default class AppExcel{
              * 4.纵向距离改变
              */
 
-        }
-
-        ws.onclose = (evt)=>{
-            console.log('evt---onclose',evt)
-            this.ws = null
-        }
-
-        ws.onmessage = evt=>{
-            console.log('evt---onmessage',evt)
             const data = JSON.parse(evt.data)
             if(data.type === 0){
-                this.components.ContentComponent.contentGroup = data.command
+                ContentComponent.contentGroup = data.command
             } else if(data.type === 1){
                 const index = this.mulPersonSelected.findIndex(item=>item.userId === data.userId)
+                data.command = ContentComponent.searchRectByLabel(data.command.label)
                 if(index === -1){
                     this.mulPersonSelected.push(data)
                 }else{
@@ -147,10 +149,26 @@ export default class AppExcel{
                 }
             }else if(data.type === 2){
                 this.components.ContentComponent.changeRectTextByLabel(data.command)
+            }else if(data.type === 3){
+                const oriRect = ContentComponent.searchRectByLabel(data.command.label)
+                DragPlugin.expandWidthNoDrag(data.command.col,data.command.width - oriRect.width)
             }
 
 
             this.fresh()
+        }
+    }
+
+    wsOpenCallback(){
+        this.ws.onopen = evt=>{
+            console.log('evt---onopen',evt)
+        }
+    }
+
+    wsCloseCallback(){
+        this.ws.onclose = evt=>{
+            console.log('evt---onclose',evt)
+            this.ws = null
         }
     }
 

@@ -147,6 +147,11 @@ export default class DragPlugin{
 
     registerDragEvent(){
 
+        this.canvasDom.addEventListener('mouseup',_=>{
+            // console.log('evt',evt,this.dragCell)
+            this.core.wsSend(3,this.dragCell)
+        })
+
         this.canvasDom.addEventListener('mousedown',evtA=>{
 
             // console.log('开始拖拽',this.core.dragSign)
