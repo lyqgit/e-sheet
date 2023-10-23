@@ -149,7 +149,9 @@ export default class DragPlugin{
 
         this.canvasDom.addEventListener('mouseup',_=>{
             // console.log('evt',evt,this.dragCell)
-            this.core.wsSend(3,this.dragCell)
+            if(this.dragCell){
+                this.core.wsSend(3,this.dragCell)
+            }
         })
 
         this.canvasDom.addEventListener('mousedown',evtA=>{
