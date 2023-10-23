@@ -25,53 +25,60 @@
     <div id="elt"></div>
     <input type="file" id="file-xlsx" >上传excel
     <input type="text" id="user-name">
+    <button id="syncBtn">同步数据</button>
 </body>
 <script>
 
     console.log('window',eSheet)
     // console.log('eSheet',eSheet)
     // console.log('CreateExcel',CreateExcel)
-    const excel = new eSheet('#elt',{
+    const excel = (new eSheet('#elt')).init({
         width:1200,
         height:800
     })
 
-    const ws = new WebSocket('ws://localhost:8091')
+    excel.connectWebSocket('ws://192.168.31.208:8091')
 
-    const userId = (new Date()).valueOf()
-
-    const userName = document.querySelector('#user-name').value
-
-    ws.onopen = function (evt) {
-        console.log('evt---onopen',evt)
-
-        /**
-         * 1.选中状态改变
-         * 2.单元格内容改变
-         * 3.横向距离改变
-         * 4.纵向距离改变
-         */
-
-        ws.send(JSON.stringify({
-            type:1,
-            command:'ceshi1',
-            userId,
-            userName
-        }))
+    document.querySelector('#syncBtn').onclick = e=>{
+        excel.AppExcel.syncData()
     }
 
-    ws.onmessage = function (evt) {
-        console.log('evt---onmessage',evt)
-        console.log(JSON.parse(JSON.parse(evt.data)))
-    }
+    // const ws = new WebSocket('ws://localhost:8091')
+    //
+    // const userId = (new Date()).valueOf()
+    //
+    // const userName = document.querySelector('#user-name').value
 
-    ws.onerror = function (evt) {
-        console.log('evt---error',evt)
-    }
+    // ws.onopen = function (evt) {
+    //     console.log('evt---onopen',evt)
+    //
+    //     /**
+    //      * 1.选中改变
+    //      * 2.单元格内容改变
+    //      * 3.横向距离改变
+    //      * 4.纵向距离改变
+    //      */
+    //
+    //     // ws.send(JSON.stringify({
+    //     //     type:1,
+    //     //     command:'ceshi1',
+    //     //     userId,
+    //     //     userName
+    //     // }))
+    // }
 
-    ws.onclose = function (evt) {
-        console.log('evt---onclose',evt)
-    }
+    // ws.onmessage = function (evt) {
+    //     console.log('evt---onmessage',evt)
+    //     console.log(JSON.parse(JSON.parse(evt.data)))
+    // }
+
+    // ws.onerror = function (evt) {
+    //     console.log('evt---error',evt)
+    // }
+
+    // ws.onclose = function (evt) {
+    //     console.log('evt---onclose',evt)
+    // }
 
     // console.log(excel)
 

@@ -84,6 +84,7 @@ export default class InputPlugin{
             inputDom.focus()
             inputDom.onblur = ()=>{
                 attrs.text = inputDom.value
+                this.core.wsSend(2,attrs)
                 this.inputDom.value = ''
                 this.core.fresh()
                 this.hideInput()

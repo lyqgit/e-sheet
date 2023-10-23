@@ -1,5 +1,6 @@
 export default class ContentComponent{
 
+
     options = {};
 
     offsetX = 0;
@@ -69,6 +70,31 @@ export default class ContentComponent{
         this.secondClickCell = null
         this.clickCell = null
         this.moreSelectedCell = []
+    }
+
+    drawMulPersonSelected(offsetX = 0,offsetY = 0){
+
+        const { cellHeight } = this.options
+
+        this.core.mulPersonSelected.forEach(item=>{
+
+            if(item.type === 1){
+
+                const clickCell = item.command
+
+                if(clickCell.isMerge){
+                    const {mergeWidth,mergeHeight} = clickCell
+                    // console.log('多个选中框',this.clickCell)
+                    this.layer.drawStrokeRect(clickCell.x+cellHeight-offsetX,clickCell.y-offsetY+cellHeight,mergeWidth,mergeHeight,item.userColor,'destination-over',2)
+                }else{
+                    // console.log('单个选中框',this.clickCell)
+                    this.layer.drawStrokeRect(clickCell.x+cellHeight-offsetX,clickCell.y-offsetY+cellHeight,clickCell.width,clickCell.height,item.userColor,'destination-over',2)
+                }
+            }
+
+
+        })
+
     }
 
     // draw canvas
@@ -312,6 +338,9 @@ export default class ContentComponent{
             }
         }
 
+        // 多人协作绘制选中
+        this.drawMulPersonSelected(offsetX,offsetY)
+
 
         this.moreSelectedCell = []
         this.mergeSelectedCell = []
@@ -474,6 +503,13 @@ export default class ContentComponent{
             return null
         }
 
+    }
+
+    changeRectTextByLabel(attr){
+        const rect = this.searchRectByLabel(attr.label)
+        if(rect){
+            rect.text = attr.text
+        }
     }
 
 }

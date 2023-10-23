@@ -2,6 +2,20 @@ import Canvas from './canvas.js'
 
 export default class AppExcel{
 
+
+    mulPersonSelected = []
+
+    /**
+     * @type {WebSocket}
+     */
+    ws
+
+    userId = (new Date()).valueOf()
+
+    userName = (new Date()).valueOf()
+
+    userColor = this.getRandomColor()
+
     fontSize = 12
 
     workBook = {}
@@ -55,7 +69,7 @@ export default class AppExcel{
     borderColor = '#ECEDEE'
     borderCellBgColor = '#F9FBFD'
 
-    constructor(selectorDom,options={},components={},plugins={},data=null) {
+    constructor(selectorDom,options={},components={},plugins={}) {
 
         // 默认设置容器宽和高为600
         options.width = options.width??this.width;
@@ -89,11 +103,85 @@ export default class AppExcel{
         this.installComponents(components);
         this.installPlugins(plugins);
 
-
-
         // requestAnimationFrame(this.draw);
     }
 
+    /**
+     * @param {string} addr
+     */
+    connectWebSocket(addr){
+
+        this.ws = new WebSocket(addr)
+
+        const ws = this.ws
+
+        ws.onopen = function (evt) {
+            console.log('evt---onopen',evt)
+
+            /**
+             * 0.同步数据
+             * 1.选中改变
+             * 2.单元格内容改变
+             * 3.横向距离改变
+             * 4.纵向距离改变
+             */
+
+        }
+
+        ws.onclose = (evt)=>{
+            console.log('evt---onclose',evt)
+            this.ws = null
+        }
+
+        ws.onmessage = evt=>{
+            console.log('evt---onmessage',evt)
+            const data = JSON.parse(evt.data)
+            if(data.type === 0){
+                this.components.ContentComponent.contentGroup = data.command
+            } else if(data.type === 1){
+                const index = this.mulPersonSelected.findIndex(item=>item.userId === data.userId)
+                if(index === -1){
+                    this.mulPersonSelected.push(data)
+                }else{
+                    this.mulPersonSelected[index] = data
+                }
+            }else if(data.type === 2){
+                this.components.ContentComponent.changeRectTextByLabel(data.command)
+            }
+
+
+            this.fresh()
+        }
+    }
+
+    setUserName(userName){
+        this.userName = userName
+    }
+
+    wsSend(type,data){
+        if(this.ws){
+            this.ws.send(JSON.stringify({
+                type,
+                command:data,
+                userId:this.userId,
+                userName:this.userName,
+                userColor:this.userColor
+            }))
+        }
+    }
+
+    syncData(){
+        this.wsSend(0,this.components.ContentComponent.contentGroup)
+    }
+
+    getRandomColor( ) {
+        var rand = Math.floor(Math.random( ) * 0xFFFFFF).toString(16);
+        if(rand.length === 6){
+            return '#'+rand;
+        }else{
+            return this.getRandomColor();
+        }
+    }
 
     initExcelData(sheetName = 'Sheet1'){
 

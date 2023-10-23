@@ -16,7 +16,7 @@ export default class eSheet{
 
     AppExcel = null
 
-    constructor(selector,options={},plugins=[]) {
+    constructor(selector) {
         if(Object.prototype.toString.call(selector) === '[object HTMLDivElement]'){
             this.excelDom = selector;
         }else{
@@ -30,13 +30,18 @@ export default class eSheet{
         // this.excelDom.style.overflow = 'hidden'
         // console.log('selector',selector)
 
+
+
+    }
+
+    init(options={},plugins=[]){
         this.AppExcel = new AppExcel(
             this.excelDom,
             options,
             {ContentComponent,HeaderComponent,SideComponent,WholeComponent},
             {ScrollPlugin,InputPlugin,DragPlugin,SelectPlugin,ContextmenuPlugin,...plugins}
         )
-
+        return this.AppExcel
     }
 
     installXlsxData(oriData){

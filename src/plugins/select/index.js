@@ -538,6 +538,9 @@ export default class SelectPlugin{
                 // console.log('offsetY',offsetY)
                 // console.log('event.offsetY',event.offsetY)
                 if(attrFirst){
+
+                    this.core.wsSend(1,attrFirst)
+
                     this.contentComponent.showClickRect(attrFirst)
 
                     this.contentComponent.setSecondClickCell(null)
@@ -616,11 +619,15 @@ export default class SelectPlugin{
 
                             this.contentComponent.setSecondClickCell(attrSecond)
                             // console.log('attrSecond',attrSecond)
+
                             this.core.fresh()
                         }
                     }
                 }
             }
+
+
+
             this.core.fresh()
             this.core.plugins.InputPlugin.hideInput()
 
