@@ -14,13 +14,48 @@ export default class ContextmenuPlugin{
         this.registryContextMenu()
     }
 
+    containerDom = null
+
+    hideContextMenu=()=>{
+        this.containerDom.style.display = 'none'
+    }
 
     registryContextMenu(){
-        const containerDom = this.core.h('div')
-        const mergeBtn = this.core.h('div')
+        const containerDom = this.core.h('div',{
+            style:{
+                display:'none',
+            },
+            attr:{
+                className:'contextmenu-layout'
+            }
+        })
 
-        mergeBtn.innerText='合并'
-        mergeBtn.onclick = event=>{
+        this.containerDom = containerDom
+
+        this.canvasDom.addEventListener('contextmenu',evt=>{
+            console.log('evt---contextmenu',evt)
+            evt.preventDefault()
+            const { clickCell } = this.contentComponent
+            const { cellHeight } = this.options
+            const { offsetX,offsetY } = this.core.plugins.ScrollPlugin
+            if(clickCell){
+                // show contextmenu
+                containerDom.style.display = 'flex'
+                containerDom.style.left = clickCell.ltX-offsetX+cellHeight+'px'
+                containerDom.style.top = clickCell.ltY-offsetY+'px'
+            }
+        })
+
+        const mergeBtn = this.core.h('div',{
+            style:{
+                cursor:'pointer'
+            },
+            attr:{
+                innerText:'合并单元格'
+            }
+        })
+
+        mergeBtn.onclick = _=>{
             const { clickCell,mergeSelectedCell } = this.contentComponent
             if(mergeSelectedCell.some(item=>item.isMerge)){
                 return
@@ -52,7 +87,7 @@ export default class ContextmenuPlugin{
             // console.log('合并完成',clickCell)
             this.contentComponent.setSecondClickCell(null)
             this.core.freshContent()
-
+            this.hideContextMenu()
         }
 
         containerDom.appendChild(mergeBtn)

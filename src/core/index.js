@@ -326,7 +326,7 @@ export default class AppExcel{
             tempDom[i] = attr[i]
         }
 
-        for(let i in attr){
+        for(let i in style){
             tempDom.style[i] = style[i]
         }
 
