@@ -82,6 +82,8 @@ export default class ContentComponent{
 
                 const clickCell = item.command
 
+                // console.log('item',item)
+
                 if(clickCell.isMerge){
                     const {mergeWidth,mergeHeight} = clickCell
                     // console.log('多个选中框',this.clickCell)
@@ -90,6 +92,8 @@ export default class ContentComponent{
                     // console.log('单个选中框',this.clickCell)
                     this.layer.drawStrokeRect(clickCell.x+cellHeight-offsetX,clickCell.y-offsetY+cellHeight,clickCell.width,clickCell.height,item.userColor,'destination-over',2)
                 }
+                this.layer.drawText(clickCell.x+cellHeight-offsetX+6,clickCell.y-offsetY+cellHeight-16,item.userName,clickCell.width,20,'destination-over','#ffffff','left',null,'top')
+                this.layer.drawFillRect(clickCell.x+cellHeight-offsetX,clickCell.y-offsetY+cellHeight-20,clickCell.width,20,item.userColor,'destination-over')
             }
 
 
@@ -359,7 +363,7 @@ export default class ContentComponent{
                         const {mergeWidth,mergeHeight} = tempRect
                         // console.log('背景色',tempRect)
                         this.layer.drawStrokeRect(x-offsetX+cellHeight,y-offsetY+cellHeight,mergeWidth,mergeHeight,borderColor,'destination-over',1)
-                        this.layer.drawText(x-offsetX+cellHeight,y-offsetY+cellHeight,text,mergeWidth,mergeHeight,'destination-over',tempRect.fontColor,tempRect.font)
+                        this.layer.drawText(x-offsetX+cellHeight,y-offsetY+cellHeight,text,mergeWidth,mergeHeight,'destination-over',tempRect.fontColor,'center',tempRect.font)
                         this.layer.drawFillRect(x-offsetX+cellHeight,y-offsetY+cellHeight,mergeWidth,mergeHeight,tempRect.bgColor?tempRect.bgColor:nonSelectBgColor,'destination-over',1)
                     }else{
                         // 如果左上角不在屏幕内，渲染左上角
@@ -373,7 +377,7 @@ export default class ContentComponent{
 
                 }else if(!tempRect.isMerge){
                     this.layer.drawStrokeRect(x-offsetX+cellHeight,y-offsetY+cellHeight,width,height,borderColor,'destination-over',1)
-                    this.layer.drawText(x-offsetX+cellHeight,y-offsetY+cellHeight,text,width,height,'destination-over',tempRect.fontColor,tempRect.font)
+                    this.layer.drawText(x-offsetX+cellHeight,y-offsetY+cellHeight,text,width,height,'destination-over',tempRect.fontColor,'center',tempRect.font)
                     this.layer.drawFillRect(x-offsetX+cellHeight,y-offsetY+cellHeight,width,height,tempRect.bgColor?tempRect.bgColor:nonSelectBgColor,'destination-over',1)
                 }
                 // this.layer.drawFillRect(x-offsetX+cellHeight,y-offsetY+cellHeight,width,height,'#EBF4FF','destination-over',1)
