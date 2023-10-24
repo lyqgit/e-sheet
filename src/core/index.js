@@ -139,6 +139,9 @@ export default class AppExcel{
             const data = JSON.parse(evt.data)
             if(data.type === 0){
                 ContentComponent.contentGroup = data.command
+                this.mulPersonSelected.forEach(item=>{
+                    item.command = ContentComponent.searchRectByLabel(item.command.label)
+                })
             } else if(data.type === 1){
                 const index = this.mulPersonSelected.findIndex(item=>item.userId === data.userId)
                 data.command = ContentComponent.searchRectByLabel(data.command.label)
