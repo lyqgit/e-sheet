@@ -539,30 +539,33 @@ export default class ContentComponent{
 
     initContentGroupRowAndColByCol(startCol,num){
         const { contentGroup } = this
-        // let { col } = this.core
-        const { cellWidth } = this.options
+        const { cellHeight } = this.options
+        this.core.col += num
+        const { col } = this.core
 
-        // col += num
 
-        // let curRow = 1
-        // let curCol = 1
+        let curRow = 1
+        let curCol = 1
+
+        // console.log('col',col)
+
+        let countSheetWidth = 0;
 
         for(let i=0,n=contentGroup.length;i<n;i++){
 
             const tempRect = contentGroup[i]
 
-            // if((i+1)%col === 0){
-            //     curRow += 1
-            // }else if((i+1)%col === 1){
-            //     curCol = 1
-            // }
+            if((i+1)%col === 1){
+                curCol = 1
+                curRow += 1
+                countSheetWidth = 0
+            }
             // console.log('curRow',curRow)
             if(tempRect.col >= startCol){
-                if(tempRect.label !== 'insert'){
-                    tempRect.col += num
-                    tempRect.x += cellWidth*num
-                    tempRect.ltX += cellWidth*num
-                }
+                // console.log('curCol',curCol)
+                tempRect.col = curCol
+                tempRect.x = countSheetWidth
+                tempRect.ltX = countSheetWidth+cellHeight
 
                 if(tempRect.col >= 27){
                     tempRect.label = String.fromCharCode(65+tempRect.col-27)+String.fromCharCode(65 + tempRect.col-27)+tempRect.row
@@ -571,28 +574,34 @@ export default class ContentComponent{
                 }
                 if(tempRect.isMerge){
 
-                    let oriStartCol = 1
-                    let oriEndCol = 1
-                    for(let s=0;s<tempRect.mergeStartLabel.length-1;s++){
-                        oriStartCol += tempRect.mergeStartLabel.charCodeAt(s) - 65
-
+                    let oriStartCol = 0
+                    let oriEndCol = 0
+                    let startLabel = tempRect.mergeStartLabel.replace(/[0-9]/,'')
+                    let endLabel = tempRect.mergeEndLabel.replace(/[0-9]/,'')
+                    let startLabelRow = tempRect.mergeStartLabel.replace(/[A-Z]/,'')
+                    let endLabelRow = tempRect.mergeEndLabel.replace(/[A-Z]/,'')
+                    // console.log('----',startLabel,endLabel)
+                    // console.log('----',startLabelRow,endLabelRow)
+                    for(let s=0;s<startLabel.length;s++){
+                        oriStartCol += tempRect.mergeStartLabel.charCodeAt(s) - 65 + num
                     }
-                    for(let s=0;s<tempRect.mergeEndLabel.length-1;s++){
-                        oriEndCol += tempRect.mergeEndLabel.charCodeAt(s) - 65
+                    for(let s=0;s<endLabel.length;s++){
+                        oriEndCol += tempRect.mergeEndLabel.charCodeAt(s) - 65 + num
                     }
 
                     if(oriStartCol >= 27){
-                        tempRect.mergeStartLabel = String.fromCharCode(65+oriStartCol-26)+String.fromCharCode(65 + oriStartCol-26)
-                        tempRect.mergeEndLabel = String.fromCharCode(65+oriEndCol-26)+String.fromCharCode(65 + oriEndCol-26)
+                        tempRect.mergeStartLabel = String.fromCharCode(65+oriStartCol-26)+String.fromCharCode(65 + oriStartCol-26)+startLabelRow
+                        tempRect.mergeEndLabel = String.fromCharCode(65+oriEndCol-26)+String.fromCharCode(65 + oriEndCol-26)+endLabelRow
                     }else{
-                        tempRect.mergeStartLabel = String.fromCharCode(65+oriStartCol)
-                        tempRect.mergeEndLabel = String.fromCharCode(65+oriEndCol)
+                        tempRect.mergeStartLabel = String.fromCharCode(65+oriStartCol)+startLabelRow
+                        tempRect.mergeEndLabel = String.fromCharCode(65+oriEndCol)+endLabelRow
                     }
 
                 }
             }
 
-            // curCol += 1
+            curCol += 1
+            countSheetWidth += tempRect.width
         }
 
     }

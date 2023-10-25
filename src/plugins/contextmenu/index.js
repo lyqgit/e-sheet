@@ -21,6 +21,7 @@ export default class ContextmenuPlugin{
     }
 
     insertCol=(col,num)=>{
+        console.log('当前选中的col',col)
         const { row } = this.core
         const { cellWidth,cellHeight } = this.options
         const { contentGroup } = this.contentComponent
@@ -29,7 +30,7 @@ export default class ContextmenuPlugin{
             const index = this.contentComponent.searchRectIndexByColAndRow(col,i);
             const tempRect = contentGroup[index];
             // console.log('index',index);
-            (new Array(num)).fill(undefined).forEach((_,ind)=>{
+            (new Array(num)).fill(undefined).forEach(_=>{
                 contentGroup.splice(index,0,{
                     row:i,
                     col,
@@ -52,17 +53,17 @@ export default class ContextmenuPlugin{
                     fontColor:null,
                     font:null,
                     textAlign:'center',
-                    label:ind===num-1?'insert':''
+                    label:'insert'
                 })
 
             });
 
         }
+        // console.log('contentGroup',contentGroup)
         this.contentComponent.initContentGroupRowAndColByCol(col,num)
         this.contentComponent.hideClickRect()
         this.core.fresh()
         this.core.plugins.ScrollPlugin.changeHorBarWidth()
-        // console.log('contentGroup',contentGroup)
     }
 
     splitCell=(clickCell)=>{
