@@ -110,14 +110,14 @@ export default class HeaderComponent{
         for(let j=0;j<headerRectGroup.length;j++){
             const tempHeader = headerRectGroup[j]
             let label = ''
-            const col = tempHeader.col - 1
-            if(tempHeader.col>=27){
-                label = String.fromCharCode(65 + col-26)+String.fromCharCode(65 + col-26)
-            }else{
-                label = String.fromCharCode(65 + col)
-            }
+            // const col = tempHeader.col - 1
+            // if(tempHeader.col>=27){
+            //     label = String.fromCharCode(65 + col-26)+String.fromCharCode(65 + col-26)
+            // }else{
+            //     label = String.fromCharCode(65 + col)
+            // }
             // console.log('label',label,j)
-            this.layer.drawText(tempHeader.x+cellHeight-offsetX,0,label,tempHeader.width,cellHeight,'destination-over')
+            this.layer.drawText(tempHeader.x+cellHeight-offsetX,0,tempHeader.label.slice(0,tempHeader.label.length-1),tempHeader.width,cellHeight,'destination-over')
             this.layer.drawLine([tempHeader.x+cellHeight-offsetX,0,tempHeader.x+cellHeight-offsetX,cellHeight],'destination-over',borderColor)
             if(clickRectShow && !isRowSelect){
                 // console.log('secondClickCell',secondClickCell)

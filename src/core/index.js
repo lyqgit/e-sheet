@@ -26,7 +26,7 @@ export default class AppExcel{
 
     row= 160
 
-    col = 52
+    col = 26
 
     // 以内容表格左上角为原点计算表格的坐标
 
@@ -227,6 +227,15 @@ export default class AppExcel{
                 if(i===0){
                     this.sheetWidth += cellWidth
                 }
+
+                let label = ''
+
+                if(j>=26){
+                    label = String.fromCharCode(65 + j-26)+String.fromCharCode(65 + j-26)+(i+1)
+                }else{
+                    label = String.fromCharCode(65 + j)+(i+1)
+                }
+
                 this.eSheetWorkBook[sheetName].push({
                     row:i+1,
                     col:j+1,
@@ -249,7 +258,7 @@ export default class AppExcel{
                     fontColor:null,
                     font:null,
                     textAlign:'center',
-                    label:String.fromCharCode(65 + j)+(i+1)
+                    label
                 })
                 colWidth += cellWidth
                 colAbWidth += cellWidth
@@ -315,14 +324,23 @@ export default class AppExcel{
     }
 
     /**
+     * @param {*} obj
+     * @returns {string}
+     */
+    getType=(obj)=>{
+        return Object.prototype.toString.call(obj)
+    }
+
+    /**
      *
      * @param {string} elName
      * @param {Object} attr
      * @param {Object} style
-     * @param {HTMLElement} childDom
+     * @param {HTMLElement | Array<HTMLElement>} childDom
+     * @param {Object} listener
      * @returns {HTMLElement}
      */
-    h(elName,{attr,style} = {},childDom=null){
+    h=(elName,{attr,style} = {},childDom=null)=>{
         const tempDom = document.createElement(elName)
 
         for(let i in attr){
@@ -334,7 +352,14 @@ export default class AppExcel{
         }
 
         if(childDom){
-            tempDom.appendChild(childDom)
+            const childType = this.getType(childDom)
+            if(childType === '[object Array]'){
+                childDom.forEach(item=>{
+                    tempDom.appendChild(item)
+                })
+            }else{
+                tempDom.appendChild(childDom)
+            }
         }
 
         return tempDom

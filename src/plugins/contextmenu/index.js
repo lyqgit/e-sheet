@@ -20,8 +20,52 @@ export default class ContextmenuPlugin{
         this.containerDom.style.display = 'none'
     }
 
-    splitCell=()=>{
-        const { clickCell } = this.contentComponent
+    insertCol=(col,num)=>{
+        const { row } = this.core
+        const { cellWidth,cellHeight } = this.options
+        const { contentGroup } = this.contentComponent
+        this.core.sheetWidth += num*cellWidth
+        for(let i = 1;i<=row;i++){
+            const index = this.contentComponent.searchRectIndexByColAndRow(col,i);
+            const tempRect = contentGroup[index];
+            // console.log('index',index);
+            (new Array(num)).fill(undefined).forEach((_,ind)=>{
+                contentGroup.splice(index,0,{
+                    row:i,
+                    col,
+                    text:'',
+                    width:cellWidth,
+                    height:cellHeight,
+                    x:tempRect.x,
+                    y:tempRect.y,
+                    ltX:tempRect.ltX,
+                    ltY:tempRect.ltY,
+                    mergeWidth:0,
+                    mergeHeight:0,
+                    mergeRow:1,
+                    mergeCol:1,
+                    mergeStartLabel:'',
+                    mergeEndLabel:'',
+                    mergeLabelGroup:[],
+                    isMerge:false,
+                    bgColor:null,
+                    fontColor:null,
+                    font:null,
+                    textAlign:'center',
+                    label:ind===num-1?'insert':''
+                })
+
+            });
+
+        }
+        this.contentComponent.initContentGroupRowAndColByCol(col,num)
+        this.contentComponent.hideClickRect()
+        this.core.fresh()
+        this.core.plugins.ScrollPlugin.changeHorBarWidth()
+        // console.log('contentGroup',contentGroup)
+    }
+
+    splitCell=(clickCell)=>{
         if(!clickCell.isMerge){
             return
         }
@@ -51,9 +95,8 @@ export default class ContextmenuPlugin{
         this.hideContextMenu()
     }
 
-    mergeCell=()=>{
-        const { clickCell,mergeSelectedCell } = this.contentComponent
-        if(mergeSelectedCell.some(item=>item.isMerge)){
+    mergeCell=(clickCell,mergeSelectedCell)=>{
+        if(mergeSelectedCell.some(item=>item.isMerge) || mergeSelectedCell.length === 0){
             return
         }
         let mergeWidth = clickCell.width
@@ -87,7 +130,10 @@ export default class ContextmenuPlugin{
     }
 
     registryContextMenu(){
-        const containerDom = this.core.h('div',{
+
+        const { h } = this.core
+
+        const containerDom = h('div',{
             style:{
                 display:'none',
             },
@@ -96,7 +142,7 @@ export default class ContextmenuPlugin{
             }
         })
 
-        const mergeBtn = this.core.h('div',{
+        const mergeBtn = h('div',{
             style:{
                 cursor:'pointer'
             },
@@ -105,7 +151,7 @@ export default class ContextmenuPlugin{
             }
         })
 
-        const splitBtn = this.core.h('div',{
+        const splitBtn = h('div',{
             style:{
                 cursor:'pointer'
             },
@@ -113,6 +159,40 @@ export default class ContextmenuPlugin{
                 innerText:'拆分单元格'
             }
         })
+
+        const insertColBtn = h('div',{
+            style:{
+                cursor:'pointer'
+            },
+        },[
+            h('span',{
+                attr:{
+                    innerText:'插入'
+                }
+            }),
+            h('input',{
+                attr:{
+                    type:'number',
+                    placeholder:'请输入列数',
+                    onkeydown:event=>{
+                        console.log('event',event)
+                        if(event.key==='Enter'){
+                            const { clickCell } = this.contentComponent
+                            if(!this.contentComponent.isHasMergerInRectArrByCol(clickCell.col)){
+                                this.insertCol(clickCell.col,event.target.valueAsNumber)
+                            }
+                            this.hideContextMenu()
+                        }
+
+                    }
+                }
+            }),
+            h('span',{
+                attr:{
+                    innerText:'列'
+                }
+            })
+        ])
 
         this.containerDom = containerDom
 
@@ -141,15 +221,18 @@ export default class ContextmenuPlugin{
 
 
         mergeBtn.onclick = _=>{
-            this.mergeCell()
+            const { clickCell,mergeSelectedCell } = this.contentComponent
+            this.mergeCell(clickCell,mergeSelectedCell)
         }
 
         splitBtn.onclick = _=>{
-            this.splitCell()
+            const { clickCell } = this.contentComponent
+            this.splitCell(clickCell)
         }
 
         containerDom.appendChild(mergeBtn)
         containerDom.appendChild(splitBtn)
+        containerDom.appendChild(insertColBtn)
         this.selectorDom.appendChild(containerDom)
     }
 
