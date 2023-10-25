@@ -3,5 +3,20 @@
   position:absolute;
   flex-direction:column;
   background-color:#ffffff;
-  padding:20px 10px;
+  padding:10px 6px;
+  box-shadow: rgba(0, 0, 0, 0.1) 1px 3px 8px 0;
+  border-radius: 4px;
+  .item-btn{
+    position: relative;
+    min-width: 150px;
+    height: 34px;
+    font-size: 13px;
+    line-height: 20px;
+    padding: 0 8px;
+    margin: 0 4px;
+    color: rgb(17, 31, 44);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+  }
 }

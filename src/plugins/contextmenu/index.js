@@ -21,7 +21,10 @@ export default class ContextmenuPlugin{
     }
 
     insertCol=(col,num,isLeft = true)=>{
-        console.log('当前选中的col',col)
+        // console.log('当前选中的col',col)
+        if(!num){
+            return
+        }
         const { row } = this.core
         const { cellWidth,cellHeight } = this.options
         const { contentGroup } = this.contentComponent
@@ -148,7 +151,8 @@ export default class ContextmenuPlugin{
                 cursor:'pointer'
             },
             attr:{
-                innerText:'合并单元格'
+                innerText:'合并单元格',
+                className: 'item-btn'
             }
         })
 
@@ -182,6 +186,7 @@ export default class ContextmenuPlugin{
                             if(!this.contentComponent.isHasMergerInRectArrByCol(clickCell.col)){
                                 this.insertCol(clickCell.col,event.target.valueAsNumber)
                             }
+                            event.target.value = null
                             this.hideContextMenu()
                         }
 
@@ -216,6 +221,7 @@ export default class ContextmenuPlugin{
                             if(!this.contentComponent.isHasMergerInRectArrByCol(clickCell.col)){
                                 this.insertCol(clickCell.col,event.target.valueAsNumber,false)
                             }
+                            event.target.value = null
                             this.hideContextMenu()
                         }
 
