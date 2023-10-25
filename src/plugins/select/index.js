@@ -484,9 +484,9 @@ export default class SelectPlugin{
             // console.log('测试',event)
             // console.log('选中',this.core.dragSign)
             // console.log('event.button',event.button)
-            if(event.button !== 0){
-                return;
-            }
+            // if(event.button !== 0){
+            //     return;
+            // }
             this.core.plugins.ContextmenuPlugin.hideContextMenu()
             if(this.core.shiftKey || this.core.ctrlKey || this.core.dragSign){
                 return

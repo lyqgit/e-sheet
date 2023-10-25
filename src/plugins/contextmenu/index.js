@@ -20,7 +20,7 @@ export default class ContextmenuPlugin{
         this.containerDom.style.display = 'none'
     }
 
-    insertCol=(col,num)=>{
+    insertCol=(col,num,isLeft = true)=>{
         console.log('当前选中的col',col)
         const { row } = this.core
         const { cellWidth,cellHeight } = this.options
@@ -31,7 +31,7 @@ export default class ContextmenuPlugin{
             const tempRect = contentGroup[index];
             // console.log('index',index);
             (new Array(num)).fill(undefined).forEach(_=>{
-                contentGroup.splice(index,0,{
+                contentGroup.splice(isLeft?index:index+1,0,{
                     row:i,
                     col,
                     text:'',
@@ -161,14 +161,14 @@ export default class ContextmenuPlugin{
             }
         })
 
-        const insertColBtn = h('div',{
+        const insertLeftColBtn = h('div',{
             style:{
                 cursor:'pointer'
             },
         },[
             h('span',{
                 attr:{
-                    innerText:'插入'
+                    innerText:'左侧插入'
                 }
             }),
             h('input',{
@@ -181,6 +181,40 @@ export default class ContextmenuPlugin{
                             const { clickCell } = this.contentComponent
                             if(!this.contentComponent.isHasMergerInRectArrByCol(clickCell.col)){
                                 this.insertCol(clickCell.col,event.target.valueAsNumber)
+                            }
+                            this.hideContextMenu()
+                        }
+
+                    }
+                }
+            }),
+            h('span',{
+                attr:{
+                    innerText:'列'
+                }
+            })
+        ])
+
+        const insertRightColBtn = h('div',{
+            style:{
+                cursor:'pointer'
+            },
+        },[
+            h('span',{
+                attr:{
+                    innerText:'右侧插入'
+                }
+            }),
+            h('input',{
+                attr:{
+                    type:'number',
+                    placeholder:'请输入列数',
+                    onkeydown:event=>{
+                        console.log('event',event)
+                        if(event.key==='Enter'){
+                            const { clickCell } = this.contentComponent
+                            if(!this.contentComponent.isHasMergerInRectArrByCol(clickCell.col)){
+                                this.insertCol(clickCell.col,event.target.valueAsNumber,false)
                             }
                             this.hideContextMenu()
                         }
@@ -219,8 +253,6 @@ export default class ContextmenuPlugin{
             }
         })
 
-
-
         mergeBtn.onclick = _=>{
             const { clickCell,mergeSelectedCell } = this.contentComponent
             this.mergeCell(clickCell,mergeSelectedCell)
@@ -233,7 +265,8 @@ export default class ContextmenuPlugin{
 
         containerDom.appendChild(mergeBtn)
         containerDom.appendChild(splitBtn)
-        containerDom.appendChild(insertColBtn)
+        containerDom.appendChild(insertLeftColBtn)
+        containerDom.appendChild(insertRightColBtn)
         this.selectorDom.appendChild(containerDom)
     }
 
