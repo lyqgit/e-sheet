@@ -78,7 +78,7 @@ async fn accept_connection(stream: TcpStream) {
 
 async fn user_message(my_id: usize, msg: Message) {
 
-    let mut rx_str:String;
+    let rx_str:String;
 
     match msg {
         Message::Text(data)=>{rx_str=data}

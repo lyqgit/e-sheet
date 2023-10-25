@@ -117,7 +117,7 @@ export default class ContextmenuPlugin{
         this.containerDom = containerDom
 
         this.canvasDom.addEventListener('contextmenu',evt=>{
-            console.log('evt---contextmenu',evt)
+            // console.log('evt---contextmenu',evt)
             evt.preventDefault()
             const { clickCell } = this.contentComponent
             const { cellHeight } = this.options
@@ -125,8 +125,8 @@ export default class ContextmenuPlugin{
             if(clickCell){
                 // show contextmenu
                 containerDom.style.display = 'flex'
-                containerDom.style.left = clickCell.ltX-offsetX+cellHeight+'px'
-                containerDom.style.top = clickCell.ltY-offsetY+'px'
+                containerDom.style.left = evt.offsetX+'px'//clickCell.ltX-offsetX+cellHeight+'px'
+                containerDom.style.top = evt.offsetY+'px'//clickCell.ltY-offsetY+'px'
                 if(clickCell.isMerge){
                     mergeBtn.style.display='none'
                     splitBtn.style.display='block'
