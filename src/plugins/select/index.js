@@ -33,10 +33,12 @@ export default class SelectPlugin{
 
     displayAllTextByCol(col,width){
 
+        const { cellHeight } = this.options
+
         const { contentGroup } = this.contentComponent
 
         const allCol = contentGroup.filter(item=>item.col === col)
-        const allColTextWidth = allCol.map(item=>this.layer.ctx.measureText(item.text).width)
+        const allColTextWidth = allCol.map(item=>this.layer.ctx.measureText(item.text).width+cellHeight)
         allColTextWidth.push(width)
 
         const maxWidth = allColTextWidth.sort((a,b)=>a-b)[allColTextWidth.length-1]

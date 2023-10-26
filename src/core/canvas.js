@@ -92,12 +92,12 @@ export default class Canvas{
         rectWidth = rectWidth??cellWidth
         rectHeight = rectHeight??cellHeight
 
-        ctx.font = font??'12px Calibri'
-        ctx.fillStyle= color??"black";
+        ctx.font = font?font:'12px Calibri'
+        ctx.fillStyle= color?color:"black";
         const baseX = x+rectWidth/2
         const baseY = y+rectHeight/2
 
-        ctx.textBaseline = textBaseline??"middle";
+        ctx.textBaseline = textBaseline?textBaseline:"middle";
         ctx.textAlign = textAlign!==''?textAlign:"center";
 
         const textObj = ctx.measureText(text);
