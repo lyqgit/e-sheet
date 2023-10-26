@@ -1,12 +1,35 @@
 
 // 主题颜色
 :root{
-  --eview-sheet-primary-color:#4290f7;
+  --e-sheet-primary-color:#4290f7;
+  --e-sheet-selected-cell-color:#0089FF;
 }
 $theme-color-blue:--eview-sheet-primary-color;
 
 
 // 全局样式
+
+// cell
+.e-sheet-selected-cell{
+  border:2px solid var(--e-sheet-selected-cell-color);
+  position: absolute;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+.e-sheet-ver-cell-border{
+  position: absolute;
+  width: 4px;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.e-sheet-hor-cell-border{
+  position: absolute;
+  height: 4px;
+  background-color: transparent;
+  cursor: pointer;
+}
 
 
 // 引入内容样式

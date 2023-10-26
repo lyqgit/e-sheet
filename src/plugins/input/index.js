@@ -51,6 +51,8 @@ export default class InputPlugin{
 
         this.canvasDom.addEventListener('dblclick',evt=>{
 
+            this.contentComponent.hideSelectedCellDom()
+
             const { cellHeight } = this.options
 
             if(evt.offsetX<=cellHeight || evt.offsetY<=cellHeight){

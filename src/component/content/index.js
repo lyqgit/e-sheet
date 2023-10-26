@@ -1,5 +1,29 @@
 export default class ContentComponent{
 
+    /**
+     * @type {HTMLElement}
+     */
+    selectedCellTopBorderDom = null
+    /**
+     * @type {HTMLElement}
+     */
+    selectedCellBottomBorderDom = null
+    /**
+     * @type {HTMLElement}
+     */
+    selectedCellLeftBorderDom = null
+    /**
+     * @type {HTMLElement}
+     */
+    selectedCellRightBorderDom = null
+
+    selectedCellWidth=0
+    selectedCellHeight=0
+
+    /**
+     * @type {HTMLElement}
+     */
+    canvasDom = null
 
     options = {};
 
@@ -7,6 +31,11 @@ export default class ContentComponent{
     offsetY = 0;
 
     clickRectShow = false
+
+    // 鼠标松开后的当前选中框
+    moveClickCell = null
+
+
 
     clickCell = null
 
@@ -34,11 +63,14 @@ export default class ContentComponent{
         this.options = options;
         this.layer = layer;
         this.core = core;
+        this.canvasDom = core.canvasDom
+        this.selectorDom = core.selectorDom
         this.installContentData()
         // console.log('this.core.sheetWidth',this.core.sheetWidth)
         // console.log('this.core.sheetHeight',this.core.sheetHeight)
         // this.initDraw()
         this.trendsDraw(0,0)
+        this.registrySelectedCellDom()
     }
 
 
@@ -191,6 +223,166 @@ export default class ContentComponent{
         this.contentBorderGroup.add(tempHandlerRectBack);
     }
 
+    showSelectedCellDom(x,y,width,height){
+
+        width = width??this.selectedCellWidth
+        height = height??this.selectedCellHeight
+
+        this.selectedCellWidth = width
+        this.selectedCellHeight = height
+
+        // top
+        this.selectedCellTopBorderDom.style.display = 'block'
+        this.selectedCellTopBorderDom.style.left = x+'px'
+        this.selectedCellTopBorderDom.style.top = y+'px'
+        this.selectedCellTopBorderDom.style.width = width+'px'
+
+        // bottom
+        this.selectedCellBottomBorderDom.style.display = 'block'
+        this.selectedCellBottomBorderDom.style.left = x+'px'
+        this.selectedCellBottomBorderDom.style.top = y+height-4+'px'
+        this.selectedCellBottomBorderDom.style.width = width+'px'
+
+        // left
+        this.selectedCellLeftBorderDom.style.display = 'block'
+        this.selectedCellLeftBorderDom.style.left = x+'px'
+        this.selectedCellLeftBorderDom.style.top = y+'px'
+        this.selectedCellLeftBorderDom.style.height = height+'px'
+
+        // right
+        this.selectedCellRightBorderDom.style.display = 'block'
+        this.selectedCellRightBorderDom.style.left = x+width-4+'px'
+        this.selectedCellRightBorderDom.style.top = y+'px'
+        this.selectedCellRightBorderDom.style.height = height+'px'
+
+    }
+
+    setSelectedCellBorderDomBgColor(color){
+
+        const { selectedBorderBgColor } = this.core
+
+        const tempColor = color??selectedBorderBgColor
+
+        this.selectedCellTopBorderDom.style.backgroundColor = tempColor
+        this.selectedCellBottomBorderDom.style.backgroundColor = tempColor
+        this.selectedCellLeftBorderDom.style.backgroundColor = tempColor
+        this.selectedCellRightBorderDom.style.backgroundColor = tempColor
+    }
+
+    hideSelectedCellDom(){
+        this.selectedCellTopBorderDom.style.display = 'none'
+        this.selectedCellBottomBorderDom.style.display = 'none'
+        this.selectedCellLeftBorderDom.style.display = 'none'
+        this.selectedCellRightBorderDom.style.display = 'none'
+    }
+
+    registrySelectedCellDom(){
+
+        const { h,selectorDom } = this.core
+
+        const cellTopBorderDom = h('div',{
+            attr:{
+                className:'e-sheet-hor-cell-border',
+                onmousedown:_=>{
+                    this.setSelectedCellBorderDomBgColor()
+                    this.canvasDom.onmousemove = event=>{
+                        this.moveCell(event)
+                    }
+                    this.selectorDom.onmouseup = event=>{
+                        console.log('测试',this.moveClickCell,this.clickCell)
+                        this.setSelectedCellBorderDomBgColor('transparent')
+                        this.setCellAttrIneSheet(this.moveClickCell,this.clickCell)
+                        this.selectorDom.onmouseup = null
+                    }
+
+                }
+            },
+            style:{
+                left:0,
+                top:0,
+                width:0,
+                display:'none'
+            }
+        })
+
+        const cellBottomBorderDom = h('div',{
+            attr:{
+                className:'e-sheet-hor-cell-border'
+            },
+            style:{
+                left:0,
+                top:0,
+                width:0,
+                display:'none'
+            }
+        })
+
+        const cellLeftBorderDom = h('div',{
+            attr:{
+                className:'e-sheet-ver-cell-border'
+            },
+            style:{
+                left:0,
+                top:0,
+                height:0,
+                display:'none'
+            }
+        })
+
+        const cellRightBorderDom = h('div',{
+            attr:{
+                className:'e-sheet-ver-cell-border'
+            },
+            style:{
+                left:0,
+                top:0,
+                height:0,
+                display:'none'
+            }
+        })
+
+        this.selectedCellTopBorderDom = cellTopBorderDom
+        this.selectedCellBottomBorderDom = cellBottomBorderDom
+        this.selectedCellLeftBorderDom = cellLeftBorderDom
+        this.selectedCellRightBorderDom = cellRightBorderDom
+        selectorDom.appendChild(cellTopBorderDom)
+        selectorDom.appendChild(cellBottomBorderDom)
+        selectorDom.appendChild(cellLeftBorderDom)
+        selectorDom.appendChild(cellRightBorderDom)
+    }
+
+    /**
+     * @param {MouseEvent} event
+     */
+    moveCell=(event)=>{
+        // console.log('event',event)
+        const { moreSelectedCell } = this
+        const { cellHeight } = this.options
+        const { offsetX,offsetY } = this.core.plugins.ScrollPlugin
+        const curCell = this.core.plugins.SelectPlugin.searchRectAddr(event.offsetX+offsetX - cellHeight,event.offsetY+offsetY - cellHeight)
+        this.moveClickCell = curCell;
+        // console.log('clickCell',clickCell)
+        this.showSelectedCellDom(curCell.x+cellHeight-offsetX,curCell.y-offsetY+cellHeight)
+        if(moreSelectedCell.length > 0){
+            // 多选移动
+        }else{
+            // 单选移动
+
+        }
+    }
+
+    /**
+     * @param {Object} cell
+     * @param {Object} attr
+     */
+    setCellAttrIneSheet(cell,attr){
+        cell.text = attr.text
+        attr.text = ''
+        this.showClickRect(cell)
+        this.moveClickCell = null
+        this.core.freshContent()
+    }
+
     /**
      * @param {number} offsetX
      * @param {number} offsetY
@@ -319,9 +511,11 @@ export default class ContentComponent{
                         const {mergeWidth,mergeHeight} = this.clickCell
                         // console.log('多个选中框',this.clickCell)
                         this.layer.drawStrokeRect(this.clickCell.x+cellHeight-offsetX,this.clickCell.y-offsetY+cellHeight,mergeWidth,mergeHeight,selectedBorderBgColor,'destination-over',2)
+                        this.showSelectedCellDom(this.clickCell.x+cellHeight-offsetX,this.clickCell.y-offsetY+cellHeight,mergeWidth,mergeHeight)
                     }else{
                         // console.log('单个选中框',this.clickCell)
                         this.layer.drawStrokeRect(this.clickCell.x+cellHeight-offsetX,this.clickCell.y-offsetY+cellHeight,this.clickCell.width,this.clickCell.height,selectedBorderBgColor,'destination-over',2)
+                        this.showSelectedCellDom(this.clickCell.x+cellHeight-offsetX,this.clickCell.y-offsetY+cellHeight,this.clickCell.width,this.clickCell.height)
                     }
 
                 }else if(!startAndEndRect){
@@ -329,13 +523,16 @@ export default class ContentComponent{
                         // 最后一个在右边
                         const isBottom = this.secondClickCell.y>this.clickCell.y
                         this.layer.drawStrokeRect(this.clickCell.x+cellHeight-offsetX,(isBottom?this.clickCell.y:this.secondClickCell.y)-offsetY+cellHeight,this.secondClickCell.x-this.clickCell.x+this.secondClickCell.width,Math.abs(this.secondClickCell.y-this.clickCell.y)+this.secondClickCell.height,selectedBorderBgColor,'destination-over',2)
+                        this.showSelectedCellDom(this.clickCell.x+cellHeight-offsetX,(isBottom?this.clickCell.y:this.secondClickCell.y)-offsetY+cellHeight,this.secondClickCell.x-this.clickCell.x+this.secondClickCell.width,Math.abs(this.secondClickCell.y-this.clickCell.y)+this.secondClickCell.height)
                     }else{
                         // 最后一个在左边
                         const isBottom = this.secondClickCell.y>this.clickCell.y
                         this.layer.drawStrokeRect(this.secondClickCell.x+cellHeight-offsetX,(isBottom?this.clickCell.y:this.secondClickCell.y)-offsetY+cellHeight,this.clickCell.x-this.secondClickCell.x+this.clickCell.width,Math.abs(this.secondClickCell.y-this.clickCell.y)+this.secondClickCell.height,selectedBorderBgColor,'destination-over',2)
+                        this.showSelectedCellDom(this.secondClickCell.x+cellHeight-offsetX,(isBottom?this.clickCell.y:this.secondClickCell.y)-offsetY+cellHeight,this.clickCell.x-this.secondClickCell.x+this.clickCell.width,Math.abs(this.secondClickCell.y-this.clickCell.y)+this.secondClickCell.height)
                     }
                 }else if(startAndEndRect){
                     this.layer.drawStrokeRect(attrFirst.x+cellHeight-offsetX,attrFirst.y-offsetY+cellHeight,attrSecond.x-attrFirst.x+attrSecond.width,attrSecond.y-attrFirst.y+attrSecond.height,selectedBorderBgColor,'destination-over',2)
+                    this.showSelectedCellDom(attrFirst.x+cellHeight-offsetX,attrFirst.y-offsetY+cellHeight,attrSecond.x-attrFirst.x+attrSecond.width,attrSecond.y-attrFirst.y+attrSecond.height)
                 }
 
 

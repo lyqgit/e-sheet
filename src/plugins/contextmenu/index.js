@@ -191,7 +191,7 @@ export default class ContextmenuPlugin{
                 display:'none',
             },
             attr:{
-                className:'contextmenu-layout'
+                className:'e-sheet-contextmenu-layout'
             }
         })
 
