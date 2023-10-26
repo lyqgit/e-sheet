@@ -528,13 +528,24 @@ export default class ContentComponent{
      */
     searchRectArrByCol(col){
         const { contentGroup } = this
-        return contentGroup.filter(item=>{
-            item.col === col
-        })
+        return contentGroup.filter(item=>item.col === col)
+    }
+
+    /**
+     * @param {number} row
+     * @returns {*[]}
+     */
+    searchRectArrByRow(row){
+        const { contentGroup } = this
+        return contentGroup.filter(item=>item.row === row)
     }
 
     isHasMergerInRectArrByCol(col){
         return this.searchRectArrByCol(col).some(item=>item.isMerge)
+    }
+
+    isHasMergerInRectArrByRow(row){
+        return this.searchRectArrByRow(row).some(item=>item.isMerge)
     }
 
     initContentGroupRowAndColByCol(startCol,num){
@@ -544,7 +555,7 @@ export default class ContentComponent{
         const { col } = this.core
 
 
-        let curRow = 1
+        let curRow = 0
         let curCol = 1
 
         // console.log('col',col)
@@ -596,6 +607,77 @@ export default class ContentComponent{
                         tempRect.mergeStartLabel = String.fromCharCode(65+oriStartCol)+startLabelRow
                         tempRect.mergeEndLabel = String.fromCharCode(65+oriEndCol)+endLabelRow
                     }
+
+                }
+            }
+
+            curCol += 1
+            countSheetWidth += tempRect.width
+        }
+
+    }
+
+    initContentGroupRowAndColByRow(startRow,num){
+        const { contentGroup } = this
+        const { cellHeight } = this.options
+        this.core.row += num
+        const { col } = this.core
+
+
+        let curRow = 0
+        let curCol = 1
+
+        // console.log('startRow',startRow)
+
+        let countSheetHeight = 0;
+        let countSheetWidth = 0;
+
+        for(let i=0,n=contentGroup.length;i<n;i++){
+
+            const tempRect = contentGroup[i]
+
+            if((i+1)%col === 1){
+                curCol = 1
+                curRow += 1
+                if(curRow > 1){
+                    countSheetHeight += tempRect.height
+                }
+                countSheetWidth = 0
+            }
+            // console.log('curRow',curRow)
+            if(tempRect.row >= startRow){
+                // console.log('curRow',curRow)
+                tempRect.row = curRow
+                tempRect.y = countSheetHeight
+                tempRect.ltY = countSheetHeight+cellHeight
+                tempRect.x = countSheetWidth
+                tempRect.ltX = countSheetWidth+cellHeight
+
+                if(tempRect.label === 'insert'){
+                    if(tempRect.col >= 27){
+                        tempRect.label = String.fromCharCode(65+tempRect.col-27)+String.fromCharCode(65 + tempRect.col-27)+tempRect.row
+                    }else{
+                        tempRect.label = String.fromCharCode(65 + tempRect.col - 1)+tempRect.row
+                    }
+                }else{
+                    tempRect.label = tempRect.label.replace(/[0-9]/,curRow)
+                }
+
+                // if(tempRect.col >= 27){
+                //     tempRect.label = String.fromCharCode(65+tempRect.col-27)+String.fromCharCode(65 + tempRect.col-27)+tempRect.row
+                // }else{
+                //     tempRect.label = String.fromCharCode(65 + tempRect.col - 1)+tempRect.row
+                // }
+                if(tempRect.isMerge){
+
+                    let startLabel = tempRect.mergeStartLabel.replace(/[0-9]/,'')
+                    let endLabel = tempRect.mergeEndLabel.replace(/[0-9]/,'')
+                    let startLabelRow = parseInt(tempRect.mergeStartLabel.replace(/[A-Z]/,''))
+                    let endLabelRow = parseInt(tempRect.mergeEndLabel.replace(/[A-Z]/,''))
+                    // console.log('----',startLabel,endLabel)
+                    // console.log('----',startLabelRow,endLabelRow)
+                    tempRect.mergeStartLabel = startLabel+(startLabelRow+num)
+                    tempRect.mergeEndLabel = endLabel+(endLabelRow+num)
 
                 }
             }

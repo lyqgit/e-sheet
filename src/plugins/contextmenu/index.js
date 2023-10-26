@@ -20,6 +20,55 @@ export default class ContextmenuPlugin{
         this.containerDom.style.display = 'none'
     }
 
+    insertRow=(row,num,isTop = true)=>{
+        // console.log('当前选中的row',row)
+        if(!num){
+            return
+        }
+        const { col } = this.core
+        const { cellWidth,cellHeight } = this.options
+        const { contentGroup } = this.contentComponent
+        this.core.sheetHeight += num*cellHeight
+        const index = this.contentComponent.searchRectIndexByColAndRow(1,isTop?row:(row+1));
+        for(let i = 1;i<=num;i++){
+            const tempRect = contentGroup[index];
+            // console.log('index',index);
+            (new Array(col)).fill(undefined).forEach((_,ind)=>{
+                contentGroup.splice(index,0,{
+                    row,
+                    col:col - ind,
+                    text:'',
+                    width:cellWidth,
+                    height:cellHeight,
+                    x:tempRect.x,
+                    y:tempRect.y,
+                    ltX:tempRect.ltX,
+                    ltY:tempRect.ltY,
+                    mergeWidth:0,
+                    mergeHeight:0,
+                    mergeRow:1,
+                    mergeCol:1,
+                    mergeStartLabel:'',
+                    mergeEndLabel:'',
+                    mergeLabelGroup:[],
+                    isMerge:false,
+                    bgColor:null,
+                    fontColor:null,
+                    font:null,
+                    textAlign:'center',
+                    label:'insert'
+                })
+
+            });
+
+        }
+        this.contentComponent.initContentGroupRowAndColByRow(row,num)
+        this.contentComponent.hideClickRect()
+        this.core.fresh()
+        this.core.plugins.ScrollPlugin.changeVerBarHeight()
+        console.log('contentGroup',contentGroup)
+    }
+
     insertCol=(col,num,isLeft = true)=>{
         // console.log('当前选中的col',col)
         if(!num){
@@ -180,7 +229,7 @@ export default class ContextmenuPlugin{
                     type:'number',
                     placeholder:'请输入列数',
                     onkeydown:event=>{
-                        console.log('event',event)
+                        // console.log('event',event)
                         if(event.key==='Enter'){
                             const { clickCell } = this.contentComponent
                             if(!this.contentComponent.isHasMergerInRectArrByCol(clickCell.col)){
@@ -215,7 +264,7 @@ export default class ContextmenuPlugin{
                     type:'number',
                     placeholder:'请输入列数',
                     onkeydown:event=>{
-                        console.log('event',event)
+                        // console.log('event',event)
                         if(event.key==='Enter'){
                             const { clickCell } = this.contentComponent
                             if(!this.contentComponent.isHasMergerInRectArrByCol(clickCell.col)){
@@ -234,6 +283,78 @@ export default class ContextmenuPlugin{
                 }
             })
         ])
+
+        const insertTopRowBtn = h('div',{
+            style:{
+                cursor:'pointer'
+            },
+        },[
+            h('span',{
+                attr:{
+                    innerText:'上侧插入'
+                }
+            }),
+            h('input',{
+                attr:{
+                    type:'number',
+                    placeholder:'请输入行数',
+                    onkeydown:event=>{
+                        // console.log('event',event)
+                        if(event.key==='Enter'){
+                            const { clickCell } = this.contentComponent
+                            if(!this.contentComponent.isHasMergerInRectArrByRow(clickCell.row)){
+                                this.insertRow(clickCell.row,event.target.valueAsNumber)
+                            }
+                            event.target.value = null
+                            this.hideContextMenu()
+                        }
+
+                    }
+                }
+            }),
+            h('span',{
+                attr:{
+                    innerText:'行'
+                }
+            })
+        ])
+
+
+        const insertBottomRowBtn = h('div',{
+            style:{
+                cursor:'pointer'
+            },
+        },[
+            h('span',{
+                attr:{
+                    innerText:'下侧插入'
+                }
+            }),
+            h('input',{
+                attr:{
+                    type:'number',
+                    placeholder:'请输入行数',
+                    onkeydown:event=>{
+                        // console.log('event',event)
+                        if(event.key==='Enter'){
+                            const { clickCell } = this.contentComponent
+                            if(!this.contentComponent.isHasMergerInRectArrByRow(clickCell.row)){
+                                this.insertRow(clickCell.row,event.target.valueAsNumber,false)
+                            }
+                            event.target.value = null
+                            this.hideContextMenu()
+                        }
+
+                    }
+                }
+            }),
+            h('span',{
+                attr:{
+                    innerText:'行'
+                }
+            })
+        ])
+
 
         this.containerDom = containerDom
 
@@ -273,6 +394,8 @@ export default class ContextmenuPlugin{
         containerDom.appendChild(splitBtn)
         containerDom.appendChild(insertLeftColBtn)
         containerDom.appendChild(insertRightColBtn)
+        containerDom.appendChild(insertTopRowBtn)
+        containerDom.appendChild(insertBottomRowBtn)
         this.selectorDom.appendChild(containerDom)
     }
 
