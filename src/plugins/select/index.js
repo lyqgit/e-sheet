@@ -151,246 +151,259 @@ export default class SelectPlugin{
         return tableArr
     }
 
+    /**
+     * @param {string} tableDomStr
+     * @param {Object} clickCell
+     */
+    transformTableDomStrToCanvasCell(tableDomStr,clickCell){
+
+        const { h } = this.core
+
+        const domParser = new DOMParser();
+        const html = domParser.parseFromString(tableDomStr,'text/html')
+        const css = html.querySelector('style')?html.querySelector('style').sheet.cssRules:[]
+        // console.log('table',html.querySelector('style'))
+        // console.log('table',html.querySelector('table'))
+        const table = html.querySelector('table')
+        if(!table){
+            return
+        }
+
+        const trs = table.querySelectorAll('tr')
+
+        const tableArr = this.tableDomToArr(table)
+
+        // console.log('tableArr',tableArr)
+
+        const tdDom = h('td')
+
+        for(let i=0;i<tableArr.length;i++){
+            const tds = tableArr[i]
+            // console.log('tds.length',tds.length)
+            for(let j=0;j<tds.length;j++){
+                const tempTdDom = tds[j]
+
+                if(!tempTdDom){
+                    tableArr[i].push(tdDom.cloneNode())
+                }
+
+                if(tempTdDom.rowSpan > 1){
+                    for(let k=1,kn=tempTdDom.rowSpan;k<kn;k++){
+                        tableArr[i+k].splice(j,0,tdDom.cloneNode())
+                    }
+                }
+
+                if(tempTdDom.colSpan > 1){
+                    (new Array(tempTdDom.colSpan-1)).fill(0).forEach(_=>{
+                        tableArr[i].splice(j+1,0,tdDom.cloneNode())
+                    })
+                }
+
+
+            }
+            // console.log('tableArr--td-arr',tableArr[i])
+        }
+        // console.log('tableArr',tableArr)
+
+        const tdCount = tableArr.length
+        let endSearchRect = null
+        for(let i=0;i<tableArr.length;i++){
+            const tds = tableArr[i]
+            for(let j=0;j<tds.length;j++){
+
+                const tempTdDom = tds[j]
+
+                // console.log(tempTdDom.rowSpan,'tempTdDom.rowSpan')
+                // console.log(tempTdDom.colSpan,'tempTdDom.colSpan')
+
+                let tempTd = {}
+
+                if(tds[j].getAttribute('data-json')){
+                    tempTd = JSON.parse(tds[j].getAttribute('data-json'))
+                }else{
+
+                    let bgColor = ''
+                    let fontColor = ''
+                    let textAlign = ''
+                    let font = ''
+                    let fontSize = ''
+                    let fontFamily = ''
+
+                    for(let ci=0,cn=css.length;ci<cn;ci++){
+                        if(tempTdDom.className === css[ci].selectorText.replace('.','')){
+                            bgColor = css[ci].style.backgroundColor!==''?css[ci].style.backgroundColor:null
+                            fontColor = css[ci].style.color!==''?css[ci].style.color:null
+                            textAlign = css[ci].style.textAlign!==''?css[ci].style.textAlign:'center'
+                            fontSize = css[ci].style.fontSize!==''?css[ci].style.fontSize.replace('pt','px'):'12px'
+                            fontFamily = css[ci].style.fontFamily!==''?css[ci].style.fontFamily:null
+                        }
+                    }
+
+                    font = fontSize+' '+fontFamily
+
+                    tempTd = {
+                        mergeRow:tempTdDom.rowSpan>1?tempTdDom.rowSpan:(tempTdDom.colSpan>1?1:0),
+                        mergeCol:tempTdDom.colSpan>1?tempTdDom.colSpan:(tempTdDom.rowSpan>1?1:0),
+                        isMerge:((tempTdDom.colSpan && tempTdDom.colSpan>1)||(tempTdDom.rowSpan && tempTdDom.rowSpan>1)),
+                        text:tempTdDom.innerText,
+                        isFromExcel:true,
+                        bgColor,
+                        fontColor,
+                        font
+                    }
+                }
+                // console.log('tempTd',tempTd)
+
+                const tempSearchRect = this.searchRectByColAndRow(clickCell.col+j,clickCell.row+i)
+                if(i===trs.length-1 && j===tds.length-1){
+                    endSearchRect = tempSearchRect
+                }
+                if(tempTd.isMerge){
+                    // console.log('tempTd',tempTd)
+                    const rowLen = tempSearchRect.row+tempTd.mergeRow
+                    const colLen = tempSearchRect.col+tempTd.mergeCol
+                    // console.log('rowLen',rowLen)
+                    // console.log('colLen',colLen)
+                    // console.log('tempSearchRect.row',tempSearchRect.row)
+                    // console.log('tempSearchRect.col',tempSearchRect.col)
+                    // console.log('tempSearchRect',tempSearchRect)
+                    for(let i=tempSearchRect.row;i<rowLen;i++){
+                        for(let j=tempSearchRect.col;j<colLen;j++){
+                            // console.log('合并',this.searchRectByColAndRow(j,i))
+                            if(i===tempSearchRect.row&&j===tempSearchRect.col){
+                                this.setCellAttr(tempSearchRect,tempTd)
+                                if(tempTd.isFromExcel){
+                                    tempSearchRect.mergeWidth = tempSearchRect.width
+                                    tempSearchRect.mergeHeight = tempSearchRect.height
+                                }
+                            }else{
+                                const tempMergeRect = this.searchRectByColAndRow(j,i)
+                                tempMergeRect.isMerge = true
+                                tempMergeRect.mergeStartLabel = tempSearchRect.mergeStartLabel
+                                tempMergeRect.mergeEndLabel = tempSearchRect.mergeEndLabel
+                                if(tempTd.isFromExcel){
+                                    if(tempMergeRect.col === tempSearchRect.col){
+                                        tempSearchRect.mergeHeight += tempMergeRect.height
+                                    }
+                                    if(tempMergeRect.row === tempSearchRect.row){
+                                        tempSearchRect.mergeWidth += tempMergeRect.width
+                                    }
+                                }
+                                // console.log('tempMergeRect',tempMergeRect)
+                                // console.log('tempMergeRect.isMerge',tempMergeRect.isMerge)
+                            }
+                        }
+                    }
+                    // console.log('有合并----')
+                    // console.log('tempSearchRect',tempSearchRect)
+                }else{
+                    // console.log('没合并····')
+                    // console.log('tempSearchRect',tempSearchRect)
+                    // console.log('clickCell',clickCell)
+                    // console.log('tempTd',tempTd)
+                    // console.log('colDiff',colDiff)
+                    // console.log('rowDiff',rowDiff)
+                    // console.log('tempTd',tempTd.isMerge)
+                    if(!tempSearchRect.isMerge){
+                        this.setCellAttr(tempSearchRect,tempTd)
+                    }
+                }
+
+            }
+        }
+        if(tdCount === 0){
+            endSearchRect = null
+        }
+        // console.log('endSearchRect',endSearchRect)
+        this.contentComponent.showClickRect(clickCell)
+        this.contentComponent.setSecondClickCell(endSearchRect)
+        this.core.fresh()
+    }
+
+    transformCanvasCellToTableDomStr(){
+        const { clickCell,secondClickCell,clickRectShow,moreSelectedCell } = this.contentComponent
+        const { h } = this.core
+        if(clickRectShow){
+            // 一个框
+            // console.log('moreSelectedCell',moreSelectedCell)
+
+            const table = h('table')
+
+            const oriTr = h('tr')
+            const oriTd = h('td')
+
+            if(clickCell && !secondClickCell){
+
+                if(clickCell.isMerge){
+                    const finalRow = clickCell.row+clickCell.mergeRow
+                    for(let i=clickCell.row;i<finalRow;i++){
+                        const tr = oriTr.cloneNode()
+                        if(i === clickCell.row){
+                            const td = oriTd.cloneNode()
+                            this.setTdAttrs(td,clickCell)
+                            tr.appendChild(td)
+                            // console.log('td',td)
+                        }
+
+                        table.appendChild(tr)
+                    }
+                    // console.log('clickCell',clickCell)
+                }else{
+                    const tr = oriTr.cloneNode()
+                    const td = oriTd.cloneNode()
+                    this.setTdAttrs(td,clickCell)
+                    tr.appendChild(td)
+                    table.appendChild(tr)
+                    // console.log('table',table.outerHTML)
+                }
+                // console.log('clickCell',clickCell)
+            }else if(secondClickCell){
+                let tempRow = 0
+                let tr = null
+                for(let i=0;i<moreSelectedCell.length;i++){
+                    const tempRect = moreSelectedCell[i]
+                    if(tempRow !== tempRect.row){
+                        tempRow = tempRect.row
+                        tr = oriTr.cloneNode()
+                        table.appendChild(tr)
+                    }
+
+                    if((tempRect.isMerge && tempRect.label === tempRect.mergeStartLabel) || !tempRect.isMerge){
+                        const td = oriTd.cloneNode()
+                        this.setTdAttrs(td,tempRect)
+                        tr.appendChild(td)
+                    }
+                }
+                // 复制多个
+                // console.log('复制moreSelectedCell',moreSelectedCell)
+            }
+            // console.log('复制的table',table)
+            const tableDomStr = table.outerHTML
+
+            oriTr.remove()
+            oriTd.remove()
+            return tableDomStr
+            // this.copyText('<html><body><table><tr><td style="color:red">测试</td></tr></table></body></html>')
+        }
+    }
+
     moreSelect(){
 
         document.addEventListener('paste',event=>{
-            const { clickCell,secondClickCell,clickRectShow,contentGroup } = this.contentComponent
-            const { h } = this.core
-
+            const { clickRectShow,clickCell } = this.contentComponent
             if(clickRectShow){
                 // 一个框
-                const domParser = new DOMParser();
-                const html = domParser.parseFromString(event.clipboardData.getData('text/html'),'text/html')
-                const css = html.querySelector('style')?html.querySelector('style').sheet.cssRules:[]
-                // console.log('table',html.querySelector('style'))
-                // console.log('table',html.querySelector('table'))
-                const table = html.querySelector('table')
-                if(!table){
-                    return
-                }
-
+                this.transformTableDomStrToCanvasCell(event.clipboardData.getData('text/html'),clickCell)
                 // console.log('event-html',event.clipboardData.getData('text/html'))
                 // console.log('event-text',event.clipboardData.getData('text/plain'))
-                const trs = html.querySelector('table').querySelectorAll('tr')
-
-                const tableArr = this.tableDomToArr(html.querySelector('table'))
-
-                // console.log('tableArr',tableArr)
-
-                const tdDom = h('td')
-
-                for(let i=0;i<tableArr.length;i++){
-                    const tds = tableArr[i]
-                    // console.log('tds.length',tds.length)
-                    for(let j=0;j<tds.length;j++){
-                        const tempTdDom = tds[j]
-
-                        if(!tempTdDom){
-                            tableArr[i].push(tdDom.cloneNode())
-                        }
-
-                        if(tempTdDom.rowSpan > 1){
-                            for(let k=1,kn=tempTdDom.rowSpan;k<kn;k++){
-                                tableArr[i+k].splice(j,0,tdDom.cloneNode())
-                            }
-                        }
-
-                        if(tempTdDom.colSpan > 1){
-                            (new Array(tempTdDom.colSpan-1)).fill(0).forEach(_=>{
-                                    tableArr[i].splice(j+1,0,tdDom.cloneNode())
-                            })
-                        }
-
-
-                    }
-                    // console.log('tableArr--td-arr',tableArr[i])
-                }
-                // console.log('tableArr',tableArr)
-
-                const tdCount = tableArr.length
-                let endSearchRect = null
-                for(let i=0;i<tableArr.length;i++){
-                    const tds = tableArr[i]
-                    for(let j=0;j<tds.length;j++){
-
-                        const tempTdDom = tds[j]
-
-                        // console.log(tempTdDom.rowSpan,'tempTdDom.rowSpan')
-                        // console.log(tempTdDom.colSpan,'tempTdDom.colSpan')
-
-                        let tempTd = {}
-
-                        if(tds[j].getAttribute('data-json')){
-                            tempTd = JSON.parse(tds[j].getAttribute('data-json'))
-                        }else{
-
-                            let bgColor = ''
-                            let fontColor = ''
-                            let textAlign = ''
-                            let font = ''
-                            let fontSize = ''
-                            let fontFamily = ''
-
-                            for(let ci=0,cn=css.length;ci<cn;ci++){
-                                if(tempTdDom.className === css[ci].selectorText.replace('.','')){
-                                    bgColor = css[ci].style.backgroundColor!==''?css[ci].style.backgroundColor:null
-                                    fontColor = css[ci].style.color!==''?css[ci].style.color:null
-                                    textAlign = css[ci].style.textAlign!==''?css[ci].style.textAlign:'center'
-                                    fontSize = css[ci].style.fontSize!==''?css[ci].style.fontSize.replace('pt','px'):'12px'
-                                    fontFamily = css[ci].style.fontFamily!==''?css[ci].style.fontFamily:null
-                                }
-                            }
-
-                            font = fontSize+' '+fontFamily
-
-                            tempTd = {
-                                mergeRow:tempTdDom.rowSpan>1?tempTdDom.rowSpan:(tempTdDom.colSpan>1?1:0),
-                                mergeCol:tempTdDom.colSpan>1?tempTdDom.colSpan:(tempTdDom.rowSpan>1?1:0),
-                                isMerge:((tempTdDom.colSpan && tempTdDom.colSpan>1)||(tempTdDom.rowSpan && tempTdDom.rowSpan>1)),
-                                text:tempTdDom.innerText,
-                                isFromExcel:true,
-                                bgColor,
-                                fontColor,
-                                font
-                            }
-                        }
-                        // console.log('tempTd',tempTd)
-
-                        const tempSearchRect = this.searchRectByColAndRow(clickCell.col+j,clickCell.row+i)
-                        if(i===trs.length-1 && j===tds.length-1){
-                            endSearchRect = tempSearchRect
-                        }
-                        if(tempTd.isMerge){
-                            // console.log('tempTd',tempTd)
-                            const rowLen = tempSearchRect.row+tempTd.mergeRow
-                            const colLen = tempSearchRect.col+tempTd.mergeCol
-                            // console.log('rowLen',rowLen)
-                            // console.log('colLen',colLen)
-                            // console.log('tempSearchRect.row',tempSearchRect.row)
-                            // console.log('tempSearchRect.col',tempSearchRect.col)
-                            // console.log('tempSearchRect',tempSearchRect)
-                            for(let i=tempSearchRect.row;i<rowLen;i++){
-                                for(let j=tempSearchRect.col;j<colLen;j++){
-                                    // console.log('合并',this.searchRectByColAndRow(j,i))
-                                    if(i===tempSearchRect.row&&j===tempSearchRect.col){
-                                        this.setCellAttr(tempSearchRect,tempTd)
-                                        if(tempTd.isFromExcel){
-                                            tempSearchRect.mergeWidth = tempSearchRect.width
-                                            tempSearchRect.mergeHeight = tempSearchRect.height
-                                        }
-                                    }else{
-                                        const tempMergeRect = this.searchRectByColAndRow(j,i)
-                                        tempMergeRect.isMerge = true
-                                        tempMergeRect.mergeStartLabel = tempSearchRect.mergeStartLabel
-                                        tempMergeRect.mergeEndLabel = tempSearchRect.mergeEndLabel
-                                        if(tempTd.isFromExcel){
-                                            if(tempMergeRect.col === tempSearchRect.col){
-                                                tempSearchRect.mergeHeight += tempMergeRect.height
-                                            }
-                                            if(tempMergeRect.row === tempSearchRect.row){
-                                                tempSearchRect.mergeWidth += tempMergeRect.width
-                                            }
-                                        }
-                                        // console.log('tempMergeRect',tempMergeRect)
-                                        // console.log('tempMergeRect.isMerge',tempMergeRect.isMerge)
-                                    }
-                                }
-                            }
-                            // console.log('有合并----')
-                            // console.log('tempSearchRect',tempSearchRect)
-                        }else{
-                            // console.log('没合并····')
-                            // console.log('tempSearchRect',tempSearchRect)
-                            // console.log('clickCell',clickCell)
-                            // console.log('tempTd',tempTd)
-                            // console.log('colDiff',colDiff)
-                            // console.log('rowDiff',rowDiff)
-                            // console.log('tempTd',tempTd.isMerge)
-                            if(!tempSearchRect.isMerge){
-                                this.setCellAttr(tempSearchRect,tempTd)
-                            }
-                        }
-
-                    }
-                }
-                if(tdCount === 0){
-                    endSearchRect = null
-                }
-                // console.log('endSearchRect',endSearchRect)
-                this.contentComponent.setSecondClickCell(endSearchRect)
-                this.core.fresh()
-
             }
         })
 
         document.addEventListener('copy',event=>{
             // console.log('copy')
             event.preventDefault()
-            const { clickCell,secondClickCell,clickRectShow,moreSelectedCell } = this.contentComponent
-            const { h } = this.core
-            if(clickRectShow){
-                // 一个框
-                // console.log('moreSelectedCell',moreSelectedCell)
-
-                const table = h('table')
-
-                const oriTr = h('tr')
-                const oriTd = h('td')
-
-                if(clickCell && !secondClickCell){
-
-
-
-                    if(clickCell.isMerge){
-                        const finalRow = clickCell.row+clickCell.mergeRow
-                        for(let i=clickCell.row;i<finalRow;i++){
-                            const tr = oriTr.cloneNode()
-                            if(i === clickCell.row){
-                                const td = oriTd.cloneNode()
-                                this.setTdAttrs(td,clickCell)
-                                tr.appendChild(td)
-                                // console.log('td',td)
-                            }
-
-                            table.appendChild(tr)
-                        }
-                        // console.log('clickCell',clickCell)
-                    }else{
-                        const tr = oriTr.cloneNode()
-                        const td = oriTd.cloneNode()
-                        this.setTdAttrs(td,clickCell)
-                        tr.appendChild(td)
-                        table.appendChild(tr)
-                        // console.log('table',table.outerHTML)
-                    }
-                    // console.log('clickCell',clickCell)
-                }else if(secondClickCell){
-                    let tempRow = 0
-                    let tr = null
-                    for(let i=0;i<moreSelectedCell.length;i++){
-                        const tempRect = moreSelectedCell[i]
-                        if(tempRow !== tempRect.row){
-                            tempRow = tempRect.row
-                            tr = oriTr.cloneNode()
-                            table.appendChild(tr)
-                        }
-
-                        if((tempRect.isMerge && tempRect.label === tempRect.mergeStartLabel) || !tempRect.isMerge){
-                            const td = oriTd.cloneNode()
-                            this.setTdAttrs(td,tempRect)
-                            tr.appendChild(td)
-                        }
-                    }
-                    // 复制多个
-                    // console.log('复制moreSelectedCell',moreSelectedCell)
-                }
-                // console.log('复制的table',table)
-                event.clipboardData.setData('text/html', table.outerHTML);
-
-                oriTr.remove()
-                oriTd.remove()
-                // this.copyText('<html><body><table><tr><td style="color:red">测试</td></tr></table></body></html>')
-            }
+            const str = this.transformCanvasCellToTableDomStr()
+            event.clipboardData.setData('text/html', str);
 
         })
 

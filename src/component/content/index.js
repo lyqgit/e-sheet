@@ -276,6 +276,54 @@ export default class ContentComponent{
         this.selectedCellRightBorderDom.style.display = 'none'
     }
 
+
+    initMoreSelectedCell(){
+        const { moreSelectedCell,clickCell } = this
+        if(moreSelectedCell.length > 0 ){
+            moreSelectedCell.forEach(item=>{
+                item.text = ''
+                item.fontColor = ''
+                item.bgColor = ''
+                item.font = ''
+                item.textAlign = ''
+                item.mergeWidth = 0
+                item.mergeHeight = 0
+                item.mergeRow = 1
+                item.mergeCol = 1
+                item.isMerge = false
+            })
+        }else{
+            clickCell.text = ''
+            clickCell.fontColor = ''
+            clickCell.bgColor = ''
+            clickCell.font = ''
+            clickCell.textAlign = ''
+            clickCell.mergeWidth = 0
+            clickCell.mergeHeight = 0
+            clickCell.mergeRow = 1
+            clickCell.mergeCol = 1
+            clickCell.isMerge = false
+        }
+
+    }
+
+    moveSelectedCellDom(){
+        this.setSelectedCellBorderDomBgColor()
+        this.canvasDom.onmousemove = event=>{
+            this.moveCell(event)
+        }
+        this.selectorDom.onmouseup = event=>{
+            // console.log('测试',this.moveClickCell,this.clickCell)
+            this.setSelectedCellBorderDomBgColor('transparent')
+            const { SelectPlugin } = this.core.plugins
+            const tableDomStr = SelectPlugin.transformCanvasCellToTableDomStr()
+            // 初始化原来的表格
+            this.initMoreSelectedCell()
+            SelectPlugin.transformTableDomStrToCanvasCell(tableDomStr,this.moveClickCell)
+            this.selectorDom.onmouseup = null
+        }
+    }
+
     registrySelectedCellDom(){
 
         const { h,selectorDom } = this.core
@@ -284,17 +332,7 @@ export default class ContentComponent{
             attr:{
                 className:'e-sheet-hor-cell-border',
                 onmousedown:_=>{
-                    this.setSelectedCellBorderDomBgColor()
-                    this.canvasDom.onmousemove = event=>{
-                        this.moveCell(event)
-                    }
-                    this.selectorDom.onmouseup = event=>{
-                        console.log('测试',this.moveClickCell,this.clickCell)
-                        this.setSelectedCellBorderDomBgColor('transparent')
-                        this.setCellAttrIneSheet(this.moveClickCell,this.clickCell)
-                        this.selectorDom.onmouseup = null
-                    }
-
+                    this.moveSelectedCellDom()
                 }
             },
             style:{
@@ -307,7 +345,10 @@ export default class ContentComponent{
 
         const cellBottomBorderDom = h('div',{
             attr:{
-                className:'e-sheet-hor-cell-border'
+                className:'e-sheet-hor-cell-border',
+                onmousedown:_=>{
+                    this.moveSelectedCellDom()
+                }
             },
             style:{
                 left:0,
@@ -319,7 +360,10 @@ export default class ContentComponent{
 
         const cellLeftBorderDom = h('div',{
             attr:{
-                className:'e-sheet-ver-cell-border'
+                className:'e-sheet-ver-cell-border',
+                onmousedown:_=>{
+                    this.moveSelectedCellDom()
+                }
             },
             style:{
                 left:0,
@@ -331,7 +375,10 @@ export default class ContentComponent{
 
         const cellRightBorderDom = h('div',{
             attr:{
-                className:'e-sheet-ver-cell-border'
+                className:'e-sheet-ver-cell-border',
+                onmousedown:_=>{
+                    this.moveSelectedCellDom()
+                }
             },
             style:{
                 left:0,
@@ -356,31 +403,12 @@ export default class ContentComponent{
      */
     moveCell=(event)=>{
         // console.log('event',event)
-        const { moreSelectedCell } = this
         const { cellHeight } = this.options
         const { offsetX,offsetY } = this.core.plugins.ScrollPlugin
         const curCell = this.core.plugins.SelectPlugin.searchRectAddr(event.offsetX+offsetX - cellHeight,event.offsetY+offsetY - cellHeight)
         this.moveClickCell = curCell;
         // console.log('clickCell',clickCell)
         this.showSelectedCellDom(curCell.x+cellHeight-offsetX,curCell.y-offsetY+cellHeight)
-        if(moreSelectedCell.length > 0){
-            // 多选移动
-        }else{
-            // 单选移动
-
-        }
-    }
-
-    /**
-     * @param {Object} cell
-     * @param {Object} attr
-     */
-    setCellAttrIneSheet(cell,attr){
-        cell.text = attr.text
-        attr.text = ''
-        this.showClickRect(cell)
-        this.moveClickCell = null
-        this.core.freshContent()
     }
 
     /**
