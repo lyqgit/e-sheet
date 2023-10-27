@@ -178,4 +178,20 @@ export default class Canvas{
         this.ctx.setLineDash([])
     }
 
+    /**
+     * @param {Object} first
+     * @param {Object} second
+     * @param {Object} thrid
+     * @param {Color} color
+     */
+    drawTriangleRect(first,second,thrid,color){
+        this.ctx.beginPath();
+        this.ctx.moveTo(first.x,first.y)
+        this.ctx.lineTo(second.x,second.y)
+        this.ctx.lineTo(thrid.x,thrid.y)
+        this.ctx.closePath();
+        this.ctx.fillStyle = color??'black';
+        this.ctx.fill()
+    }
+
 }
