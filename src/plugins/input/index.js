@@ -59,6 +59,8 @@ export default class InputPlugin{
                 return
             }
 
+            this.core.plugins.SelectPlugin.clearCopyDash()
+
             const { offsetX,offsetY } = this.core.plugins.ScrollPlugin
 
             const attrs = this.core.plugins.SelectPlugin.searchRectAddr(evt.offsetX+offsetX - cellHeight,evt.offsetY+offsetY - cellHeight)

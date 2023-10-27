@@ -387,6 +387,13 @@ export default class SelectPlugin{
         }
     }
 
+    clearCopyDash(){
+        this.copyText('')
+        this.core.copyKey = false
+        this.core.copyCellDash = []
+        this.core.freshContent()
+    }
+
     moreSelect(){
 
         document.addEventListener('paste',event=>{
@@ -404,7 +411,19 @@ export default class SelectPlugin{
             event.preventDefault()
             const str = this.transformCanvasCellToTableDomStr()
             event.clipboardData.setData('text/html', str);
-
+            const { clickCell,moreSelectedCell } = this.contentComponent
+            this.core.copyKey = true
+            if(moreSelectedCell.length > 0){
+                // 多选
+                this.core.copyCellDash = moreSelectedCell
+            }else if(clickCell){
+                // 单选
+                this.core.copyCellDash = [clickCell]
+            }else{
+                return
+            }
+            this.core.copyRect
+            this.core.freshContent()
         })
 
         document.addEventListener('keydown',event=>{
@@ -418,6 +437,8 @@ export default class SelectPlugin{
                 // console.log('前进')
             }else if(event.ctrlKey && event.code === 'z'){
                 // 后撤
+            }else if(event.code === 'Escape'){
+                this.clearCopyDash()
             }
         })
         //

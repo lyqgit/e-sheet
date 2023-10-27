@@ -160,4 +160,22 @@ export default class Canvas{
         this.ctx.fillRect(x,y,width,height)
     }
 
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @param {number} width
+     * @param {number} height
+     * @param {Color} color
+     * @param {string} globalCompositeOperation
+     * @param {number} lineWidth
+     */
+    drawDashStrokeRect(x,y,width,height,color,globalCompositeOperation,lineWidth = 1){
+        this.ctx.lineWidth = lineWidth
+        this.ctx.globalCompositeOperation = globalCompositeOperation??'source-over'
+        this.ctx.strokeStyle = color??'black'
+        this.ctx.setLineDash([5, 5]);
+        this.ctx.strokeRect(x,y,width,height)
+        this.ctx.setLineDash([])
+    }
+
 }

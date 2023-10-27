@@ -50,6 +50,9 @@ export default class AppExcel{
 
     plugins = {}
 
+    copyKey = false
+    copyCellDash = []
+
     shiftKey = false
     ctrlKey = false
     dragSign = false

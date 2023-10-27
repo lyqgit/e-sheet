@@ -419,7 +419,7 @@ export default class ContentComponent{
 
         const { width,height,cellHeight,cellWidth } = this.options
 
-        const { nonSelectBgColor,selectedBorderBgColor,borderColor,selectedBgColor } = this.core
+        const { nonSelectBgColor,selectedBorderBgColor,borderColor,selectedBgColor,copyKey } = this.core
 
         const lt = this.searchScreenAddr(offsetX,offsetY)
         const rb = this.searchScreenAddr(offsetX+width-cellHeight,offsetY+height-cellHeight)
@@ -441,7 +441,6 @@ export default class ContentComponent{
         //         this.layer.drawText(j*cellWidth+cellHeight-offsetX,(i+1)*cellHeight-offsetY,'111',cellWidth,cellHeight)
         //     }
         // }
-
 
 
         let attrFirst = null
@@ -637,6 +636,22 @@ export default class ContentComponent{
             }
         }
 
+        const { copyCellDash } = this.core
+
+        if(copyKey){
+            // 绘制复制选中的范围
+            if(copyCellDash.length>1){
+                // 多选
+                const dashFirst = copyCellDash[0]
+                const dashLast = copyCellDash[copyCellDash.length-1]
+                this.layer.drawDashStrokeRect(dashFirst.ltX+2,dashFirst.ltY+2,dashLast.ltX-dashFirst.ltX+dashLast.width-4,dashLast.ltY-dashFirst.ltY+dashLast.height-4,selectedBorderBgColor)
+            }else if(copyCellDash.length === 1){
+                // 单选
+                const dashCell = copyCellDash[0]
+                this.layer.drawDashStrokeRect(dashCell.ltX+2,dashCell.ltY+2,dashCell.width-4,dashCell.height-4,selectedBorderBgColor)
+            }
+
+        }
 
 
     }
