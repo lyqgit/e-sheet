@@ -328,63 +328,62 @@ export default class ContentComponent{
 
         const { h,selectorDom } = this.core
 
+        const cellBorderAttrEvent = {
+            onmousedown:_=>{
+                this.moveSelectedCellDom()
+            },
+            oncontextmenu:e=>{
+                e.preventDefault()
+            }
+        }
+
+        const cellBorderStyle = {
+            left:0,
+            top:0,
+            display:'none'
+        }
+
         const cellTopBorderDom = h('div',{
             attr:{
                 className:'e-sheet-hor-cell-border',
-                onmousedown:_=>{
-                    this.moveSelectedCellDom()
-                }
+                ...cellBorderAttrEvent
             },
             style:{
-                left:0,
-                top:0,
+                ...cellBorderStyle,
                 width:0,
-                display:'none'
             }
         })
 
         const cellBottomBorderDom = h('div',{
             attr:{
                 className:'e-sheet-hor-cell-border',
-                onmousedown:_=>{
-                    this.moveSelectedCellDom()
-                }
+                ...cellBorderAttrEvent
             },
             style:{
-                left:0,
-                top:0,
-                width:0,
-                display:'none'
+                ...cellBorderStyle,
+                width:0
             }
         })
 
         const cellLeftBorderDom = h('div',{
             attr:{
                 className:'e-sheet-ver-cell-border',
-                onmousedown:_=>{
-                    this.moveSelectedCellDom()
-                }
+                ...cellBorderAttrEvent
             },
             style:{
-                left:0,
-                top:0,
-                height:0,
-                display:'none'
+                ...cellBorderStyle,
+                height:0
             }
         })
 
         const cellRightBorderDom = h('div',{
             attr:{
                 className:'e-sheet-ver-cell-border',
-                onmousedown:_=>{
-                    this.moveSelectedCellDom()
-                }
+                ...cellBorderAttrEvent
             },
             style:{
-                left:0,
-                top:0,
-                height:0,
-                display:'none'
+                ...cellBorderStyle,
+                height:0
             }
         })
 

@@ -378,6 +378,9 @@ export default class ContextmenuPlugin{
             const { clickCell } = this.contentComponent
             const { cellHeight } = this.options
             const { offsetX,offsetY } = this.core.plugins.ScrollPlugin
+            if(evt.offsetX <= cellHeight || evt.offsetY <= cellHeight){
+                return
+            }
             if(clickCell){
                 // show contextmenu
                 containerDom.style.display = 'flex'
