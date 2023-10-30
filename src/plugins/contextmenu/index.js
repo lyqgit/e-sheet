@@ -210,14 +210,15 @@ export default class ContextmenuPlugin{
                 cursor:'pointer'
             },
             attr:{
-                innerText:'拆分单元格'
+                innerText:'拆分单元格',
+                className: 'item-btn'
             }
         })
 
         const insertLeftColBtn = h('div',{
-            style:{
-                cursor:'pointer'
-            },
+            attr:{
+                className: 'item-input-btn item-top-border'
+            }
         },[
             h('span',{
                 attr:{
@@ -228,6 +229,7 @@ export default class ContextmenuPlugin{
                 attr:{
                     type:'number',
                     placeholder:'请输入列数',
+                    className:'input-con',
                     onkeydown:event=>{
                         // console.log('event',event)
                         if(event.key==='Enter'){
@@ -253,6 +255,9 @@ export default class ContextmenuPlugin{
             style:{
                 cursor:'pointer'
             },
+            attr:{
+                className: 'item-input-btn item-top-border'
+            }
         },[
             h('span',{
                 attr:{
@@ -263,6 +268,7 @@ export default class ContextmenuPlugin{
                 attr:{
                     type:'number',
                     placeholder:'请输入列数',
+                    className:'input-con',
                     onkeydown:event=>{
                         // console.log('event',event)
                         if(event.key==='Enter'){
@@ -288,6 +294,9 @@ export default class ContextmenuPlugin{
             style:{
                 cursor:'pointer'
             },
+            attr:{
+                className: 'item-input-btn item-top-border'
+            }
         },[
             h('span',{
                 attr:{
@@ -298,6 +307,7 @@ export default class ContextmenuPlugin{
                 attr:{
                     type:'number',
                     placeholder:'请输入行数',
+                    className:'input-con',
                     onkeydown:event=>{
                         // console.log('event',event)
                         if(event.key==='Enter'){
@@ -324,6 +334,9 @@ export default class ContextmenuPlugin{
             style:{
                 cursor:'pointer'
             },
+            attr:{
+                className: 'item-input-btn item-top-border'
+            }
         },[
             h('span',{
                 attr:{
@@ -334,6 +347,7 @@ export default class ContextmenuPlugin{
                 attr:{
                     type:'number',
                     placeholder:'请输入行数',
+                    className:'input-con',
                     onkeydown:event=>{
                         // console.log('event',event)
                         if(event.key==='Enter'){
@@ -371,10 +385,10 @@ export default class ContextmenuPlugin{
                 containerDom.style.top = evt.offsetY+'px'//clickCell.ltY-offsetY+'px'
                 if(clickCell.isMerge){
                     mergeBtn.style.display='none'
-                    splitBtn.style.display='block'
+                    splitBtn.style.display='flex'
                 }else{
                     splitBtn.style.display='none'
-                    mergeBtn.style.display='block'
+                    mergeBtn.style.display='flex'
 
                 }
             }
