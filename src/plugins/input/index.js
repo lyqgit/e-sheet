@@ -20,6 +20,7 @@ export default class InputPlugin{
         this.wholeComponent = components.WholeComponent
         this.selectorDom = selectorDom
         this.canvasDom = core.canvasDom
+        this.canvasWrapperDom = core.canvasWrapperDom
         this.options = options
         this.layer = layer
         this.core = core
@@ -35,6 +36,39 @@ export default class InputPlugin{
 
     hideInput(){
         this.inputDom.style.display = 'none'
+        this.inputDom.value = ''
+        this.inputDom.oninput = null
+    }
+
+    /**
+     * @param {object} attrs
+     */
+    showInput(attrs){
+        const { inputDom } = this
+        const { offsetX,offsetY } = this.core.plugins.ScrollPlugin
+        const { cellHeight } = this.options
+
+        const {x,y,width,height,text,isMerge,mergeWidth,mergeHeight,bgColor,fontColor} = attrs
+
+        const textWidth = text.length*this.core.fontSize
+
+        const inputWidth = isMerge?mergeWidth:width
+
+        inputDom.style.opacity = 1
+        inputDom.style.top = y+cellHeight-offsetY+'px'
+        inputDom.style.left = x+cellHeight-offsetX+'px'
+        inputDom.style.display = 'inline-block'
+        inputDom.style.textAlign = 'center'
+        inputDom.style.width = (inputWidth>textWidth?inputWidth:textWidth)+'px'
+        inputDom.style.height = (isMerge?mergeHeight:height)+'px'
+        inputDom.style.borderRadius = '6px'
+        inputDom.style.backgroundColor = bgColor??''
+        inputDom.style.color = fontColor??''
+        // console.log('attrs',attrs)
+        inputDom.value = text
+        inputDom.oninput=evt=>{
+            this.core.plugins.SettingPlugin.setCellCon(evt.target.value)
+        }
     }
 
     appendInput(){
@@ -47,7 +81,7 @@ export default class InputPlugin{
         inputDom.style.border = '2px solid '+this.core.selectedBorderBgColor
         inputDom.style.boxSizing = 'border-box'
 
-        this.selectorDom.appendChild(inputDom)
+        this.canvasWrapperDom.appendChild(inputDom)
 
         this.canvasDom.addEventListener('dblclick',evt=>{
 
@@ -63,8 +97,10 @@ export default class InputPlugin{
 
             const { offsetX,offsetY } = this.core.plugins.ScrollPlugin
 
-            const attrs = this.core.plugins.SelectPlugin.searchRectAddr(evt.offsetX+offsetX - cellHeight,evt.offsetY+offsetY - cellHeight)
-            const {x,y,width,height,text,isMerge,mergeWidth,mergeHeight,bgColor,fontColor} = attrs
+            const { clickCell } = this.contentComponent
+
+            // const attrs = this.core.plugins.SelectPlugin.searchRectAddr(evt.offsetX+offsetX - cellHeight,evt.offsetY+offsetY - cellHeight)
+            const {x,y,width,height,text,isMerge,mergeWidth,mergeHeight,bgColor,fontColor} = clickCell
             this.contentComponent.hideClickRect()
             this.core.fresh()
             // console.log('attrs',attrs)
@@ -86,12 +122,20 @@ export default class InputPlugin{
             // console.log('attrs',attrs)
             inputDom.value = text
             inputDom.focus()
-            inputDom.onblur = ()=>{
-                attrs.text = inputDom.value
-                this.core.wsSend(2,attrs)
+            inputDom.onblur = evt=>{
+                // console.log('测试onblur',clickCell,inputDom.value,evt.target.value)
+                // console.log('测试inputDom.value',inputDom.value)
+                // console.log('测试evt.target.value',evt.target.value)
+                clickCell.text = inputDom.value
+                this.core.wsSend(2,clickCell)
                 this.inputDom.value = ''
                 this.core.fresh()
                 this.hideInput()
+            }
+            inputDom.oninput=evt=>{
+                // console.log('测试',evt.target.value,clickCell)
+                this.core.plugins.SettingPlugin.setCellCon(evt.target.value)
+                clickCell.text = inputDom.value
             }
         })
     }

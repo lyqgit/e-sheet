@@ -35,6 +35,7 @@ export default class ScrollPlugin{
 
     constructor(selectorDom,layer,options={},components={},core) {
         this.selectorDom = selectorDom
+        this.canvasWrapperDom = core.canvasWrapperDom
         this.layer = layer
         this.core = core
         this.options = options
@@ -72,9 +73,9 @@ export default class ScrollPlugin{
 
     // 竖向鼠标中间滚动条
     registryWheel(barDom,proportion){
-        this.selectorDom.onmouseover = ()=>{
+        this.canvasWrapperDom.onmouseover = ()=>{
 
-            this.selectorDom.onwheel = event=>{
+            this.canvasWrapperDom.onwheel = event=>{
                 event.preventDefault();
                 this.recordDeltaY = Math.abs(this.barTopDis)
                 this.recordDeltaY += event.deltaY>0?this.wheelStep:-this.wheelStep
@@ -118,7 +119,7 @@ export default class ScrollPlugin{
         barContainerDom.style.bottom = 0
         // barContainerDom.style.background = 'yellow'
         barContainerDom.style.position = 'absolute'
-        this.selectorDom.appendChild(barContainerDom)
+        this.canvasWrapperDom.appendChild(barContainerDom)
         this.barHorContainerDom = barContainerDom
         // bor-bar
         const barDom = document.createElement('div')
@@ -157,7 +158,7 @@ export default class ScrollPlugin{
                 // console.log('eA',eA)
                 this.layer.setCursorDefault()
                 requestAnimationFrame(()=>{
-                    const leftDis = eA.pageX - (this.selectorDom.offsetLeft + this.options.cellHeight) -e.offsetX
+                    const leftDis = eA.pageX - (this.canvasWrapperDom.offsetLeft + this.options.cellHeight) -e.offsetX
                     this.horMoveFunc(leftDis,proportion)
                 })
 
@@ -180,7 +181,7 @@ export default class ScrollPlugin{
         barContainerDom.style.top = this.options.cellHeight+'px'
         // barContainerDom.style.background = 'yellow'
         barContainerDom.style.position = 'absolute'
-        this.selectorDom.appendChild(barContainerDom)
+        this.canvasWrapperDom.appendChild(barContainerDom)
         this.barVerContainerDom = barContainerDom
         // bor-bar
         const barDom = document.createElement('div')
@@ -221,7 +222,7 @@ export default class ScrollPlugin{
                 requestAnimationFrame(()=>{
                     // console.log('eA',eA)
                     // console.log('leftDis',leftDis)
-                    const topDis = eA.pageY - (this.selectorDom.offsetTop + this.options.cellHeight) - e.offsetY
+                    const topDis = eA.pageY - (this.canvasWrapperDom.offsetTop + this.options.cellHeight) - e.offsetY
                     this.verMoveFunc(topDis,proportion)
 
                 })

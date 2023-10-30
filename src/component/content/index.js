@@ -65,6 +65,7 @@ export default class ContentComponent{
         this.core = core;
         this.canvasDom = core.canvasDom
         this.selectorDom = core.selectorDom
+        this.canvasWrapperDom = core.canvasWrapperDom
         this.installContentData()
         // console.log('this.core.sheetWidth',this.core.sheetWidth)
         // console.log('this.core.sheetHeight',this.core.sheetHeight)
@@ -312,21 +313,26 @@ export default class ContentComponent{
         this.canvasDom.onmousemove = event=>{
             this.moveCell(event)
         }
-        this.selectorDom.onmouseup = event=>{
+        this.canvasWrapperDom.onmouseup = event=>{
             // console.log('测试',this.moveClickCell,this.clickCell)
             this.setSelectedCellBorderDomBgColor('transparent')
+            if(!this.moveClickCell){
+                return
+            }
             const { SelectPlugin } = this.core.plugins
             const tableDomStr = SelectPlugin.transformCanvasCellToTableDomStr()
             // 初始化原来的表格
             this.initMoreSelectedCell()
+            // console.log('this.moveClickCell',this.moveClickCell)
             SelectPlugin.transformTableDomStrToCanvasCell(tableDomStr,this.moveClickCell)
-            this.selectorDom.onmouseup = null
+            this.moveClickCell = null
+            this.canvasWrapperDom.onmouseup = null
         }
     }
 
     registrySelectedCellDom(){
 
-        const { h,selectorDom } = this.core
+        const { h,canvasWrapperDom } = this.core
 
         const cellBorderAttrEvent = {
             onmousedown:_=>{
@@ -391,10 +397,10 @@ export default class ContentComponent{
         this.selectedCellBottomBorderDom = cellBottomBorderDom
         this.selectedCellLeftBorderDom = cellLeftBorderDom
         this.selectedCellRightBorderDom = cellRightBorderDom
-        selectorDom.appendChild(cellTopBorderDom)
-        selectorDom.appendChild(cellBottomBorderDom)
-        selectorDom.appendChild(cellLeftBorderDom)
-        selectorDom.appendChild(cellRightBorderDom)
+        canvasWrapperDom.appendChild(cellTopBorderDom)
+        canvasWrapperDom.appendChild(cellBottomBorderDom)
+        canvasWrapperDom.appendChild(cellLeftBorderDom)
+        canvasWrapperDom.appendChild(cellRightBorderDom)
     }
 
     /**
@@ -406,7 +412,7 @@ export default class ContentComponent{
         const { offsetX,offsetY } = this.core.plugins.ScrollPlugin
         const curCell = this.core.plugins.SelectPlugin.searchRectAddr(event.offsetX+offsetX - cellHeight,event.offsetY+offsetY - cellHeight)
         this.moveClickCell = curCell;
-        // console.log('clickCell',clickCell)
+        // console.log('this.moveClickCell',this.moveClickCell)
         this.showSelectedCellDom(curCell.x+cellHeight-offsetX,curCell.y-offsetY+cellHeight)
     }
 

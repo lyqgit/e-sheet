@@ -7,6 +7,7 @@ export default class ContextmenuPlugin{
         this.sideComponent = components.SideComponent
         this.selectorDom = selectorDom
         this.canvasDom = core.canvasDom
+        this.canvasWrapperDom = core.canvasWrapperDom
         this.options = options
         this.layer = layer
         this.core = core
@@ -413,7 +414,7 @@ export default class ContextmenuPlugin{
         containerDom.appendChild(insertRightColBtn)
         containerDom.appendChild(insertTopRowBtn)
         containerDom.appendChild(insertBottomRowBtn)
-        this.selectorDom.appendChild(containerDom)
+        this.canvasWrapperDom.appendChild(containerDom)
     }
 
 }

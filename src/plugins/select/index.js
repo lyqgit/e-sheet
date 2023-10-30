@@ -584,6 +584,9 @@ export default class SelectPlugin{
 
                     this.contentComponent.showClickRect(attrFirst)
 
+                    this.core.plugins.SettingPlugin.setLabelCon(attrFirst.label)
+                    this.core.plugins.SettingPlugin.setCellCon(attrFirst.text)
+
                     this.contentComponent.setSecondClickCell(null)
 
                     this.canvasDom.onmousemove = event=>{
@@ -670,7 +673,7 @@ export default class SelectPlugin{
 
 
             this.core.fresh()
-            this.core.plugins.InputPlugin.hideInput()
+            // this.core.plugins.InputPlugin.hideInput()
 
         })
 

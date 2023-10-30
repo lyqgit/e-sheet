@@ -9,6 +9,7 @@ import InputPlugin from './plugins/input/index.js'
 import SelectPlugin from './plugins/select/index.js'
 import DragPlugin from './plugins/drag/index.js'
 import ContextmenuPlugin from './plugins/contextmenu/index.js'
+import SettingPlugin from './plugins/setting/index.js'
 
 export default class eSheet{
 
@@ -39,7 +40,7 @@ export default class eSheet{
             this.excelDom,
             options,
             {ContentComponent,HeaderComponent,SideComponent,WholeComponent},
-            {ScrollPlugin,InputPlugin,DragPlugin,SelectPlugin,ContextmenuPlugin,...plugins}
+            {SettingPlugin,ScrollPlugin,InputPlugin,DragPlugin,SelectPlugin,ContextmenuPlugin,...plugins}
         )
         return this.AppExcel
     }

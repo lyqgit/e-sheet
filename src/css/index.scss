@@ -3,11 +3,17 @@
 :root{
   --e-sheet-primary-color:#4290f7;
   --e-sheet-selected-cell-color:#0089FF;
+  --e-sheet-border-color:#ECEDEE;
 }
 $theme-color-blue:--eview-sheet-primary-color;
 
 
 // 全局样式
+
+// canvas
+.e-sheet-canvas-wrapper{
+  position: relative;
+}
 
 // cell
 .e-sheet-selected-cell{
@@ -35,3 +41,4 @@ $theme-color-blue:--eview-sheet-primary-color;
 // 引入内容样式
 @import "./content";
 @import "./contextmenu";
+@import "./setting";

@@ -43,6 +43,7 @@ export default class AppExcel{
 
     selectorDom = null
     canvasDom = null
+    canvasWrapperDom = null
 
     layer = null
 
@@ -86,13 +87,27 @@ export default class AppExcel{
 
 
         this.selectorDom = selectorDom;
-        this.selectorDom.style.width = options.width + 'px'
-        this.selectorDom.style.height = options.height + 'px'
+
 
         const canvasDom = document.createElement('canvas');
         canvasDom.width = options.width
         canvasDom.height = options.height
-        this.selectorDom.appendChild(canvasDom)
+
+        const canvasWrapperDom = this.h('div',{
+            attr:{
+                className:'e-sheet-canvas-wrapper'
+            }
+        })
+
+        canvasWrapperDom.appendChild(canvasDom)
+
+        this.canvasWrapperDom = canvasWrapperDom
+
+        this.selectorDom.style.width = options.width + 'px'
+        this.canvasWrapperDom.style.width = options.width + 'px'
+        this.canvasWrapperDom.style.height = options.height + 'px'
+
+        this.selectorDom.appendChild(canvasWrapperDom)
         this.canvasDom = canvasDom
 
         this.layer = new Canvas(canvasDom,options)
