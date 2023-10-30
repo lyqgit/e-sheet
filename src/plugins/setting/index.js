@@ -71,21 +71,22 @@ export default class setting{
             attr:{
                 className:'fx-input',
                 oninput:evt=>{
-                    console.log('fxInputDom----oninput')
+                    // console.log('fxInputDom----oninput')
                     // console.log('evt',evt.target.value)
                     this.core.plugins.InputPlugin.inputDom.value = evt.target.value
                     this.contentComponent.clickCell.text = evt.target.value
                 },
                 onfocus:_=>{
-                    console.log('fxInputDom----onfocus')
+                    // console.log('fxInputDom----onfocus')
                     if(!this.contentComponent.clickCell){
                         return
                     }
                     this.core.plugins.InputPlugin.showInput(this.contentComponent.clickCell)
                 },
                 onblur:_=>{
-                    console.log('fxInputDom----onblur')
+                    // console.log('fxInputDom----onblur')
                     this.core.freshContent()
+                    this.core.plugins.InputPlugin.hideInput()
                 }
             }
         })
