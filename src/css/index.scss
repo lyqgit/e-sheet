@@ -4,6 +4,7 @@
   --e-sheet-primary-color:#4290f7;
   --e-sheet-selected-cell-color:#0089FF;
   --e-sheet-border-color:#ECEDEE;
+  --e-sheet-radio-button-selected-color:rgba(139,165,217,0.20);
 }
 $theme-color-blue:--eview-sheet-primary-color;
 
@@ -16,6 +17,8 @@ $theme-color-blue:--eview-sheet-primary-color;
 }
 
 // cell
+
+
 .e-sheet-selected-cell{
   border:2px solid var(--e-sheet-selected-cell-color);
   position: absolute;

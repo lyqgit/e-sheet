@@ -584,8 +584,7 @@ export default class SelectPlugin{
 
                     this.contentComponent.showClickRect(attrFirst)
 
-                    this.core.plugins.SettingPlugin.setLabelCon(attrFirst.label)
-                    this.core.plugins.SettingPlugin.setCellCon(attrFirst.text)
+                    this.core.plugins.SettingPlugin.setCellAttrInHeader(attrFirst)
 
                     this.contentComponent.setSecondClickCell(null)
 

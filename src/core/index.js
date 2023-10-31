@@ -353,11 +353,15 @@ export default class AppExcel{
      * @param {Object} listener
      * @returns {HTMLElement}
      */
-    h=(elName,{attr,style} = {},childDom=null)=>{
+    h=(elName,{attr,style,attribute} = {},childDom=null)=>{
         const tempDom = document.createElement(elName)
 
         for(let i in attr){
             tempDom[i] = attr[i]
+        }
+
+        for(let i in attribute){
+            tempDom.setAttribute(i,attribute[i])
         }
 
         for(let i in style){

@@ -10,6 +10,7 @@ import SelectPlugin from './plugins/select/index.js'
 import DragPlugin from './plugins/drag/index.js'
 import ContextmenuPlugin from './plugins/contextmenu/index.js'
 import SettingPlugin from './plugins/setting/index.js'
+import './vendor/component/index.js'
 
 export default class eSheet{
 

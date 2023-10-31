@@ -1,4 +1,32 @@
 
+.e-sheet-radio-group{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.e-sheet-cell-svg-layout{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+
+.e-sheet-radio-button{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.e-sheet-radio-button-selected{
+  background-color: var(--e-sheet-radio-button-selected-color);
+}
+
+
 .e-sheet-setting-input-bar-layout{
   display: flex;
   align-items: center;
