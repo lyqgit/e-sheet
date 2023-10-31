@@ -1,4 +1,5 @@
 import Canvas from './canvas.js'
+import {transformNumToLabel} from '../util/cell.js'
 
 export default class AppExcel{
 
@@ -26,7 +27,7 @@ export default class AppExcel{
 
     row= 160
 
-    col = 26
+    col = 52
 
     // 以内容表格左上角为原点计算表格的坐标
 
@@ -246,13 +247,7 @@ export default class AppExcel{
                     this.sheetWidth += cellWidth
                 }
 
-                let label = ''
-
-                if(j>=26){
-                    label = String.fromCharCode(65 + j-26)+String.fromCharCode(65 + j-26)+(i+1)
-                }else{
-                    label = String.fromCharCode(65 + j)+(i+1)
-                }
+                let label = transformNumToLabel(j+1)+(i+1)
 
                 this.eSheetWorkBook[sheetName].push({
                     row:i+1,
