@@ -98,7 +98,7 @@ export default class Canvas{
         const baseY = y+rectHeight/2
 
         ctx.textBaseline = textBaseline?textBaseline:"middle";
-        ctx.textAlign = textAlign!==''?textAlign:"center";
+        ctx.textAlign = textAlign?textAlign:"center";
 
         const textObj = ctx.measureText(text);
 

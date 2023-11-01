@@ -12,7 +12,10 @@ export default class setting{
     /**
      * @type {HTMLElement}
      */
-    fontHorAddrGroup = null
+    fontHorAddrGroup = null/**
+     * @type {HTMLElement}
+     */
+    fontVerAddrGroup = null
 
     constructor(selectorDom,layer,options={},components={},core) {
         this.contentComponent = components.ContentComponent
@@ -37,10 +40,39 @@ export default class setting{
     }
 
     /**
+     * @param {string} textAlign
+     */
+    cellFontTextAlignChange(textAlign){
+        let resTextAlign = 'center'
+        if(textAlign === 'start'){
+            resTextAlign = 'end'
+        }else if(textAlign === 'end'){
+            resTextAlign = 'start'
+        }
+        this.contentComponent.clickCell.textAlign = resTextAlign
+        this.core.freshContent()
+    }
+
+    /**
+     * @param {string} textBaseline
+     */
+    cellFontTextBaseLineChange(textBaseline){
+        let resTextBaseline = 'middle'
+        if(textBaseline === 'top'){
+            resTextBaseline = 'bottom'
+        }else if(textBaseline === 'bottom'){
+            resTextBaseline = 'top'
+        }
+        this.contentComponent.clickCell.textBaseline = resTextBaseline
+        this.core.freshContent()
+    }
+
+    /**
      * @param {object} attr
      */
     setCellAttrInHeader(attr){
         this.fontHorAddrGroup.setAttribute('value',attr.textAlign)
+        this.fontVerAddrGroup.setAttribute('value',attr.textBaseline)
         this.setLabelCon(attr.label)
         this.setCellCon(attr.text)
     }
@@ -139,18 +171,18 @@ export default class setting{
         this.selectorDom.insertBefore(settingDom,this.canvasWrapperDom)
 
 
-        // 操作文字或背景样式
+        // 操作文字横向对齐
         const fontHorAddrGroup = h('e-sheet-radio-group',{},[
             h('e-sheet-radio-button',{
                 attribute:{
                     label:'左对齐',
-                    value:'left'
+                    value:'start'
                 },
             },[
                 h('e-sheet-icon-svg',{
                     attribute:{
                         category:'hor',
-                        position:'left'
+                        position:'start'
                     }
                 })
             ]),
@@ -170,19 +202,80 @@ export default class setting{
             h('e-sheet-radio-button',{
                 attribute:{
                     label:'右对齐',
-                    value:'right'
+                    value:'end'
                 },
             },[
                 h('e-sheet-icon-svg',{
                     attribute:{
                         category:'hor',
-                        position:'right'
+                        position:'end'
                     }
                 })
             ])
         ])
         this.fontHorAddrGroup = fontHorAddrGroup
-        this.selectorDom.insertBefore(fontHorAddrGroup,settingDom)
+        fontHorAddrGroup.addEventListener('e-sheet-radio-group-onchange',evt=>{
+            // console.log('evt',evt)
+            this.cellFontTextAlignChange(evt.detail)
+        })
+
+        // 操作文字纵向对齐
+        const fontVerAddrGroup = h('e-sheet-radio-group',{},[
+            h('e-sheet-radio-button',{
+                attribute:{
+                    label:'顶部对齐',
+                    value:'top'
+                },
+            },[
+                h('e-sheet-icon-svg',{
+                    attribute:{
+                        category:'ver',
+                        position:'top'
+                    }
+                })
+            ]),
+            h('e-sheet-radio-button',{
+                attribute:{
+                    label:'垂直居中',
+                    value:'middle'
+                },
+            },[
+                h('e-sheet-icon-svg',{
+                    attribute:{
+                        category:'ver',
+                        position:'middle'
+                    }
+                })
+            ]),
+            h('e-sheet-radio-button',{
+                attribute:{
+                    label:'底部对齐',
+                    value:'bottom'
+                },
+            },[
+                h('e-sheet-icon-svg',{
+                    attribute:{
+                        category:'ver',
+                        position:'bottom'
+                    }
+                })
+            ])
+        ])
+
+        this.fontVerAddrGroup = fontVerAddrGroup
+        fontVerAddrGroup.addEventListener('e-sheet-radio-group-onchange',evt=>{
+            // console.log('evt',evt)
+            this.cellFontTextBaseLineChange(evt.detail)
+        })
+
+        const settingTopDom = h('div',{
+            attr:{
+                className:'e-sheet-setting-layout'
+            }
+        })
+        settingTopDom.appendChild(fontHorAddrGroup)
+        settingTopDom.appendChild(fontVerAddrGroup)
+        this.selectorDom.insertBefore(settingTopDom,settingDom)
 
     }
 

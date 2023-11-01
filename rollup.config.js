@@ -1,4 +1,5 @@
 import babel from '@rollup/plugin-babel';
+import terser from '@rollup/plugin-terser';
 import postcss from "rollup-plugin-postcss";
 import autoprefixer from "autoprefixer";
 import cssnano from "cssnano";
@@ -13,22 +14,22 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename)
 
 const isProduction = process.env.NODE_ENV === 'production'
-const pluginsWithEnv = isProduction ? [strip()] : [serve({
+const pluginsWithEnv = isProduction ? [strip(),terser()] : [serve({
     port: 10001,
     contentBase: ['dist', 'examples']
-}), livereload({watch: 'dist/eSheet.umd.js'})]
+}), livereload({watch: 'dist/e-sheet.umd.js'})]
 
 export default {
     input: resolve(__dirname,'src/main.js'),
     output: [
         {
-            file: resolve(__dirname,'dist/eSheet.es.js'),
+            file: resolve(__dirname,'dist/e-sheet.es.js'),
             name:'eSheet',
             format: 'es',
             sourcemap:true
         },
         {
-            file: resolve(__dirname,'dist/eSheet.umd.js'),
+            file: resolve(__dirname,'dist/e-sheet.umd.js'),
             name:'eSheet',
             format: 'umd',
             sourcemap:true,
