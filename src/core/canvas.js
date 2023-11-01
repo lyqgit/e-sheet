@@ -111,13 +111,29 @@ export default class Canvas{
             tempText = text
         }
 
+        let alignX = 0
+        let alignY = 0
+
         if(textAlign === 'left'){
-            ctx.fillText(tempText,x,y)
+            alignX = x
+            // ctx.fillText(tempText,x,y)
         }else if(textAlign === 'right'){
-            ctx.fillText(tempText,x+rectWidth - textObj.width,y)
+            alignX = x+rectWidth
+            // ctx.fillText(tempText,x+rectWidth - textObj.width,y)
         }else{
-            ctx.fillText(tempText,baseX,baseY)
+            alignX = baseX
+            // ctx.fillText(tempText,baseX,baseY)
         }
+
+        if(textBaseline === 'top'){
+            alignY = y
+        }else if(textBaseline === 'bottom'){
+            alignY = y+rectHeight
+        }else{
+            alignY = baseY
+        }
+
+        ctx.fillText(tempText,alignX,alignY,rectWidth)
     }
 
     /**

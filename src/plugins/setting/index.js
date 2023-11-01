@@ -43,13 +43,7 @@ export default class setting{
      * @param {string} textAlign
      */
     cellFontTextAlignChange(textAlign){
-        let resTextAlign = textAlign
-        if(textAlign === 'start'){
-            resTextAlign = 'end'
-        }else if(textAlign === 'end'){
-            resTextAlign = 'start'
-        }
-        this.contentComponent.clickCell.textAlign = resTextAlign
+        this.contentComponent.clickCell.textAlign = textAlign
         this.core.freshContent()
     }
 
@@ -57,13 +51,7 @@ export default class setting{
      * @param {string} textBaseline
      */
     cellFontTextBaseLineChange(textBaseline){
-        let resTextBaseline = textBaseline
-        if(textBaseline === 'top'){
-            resTextBaseline = 'bottom'
-        }else if(textBaseline === 'bottom'){
-            resTextBaseline = 'top'
-        }
-        this.contentComponent.clickCell.textBaseline = resTextBaseline
+        this.contentComponent.clickCell.textBaseline = textBaseline
         this.core.freshContent()
     }
 
@@ -176,13 +164,13 @@ export default class setting{
             h('e-sheet-radio-button',{
                 attribute:{
                     label:'左对齐',
-                    value:'start'
+                    value:'left'
                 },
             },[
                 h('e-sheet-icon-svg',{
                     attribute:{
                         category:'hor',
-                        position:'start'
+                        position:'left'
                     }
                 })
             ]),
@@ -202,13 +190,13 @@ export default class setting{
             h('e-sheet-radio-button',{
                 attribute:{
                     label:'右对齐',
-                    value:'end'
+                    value:'right'
                 },
             },[
                 h('e-sheet-icon-svg',{
                     attribute:{
                         category:'hor',
-                        position:'end'
+                        position:'right'
                     }
                 })
             ])
