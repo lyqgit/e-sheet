@@ -101,7 +101,7 @@ export default class InputPlugin{
 
             // const attrs = this.core.plugins.SelectPlugin.searchRectAddr(evt.offsetX+offsetX - cellHeight,evt.offsetY+offsetY - cellHeight)
             const {x,y,width,height,text,isMerge,mergeWidth,mergeHeight,bgColor,fontColor} = clickCell
-            this.contentComponent.hideClickRect()
+            // this.contentComponent.hideClickRect()
             this.core.fresh()
             // console.log('attrs',attrs)
 
@@ -131,6 +131,7 @@ export default class InputPlugin{
                 this.inputDom.value = ''
                 this.core.fresh()
                 this.hideInput()
+                // console.log('inputDom---onblur结束')
             }
             inputDom.oninput=evt=>{
                 // console.log('测试',evt.target.value,clickCell)

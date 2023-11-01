@@ -112,7 +112,7 @@ export default class setting{
                     this.contentComponent.clickCell.text = evt.target.value
                 },
                 onfocus:_=>{
-                    // console.log('fxInputDom----onfocus')
+                    console.log('fxInputDom----onfocus',this.contentComponent.clickCell)
                     if(!this.contentComponent.clickCell){
                         return
                     }
