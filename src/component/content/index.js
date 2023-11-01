@@ -459,7 +459,11 @@ export default class ContentComponent{
             }else if(copyCellDash.length === 1){
                 // 单选
                 const dashCell = copyCellDash[0]
-                this.layer.drawDashStrokeRect(dashCell.ltX-offsetX+2,dashCell.ltY-offsetY+2,dashCell.width-4,dashCell.height-4,selectedBorderBgColor,'destination-over')
+                if(dashCell.isMerge){
+                    this.layer.drawDashStrokeRect(dashCell.ltX-offsetX+2,dashCell.ltY-offsetY+2,dashCell.mergeWidth-4,dashCell.mergeHeight-4,selectedBorderBgColor,'destination-over')
+                }else{
+                    this.layer.drawDashStrokeRect(dashCell.ltX-offsetX+2,dashCell.ltY-offsetY+2,dashCell.width-4,dashCell.height-4,selectedBorderBgColor,'destination-over')
+                }
             }
 
         }
