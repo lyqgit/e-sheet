@@ -249,7 +249,9 @@ export default class SelectPlugin{
                         isFromExcel:true,
                         bgColor,
                         fontColor,
-                        font
+                        font,
+                        fontSize,
+                        fontFamily
                     }
                 }
                 // console.log('tempTd',tempTd)

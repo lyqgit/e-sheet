@@ -12,10 +12,15 @@ export default class setting{
     /**
      * @type {HTMLElement}
      */
-    fontHorAddrGroup = null/**
+    fontHorAddrGroup = null
+    /**
      * @type {HTMLElement}
      */
     fontVerAddrGroup = null
+    /**
+     * @type {HTMLElement}
+     */
+    fontSizeSelectDom = null
 
     constructor(selectorDom,layer,options={},components={},core) {
         this.contentComponent = components.ContentComponent
@@ -43,6 +48,9 @@ export default class setting{
      * @param {string} textAlign
      */
     cellFontTextAlignChange(textAlign){
+        if(!this.contentComponent.clickCell){
+            return
+        }
         this.contentComponent.clickCell.textAlign = textAlign
         this.core.freshContent()
     }
@@ -51,7 +59,21 @@ export default class setting{
      * @param {string} textBaseline
      */
     cellFontTextBaseLineChange(textBaseline){
+        if(!this.contentComponent.clickCell){
+            return
+        }
         this.contentComponent.clickCell.textBaseline = textBaseline
+        this.core.freshContent()
+    }
+
+    /**
+     * @param {string} fontSize
+     */
+    cellFontSizeChange(fontSize){
+        if(!this.contentComponent.clickCell){
+            return
+        }
+        this.contentComponent.clickCell.fontSize = fontSize
         this.core.freshContent()
     }
 
@@ -61,6 +83,7 @@ export default class setting{
     setCellAttrInHeader(attr){
         this.fontHorAddrGroup.setAttribute('value',attr.textAlign)
         this.fontVerAddrGroup.setAttribute('value',attr.textBaseline)
+        this.fontSizeSelectDom.setAttribute('value',attr.fontSize)
         this.setLabelCon(attr.label)
         this.setCellCon(attr.text)
     }
@@ -261,9 +284,37 @@ export default class setting{
                 className:'e-sheet-setting-layout'
             }
         })
-        settingTopDom.appendChild(fontHorAddrGroup)
-        settingTopDom.appendChild(fontVerAddrGroup)
+        const fontPositionDom = h('div',{
+            attr:{
+                className:'font-position-layout'
+            }
+        })
+        fontPositionDom.appendChild(fontVerAddrGroup)
+        fontPositionDom.appendChild(fontHorAddrGroup)
+
+        settingTopDom.appendChild(fontPositionDom)
+
+        const fontSizeSelectDom = h('e-sheet-select',{})
+
+        fontSizeSelectDom.addEventListener('e-sheet-select-onchange',evt=>{
+            this.cellFontSizeChange(evt.detail)
+        })
+
+        const fontSizeAndFamilyLayoutDom = h('div',{
+            attr:{
+                className:'font-position-layout'
+            }
+        })
+        this.fontSizeSelectDom = fontSizeSelectDom
+
+        fontSizeAndFamilyLayoutDom.appendChild(fontSizeSelectDom)
+
+        settingTopDom.appendChild(fontSizeAndFamilyLayoutDom)
+
         this.selectorDom.insertBefore(settingTopDom,settingDom)
+
+
+
 
     }
 

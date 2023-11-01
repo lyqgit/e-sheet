@@ -7,8 +7,9 @@ export default class IconSvg extends HTMLElement{
     connectedCallback(){
         this.category = this.getAttribute('category')
         this.position = this.getAttribute('position')
-        this.className = 'e-sheet-cell-svg-layout'
+
         if(this.category === 'hor'){
+            this.className = 'e-sheet-cell-svg-layout e-sheet-svg-20-20'
             switch (this.position){
                 case 'left':
                     this.innerHTML = '<svg width="20" height="20" fill="none" viewBox="0 0 20 20" size="20"><defs><clipPath id="master_svg0_6926_00059"><rect width="20" height="20" rx="0"></rect></clipPath></defs><g clip-path="url(#master_svg0_6926_00059)"><path fill="currentColor" fill-opacity="0.94" d="M17 5H3V4h14v1Zm-7 4H3V8h7v1Zm0 8H3v-1h7v1Zm7-4v-1H3v1h14Z"></path></g></svg>'
@@ -28,6 +29,7 @@ export default class IconSvg extends HTMLElement{
             }
         }
         if(this.category === 'ver'){
+            this.className = 'e-sheet-cell-svg-layout e-sheet-svg-20-20'
             switch (this.position) {
                 case 'top':
                     this.innerHTML = '<svg width="20" height="20" fill="none" viewBox="0 0 20 20" size="20"><defs><clipPath id="master_svg0_7600_00213"><rect width="20" height="20" rx="0"></rect></clipPath></defs><g clip-path="url(#master_svg0_7600_00213)"><path fill="currentColor" d="M17 4H3V3h14v1Z"></path><path fill="#0089FF" d="m10.013 6 3.487 4h-7l3.513-4Z"></path><path fill="#0089FF" fill-rule="evenodd" d="M10.5 9v8h-1V9h1Z"></path></g></svg>'
@@ -38,6 +40,24 @@ export default class IconSvg extends HTMLElement{
                 case 'bottom':
                     this.innerHTML = '<svg width="20" height="20" fill="none" viewBox="0 0 20 20" size="20"><defs><clipPath id="master_svg0_7600_00217"><rect width="20" height="20" rx="0"></rect></clipPath></defs><g clip-path="url(#master_svg0_7600_00217)"><path fill="currentColor" d="M17 17H3v-1h14v1Z"></path><path fill="#0089FF" fill-rule="evenodd" d="M10.5 3v8h-1V3h1Z"></path><path fill="#0089FF" d="m10.013 14 3.487-4h-7l3.513 4Z"></path></g></svg>'
                     return;
+            }
+        }
+
+        if(this.category === 'bool'){
+            this.className = 'e-sheet-cell-svg-layout e-sheet-svg-20-20'
+            switch (this.position){
+                case 'true':
+                    this.innerHTML = '<svg fill="none" width="20" height="20" viewBox="0 0 20 20" class="wdn-icon"><path d="M16.354 6.854a.5.5 0 0 0-.708-.708L8.5 13.293 4.854 9.647a.5.5 0 1 0-.708.707l4 4a.5.5 0 0 0 .708 0l7.5-7.5Z" fill="currentColor"></path></svg>'
+                return;
+            }
+        }
+
+        if(this.category === 'select'){
+            this.className = 'e-sheet-cell-svg-layout e-sheet-svg-12-12'
+            switch (this.position){
+                case 'down':
+                    this.innerHTML = '<svg width="12" height="12" viewBox="0 0 12 12" stroke="none" data-spm-anchor-id="" style=""><path d="M6.00004 7.79293L1.85359 3.64648L1.14648 4.35359L6.00004 9.20714L10.8536 4.35359L10.1465 3.64648L6.00004 7.79293Z" fill="currentColor" data-spm-anchor-id=""></path></svg>'
+                return;
             }
         }
     }

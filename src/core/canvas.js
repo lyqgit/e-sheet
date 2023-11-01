@@ -83,7 +83,7 @@ export default class Canvas{
      * @param {number} cellHeight
      * @param {Color} color
      * @param {string} textAlign
-     * @param {string} font
+     * @param {object} font
      * @param {string} textBaseline
      */
     drawText(x,y,text,rectWidth,rectHeight,globalCompositeOperation,color,textAlign='center',font,textBaseline){
@@ -92,7 +92,7 @@ export default class Canvas{
         rectWidth = rectWidth??cellWidth
         rectHeight = rectHeight??cellHeight
 
-        ctx.font = font?font:'12px Calibri'
+        ctx.font = font?`${font.fontSize}px ${font.fontFamily}`:'12px Calibre'
         ctx.fillStyle= color?color:"black";
         const baseX = x+rectWidth/2
         const baseY = y+rectHeight/2
@@ -105,7 +105,7 @@ export default class Canvas{
         let tempText = ''
 
         if(textObj.width > rectWidth){
-            const txtNum = (rectWidth/12).toFixed(0)-1
+            const txtNum = (rectWidth/font.fontSize).toFixed(0)-1
             tempText = text.slice(0,txtNum-1)+'...'
         }else{
             tempText = text
@@ -116,17 +116,14 @@ export default class Canvas{
 
         if(textAlign === 'left'){
             alignX = x
-            // ctx.fillText(tempText,x,y)
         }else if(textAlign === 'right'){
             alignX = x+rectWidth
-            // ctx.fillText(tempText,x+rectWidth - textObj.width,y)
         }else{
             alignX = baseX
-            // ctx.fillText(tempText,baseX,baseY)
         }
 
         if(textBaseline === 'top'){
-            alignY = y
+            alignY = y+2
         }else if(textBaseline === 'bottom'){
             alignY = y+rectHeight
         }else{

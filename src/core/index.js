@@ -270,6 +270,8 @@ export default class AppExcel{
                     bgColor:null,
                     fontColor:null,
                     font:null,
+                    fontSize:12,
+                    fontFamily:'Calibre',
                     textAlign:'center',
                     textBaseline:'middle',
                     label
