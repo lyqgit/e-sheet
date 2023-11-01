@@ -43,7 +43,7 @@ export default class setting{
      * @param {string} textAlign
      */
     cellFontTextAlignChange(textAlign){
-        let resTextAlign = 'center'
+        let resTextAlign = textAlign
         if(textAlign === 'start'){
             resTextAlign = 'end'
         }else if(textAlign === 'end'){
@@ -57,7 +57,7 @@ export default class setting{
      * @param {string} textBaseline
      */
     cellFontTextBaseLineChange(textBaseline){
-        let resTextBaseline = 'middle'
+        let resTextBaseline = textBaseline
         if(textBaseline === 'top'){
             resTextBaseline = 'bottom'
         }else if(textBaseline === 'bottom'){

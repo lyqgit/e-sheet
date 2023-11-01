@@ -422,7 +422,7 @@ export default class SelectPlugin{
             }else{
                 return
             }
-            this.core.copyRect
+            // this.core.copyRect
             this.core.freshContent()
         })
 
