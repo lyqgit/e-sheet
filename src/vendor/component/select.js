@@ -25,7 +25,28 @@ export default class Select extends HTMLElement {
 
     connectedCallback(){
         this.value = this.getAttribute('value')??12
+        this.label = this.getAttribute('label')
         this.className = 'e-sheet-select'
+
+        let tipDom = document.createElement('div')
+        tipDom.className = 'e-sheet-radio-button-tip'
+        tipDom.innerText = this.label
+
+        this.addEventListener('mouseover',evt=>{
+            // console.log('evt',this.getBoundingClientRect())
+            if(!tipDom){
+                tipDom = document.createElement('div')
+                tipDom.className = 'e-sheet-radio-button-tip'
+                tipDom.innerText = this.label
+            }
+            const {x,y} = this.getBoundingClientRect()
+            tipDom.style.left = x+12+'px'
+            tipDom.style.top = y+22+'px'
+            document.body.appendChild(tipDom)
+        })
+        this.addEventListener('mouseleave',evt=>{
+            tipDom.remove()
+        })
 
         const showTextDom = document.createElement('div')
 

@@ -299,6 +299,7 @@ export default class setting{
         fontSizeSelectDom.addEventListener('e-sheet-select-onchange',evt=>{
             this.cellFontSizeChange(evt.detail)
         })
+        fontSizeSelectDom.setAttribute('label','字号')
 
         const fontSizeAndFamilyLayoutDom = h('div',{
             attr:{
