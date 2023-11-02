@@ -253,6 +253,7 @@ export default class AppExcel{
                     row:i+1,
                     col:j+1,
                     text:this.workBook[sheetName]?((this.workBook[sheetName][String.fromCharCode(65 + j)+(i+1)]?.v)??''):'',
+                    textAsNumber:NaN,
                     width:cellWidth,
                     height:cellHeight,
                     x:colWidth,

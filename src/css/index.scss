@@ -14,16 +14,32 @@ $theme-color-blue:--eview-sheet-primary-color;
 // canvas
 .e-sheet-canvas-wrapper{
   position: relative;
+  overflow: hidden;
 }
 
 // cell
-
+.e-sheet-cell-painter{
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--e-sheet-selected-cell-color);
+  position: absolute;
+  display: none;
+  left: 0;
+  top: 0;
+  z-index: 99;
+}
 
 .e-sheet-selected-cell{
   border:2px solid var(--e-sheet-selected-cell-color);
   position: absolute;
   box-sizing: border-box;
   user-select: none;
+}
+
+.e-sheet-cell-painter-border{
+  position: absolute;
+  background-color: #E7EFFB;
 }
 
 .e-sheet-ver-cell-border{

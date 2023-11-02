@@ -1,3 +1,5 @@
+import base64Img from '../../image/base64Img.js'
+
 export default class ContentComponent{
 
     /**
@@ -72,6 +74,7 @@ export default class ContentComponent{
         // this.initDraw()
         this.trendsDraw(0,0)
         this.registrySelectedCellDom()
+        this.registryCellPainterDom()
     }
 
 
@@ -256,6 +259,8 @@ export default class ContentComponent{
         this.selectedCellRightBorderDom.style.top = y+'px'
         this.selectedCellRightBorderDom.style.height = height+'px'
 
+        // dot
+        this.showSelectedCellPainterDom(x+width,y+height)
     }
 
     setSelectedCellBorderDomBgColor(color){
@@ -357,6 +362,7 @@ export default class ContentComponent{
             // console.log('this.moveClickCell',this.moveClickCell)
             SelectPlugin.transformTableDomStrToCanvasCell(tableDomStr,this.moveClickCell)
             this.moveClickCell = null
+            this.canvasWrapperDom.onmousemove = null
             this.canvasWrapperDom.onmouseup = null
         }
     }
@@ -445,6 +451,306 @@ export default class ContentComponent{
         this.moveClickCell = curCell;
         // console.log('this.moveClickCell',this.moveClickCell)
         this.showSelectedCellDom(curCell.x+cellHeight-offsetX,curCell.y-offsetY+cellHeight,curCell.isMerge?curCell.mergeWidth:curCell.width,curCell.isMerge?curCell.mergeHeight:curCell.height)
+    }
+
+    /**
+     * @type {HTMLElement}
+     */
+    cellPainterDom = null
+    /**
+     * @type {HTMLElement}
+     */
+    cellPainterTopBorderDom = null
+    /**
+     * @type {HTMLElement}
+     */
+    cellPainterBottomBorderDom = null
+    /**
+     * @type {HTMLElement}
+     */
+    cellPainterLeftBorderDom = null
+    /**
+     * @type {HTMLElement}
+     */
+    cellPainterRightBorderDom = null
+
+    registryCellPainterDom(){
+        const { h,canvasWrapperDom } = this.core
+        this.cellPainterDom = h('div',{
+            attr:{
+                className:'e-sheet-cell-painter',
+                onmouseup:_=>{
+                    this.canvasDom.onmousemove = null
+                }
+            }
+
+        })
+
+        this.cellPainterTopBorderDom = h('div',{
+            attr:{
+                className:'e-sheet-cell-painter-border',
+                onmouseup:_=>{
+                    this.canvasDom.onmousemove = null
+                }
+            },
+            style:{
+                height:'4px',
+                display:'none'
+            }
+        })
+
+        this.cellPainterBottomBorderDom = h('div',{
+            attr:{
+                className:'e-sheet-cell-painter-border',
+                onmouseup:_=>{
+                    this.canvasDom.onmousemove = null
+                }
+            },
+            style:{
+                height:'4px',
+                display:'none'
+            }
+        })
+
+        this.cellPainterLeftBorderDom = h('div',{
+            attr:{
+                className:'e-sheet-cell-painter-border',
+                onmouseup:_=>{
+                    this.canvasDom.onmousemove = null
+                }
+            },
+            style:{
+                width:'4px',
+                display:'none'
+            }
+        })
+
+        this.cellPainterRightBorderDom = h('div',{
+            attr:{
+                className:'e-sheet-cell-painter-border',
+                onmouseup:_=>{
+                    this.canvasDom.onmousemove = null
+                }
+            },
+            style:{
+                width:'4px',
+                display:'none'
+            }
+        })
+
+        canvasWrapperDom.appendChild(this.cellPainterTopBorderDom)
+        canvasWrapperDom.appendChild(this.cellPainterBottomBorderDom)
+        canvasWrapperDom.appendChild(this.cellPainterLeftBorderDom)
+        canvasWrapperDom.appendChild(this.cellPainterRightBorderDom)
+
+        this.cellPainterDom.oncontextmenu = evt=>{
+            evt.preventDefault()
+        }
+
+        this.cellPainterDom.onmousedown = evt=>{
+            evt.stopImmediatePropagation()
+            const painterDomLeft = parseInt(this.cellPainterDom.style.left)
+            const painterDomTop = parseInt(this.cellPainterDom.style.top)
+
+            let diffCol = 0
+            let diffRow = 0
+
+            let diffWidth = 0
+            let diffHeight = 0
+
+            let nColMultiple = 0
+            let nRowMultiple = 0
+
+            let finalColRect = null
+            let finalRowRect = null
+            let finalRect = null
+
+            let director = ''
+
+            this.canvasDom.onmousemove = event=>{
+                const { cellHeight } = this.options
+                const { clickCell,moreSelectedCell } = this
+                const { offsetX,offsetY } = this.core.plugins.ScrollPlugin
+                const curCell = this.core.plugins.SelectPlugin.searchRectAddr(event.offsetX+offsetX - cellHeight,event.offsetY+offsetY - cellHeight)
+                const absX = Math.abs(event.offsetX-painterDomLeft)
+                const absY = Math.abs(event.offsetY-painterDomTop)
+
+
+
+                if(moreSelectedCell.length > 0){
+
+                    const curRowRectArr = moreSelectedCell.filter(item=>item.row === clickCell.row)
+                    finalRowRect = curRowRectArr[curRowRectArr.length - 1]
+                    diffCol = finalRowRect.col - clickCell.col + 1
+                    diffWidth = finalRowRect.x - clickCell.x + finalRowRect.width
+
+                    const curColRectArr = moreSelectedCell.filter(item=>item.col === clickCell.col)
+                    // console.log('curColRectArr.length',curColRectArr)
+                    // console.log('clickCell',clickCell)
+                    finalColRect = curColRectArr[curColRectArr.length - 1]
+                    // console.log('finalColRect',finalColRect)
+
+                    diffRow = finalColRect.row - clickCell.row + 1
+                    diffHeight = finalColRect.y - clickCell.y + finalColRect.height
+                    finalRect = moreSelectedCell[moreSelectedCell.length - 1]
+                }else{
+                    if(clickCell.isMerge){
+                        finalRowRect = this.searchRectByColAndRow(clickCell.col + clickCell.mergeCol - 1,clickCell.row)
+                        finalColRect = this.searchRectByColAndRow(clickCell.col,clickCell.row + clickCell.mergeRow - 1)
+                        finalRect = this.searchRectByLabel(clickCell.mergeEndLabel)
+                        diffWidth = clickCell.mergeWidth
+                        diffHeight = clickCell.mergeHeight
+                    }else{
+                        finalRect = finalRowRect = finalColRect = clickCell
+                        diffWidth = clickCell.width
+                        diffHeight = clickCell.height
+                    }
+                    diffCol = clickCell.mergeCol
+                    diffRow = clickCell.mergeRow
+                }
+
+
+                // 如果mouseCell在选中区域中，则不显示格式刷框
+                if(event.offsetX>=clickCell.ltX-offsetX && event.offsetX<=(clickCell.ltX-offsetX+diffWidth) && event.offsetY>=clickCell.ltY-offsetY && curCell.y <= (clickCell.ltY-offsetY+diffHeight)){
+                    this.hidePainterBorderDom()
+                    director = null
+                    // console.log('如果mouseCell在选中区域中，则不显示格式刷框')
+                    this.canvasWrapperDom.onmouseup = null
+                    this.canvasDom.onmouseup = null
+                    return
+                }
+
+
+
+                if(absX>absY){
+                    // 在左右方向
+                    const mouseCell = this.searchRectByColAndRow(curCell.col,clickCell.row)
+                    if(event.offsetX>painterDomLeft){
+                        // 右侧，以右侧第一个为起点
+                        director = 'right'
+                        nColMultiple = Math.ceil(Math.abs(mouseCell.col - finalRowRect.col)/diffCol)
+                        // console.log('nColMultiple',nColMultiple)
+                        this.showPainterBorderDom(clickCell.ltX+diffWidth - offsetX,clickCell.ltY - offsetY,diffWidth*nColMultiple,diffHeight)
+                    }else if(event.offsetX<painterDomLeft){
+                        director = 'left'
+                        nColMultiple = Math.ceil(Math.abs(mouseCell.col - clickCell.col)/diffCol)
+                        this.showPainterBorderDom(clickCell.ltX - diffWidth*nColMultiple - offsetX,clickCell.ltY - offsetY,diffWidth*nColMultiple,diffHeight)
+                    }
+                }else{
+                    const mouseCell = this.searchRectByColAndRow(clickCell.col,curCell.row)
+                    if(event.offsetY>painterDomTop){
+                        // 下方
+                        director = 'bottom'
+                        nRowMultiple = Math.ceil(Math.abs(mouseCell.row - finalColRect.row)/diffRow)
+                        this.showPainterBorderDom(clickCell.ltX,clickCell.ltY+diffHeight - offsetY,diffWidth,diffHeight*nRowMultiple)
+                    }else if(event.offsetY<painterDomTop){
+                        // 上方
+                        director = 'top'
+                        nRowMultiple = Math.ceil(Math.abs(mouseCell.row - clickCell.row)/diffRow)
+                        this.showPainterBorderDom(clickCell.ltX,clickCell.ltY-diffHeight*nRowMultiple - offsetY,diffWidth,diffHeight*nRowMultiple)
+                    }
+                }
+
+
+                this.canvasWrapperDom.onmouseup = evt=>{
+                    evt.stopImmediatePropagation()
+                    if(director === null){
+                        return
+                    }
+                    const { SelectPlugin } = this.core.plugins
+                    const tableDomStr = SelectPlugin.transformCanvasCellToTableDomStr()
+                    // 查找格式刷后的第一个cell
+                    const startCellArr = []
+                    if(director === 'right'){
+                        // 右侧
+                        for(let i=1;i<=nColMultiple;i++){
+                            startCellArr.push(this.searchRectByColAndRow(clickCell.col+i*diffCol,clickCell.row))
+                        }
+                    }else if(director === 'left'){
+                        // 左侧
+                        for(let i=1;i<=nColMultiple;i++){
+                            startCellArr.push(this.searchRectByColAndRow(clickCell.col-i*diffCol,clickCell.row))
+                        }
+                    }else if(director === 'bottom'){
+                        // 下侧
+                        for(let i=1;i<=nRowMultiple;i++){
+                            startCellArr.push(this.searchRectByColAndRow(clickCell.col,clickCell.row+i*diffRow))
+                        }
+                    }else if(director === 'top'){
+                        // 下侧
+                        for(let i=1;i<=nRowMultiple;i++){
+                            startCellArr.push(this.searchRectByColAndRow(clickCell.col,clickCell.row-i*diffRow))
+                        }
+                    }
+
+                    // console.log('tableDomStr',tableDomStr)
+                    // console.log('startCellArr',startCellArr)
+
+                    startCellArr.forEach(item=>{
+                        SelectPlugin.transformTableDomStrToCanvasCell(tableDomStr,item)
+                    })
+                    this.canvasDom.onmousemove = null
+                    this.canvasWrapperDom.onmouseup = null
+                    this.hidePainterBorderDom()
+                }
+
+            }
+
+
+
+        }
+
+
+
+        canvasWrapperDom.appendChild(this.cellPainterDom)
+
+    }
+
+    hidePainterBorderDom(){
+        this.cellPainterTopBorderDom.style.display = 'none'
+        this.cellPainterBottomBorderDom.style.display = 'none'
+        this.cellPainterLeftBorderDom.style.display = 'none'
+        this.cellPainterRightBorderDom.style.display = 'none'
+    }
+
+    showPainterBorderDom(x,y,width,height){
+
+        // console.log('xy',x,y,width,height)
+
+        // top
+        this.cellPainterTopBorderDom.style.left = x+'px'
+        this.cellPainterTopBorderDom.style.top = y+'px'
+        this.cellPainterTopBorderDom.style.width = width+'px'
+        this.cellPainterTopBorderDom.style.display = 'block'
+
+        // bottom
+        this.cellPainterBottomBorderDom.style.left = x+'px'
+        this.cellPainterBottomBorderDom.style.top = y+height-4+'px'
+        this.cellPainterBottomBorderDom.style.width = width+'px'
+        this.cellPainterBottomBorderDom.style.display = 'block'
+
+        // left
+        this.cellPainterLeftBorderDom.style.left = x+'px'
+        this.cellPainterLeftBorderDom.style.top = y+'px'
+        this.cellPainterLeftBorderDom.style.height = height+'px'
+        this.cellPainterLeftBorderDom.style.display = 'block'
+
+        // right
+        this.cellPainterRightBorderDom.style.left = x+width - 4 +'px'
+        this.cellPainterRightBorderDom.style.top = y+'px'
+        this.cellPainterRightBorderDom.style.height = height+'px'
+        this.cellPainterRightBorderDom.style.display = 'block'
+    }
+
+    /**
+     * @param {number} x
+     * @param {number} y
+     */
+    showSelectedCellPainterDom(x,y){
+        this.cellPainterDom.style.display = 'block'
+        this.cellPainterDom.style.left = x-3+'px'
+        this.cellPainterDom.style.top = y-3+'px'
+        this.cellPainterDom.style.cursor = `url(${base64Img['crosshair']}) 18 18, crosshair`
     }
 
     /**
