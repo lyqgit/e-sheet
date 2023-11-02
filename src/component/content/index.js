@@ -575,8 +575,6 @@ export default class ContentComponent{
                 const absX = Math.abs(event.offsetX-painterDomLeft)
                 const absY = Math.abs(event.offsetY-painterDomTop)
 
-
-
                 if(moreSelectedCell.length > 0){
 
                     const curRowRectArr = moreSelectedCell.filter(item=>item.row === clickCell.row)
@@ -611,10 +609,10 @@ export default class ContentComponent{
 
 
                 // 如果mouseCell在选中区域中，则不显示格式刷框
-                if(event.offsetX>=clickCell.ltX-offsetX && event.offsetX<=(clickCell.ltX-offsetX+diffWidth) && event.offsetY>=clickCell.ltY-offsetY && curCell.y <= (clickCell.ltY-offsetY+diffHeight)){
+                if(event.offsetX>=clickCell.ltX-offsetX && event.offsetX<=(clickCell.ltX-offsetX+diffWidth) && event.offsetY>=clickCell.ltY-offsetY && event.offsetY <= (clickCell.ltY-offsetY+diffHeight)){
                     this.hidePainterBorderDom()
                     director = null
-                    // console.log('如果mouseCell在选中区域中，则不显示格式刷框')
+                    // console.log('如果mouseCell在选中区域中，则不显示格式刷框',event.offsetY,clickCell.ltY-offsetY,clickCell.ltY-offsetY+diffHeight)
                     this.canvasWrapperDom.onmouseup = null
                     this.canvasDom.onmouseup = null
                     return
