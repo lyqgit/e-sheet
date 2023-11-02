@@ -292,18 +292,49 @@ export default class ContentComponent{
                 item.mergeRow = 1
                 item.mergeCol = 1
                 item.isMerge = false
+                item.fontSize = 12
+                item.fontFamily = ''
             })
         }else{
-            clickCell.text = ''
-            clickCell.fontColor = ''
-            clickCell.bgColor = ''
-            clickCell.font = ''
-            clickCell.textAlign = ''
-            clickCell.mergeWidth = 0
-            clickCell.mergeHeight = 0
-            clickCell.mergeRow = 1
-            clickCell.mergeCol = 1
-            clickCell.isMerge = false
+            if(clickCell.isMerge){
+                // 是单个合并的单元格
+
+                let ni = clickCell.row+clickCell.mergeRow
+                let nj = clickCell.col+clickCell.mergeCol
+
+                for(let i=clickCell.row;i<ni;i++){
+                    for(let j=clickCell.col;j<nj;j++){
+                        const oriRect = this.searchRectByColAndRow(j,i)
+                        oriRect.text = ''
+                        oriRect.fontSize = 12
+                        oriRect.fontFamily = ''
+                        oriRect.fontColor = ''
+                        oriRect.bgColor = ''
+                        oriRect.font = ''
+                        oriRect.textAlign = ''
+                        oriRect.mergeWidth = 0
+                        oriRect.mergeHeight = 0
+                        oriRect.mergeRow = 1
+                        oriRect.mergeCol = 1
+                        oriRect.isMerge = false
+                    }
+                }
+
+            }else{
+                clickCell.text = ''
+                clickCell.fontColor = ''
+                clickCell.bgColor = ''
+                clickCell.font = ''
+                clickCell.textAlign = ''
+                clickCell.mergeWidth = 0
+                clickCell.mergeHeight = 0
+                clickCell.mergeRow = 1
+                clickCell.mergeCol = 1
+                clickCell.isMerge = false
+                clickCell.fontSize = 12
+                clickCell.fontFamily = ''
+            }
+
         }
 
     }
@@ -316,7 +347,7 @@ export default class ContentComponent{
         this.canvasWrapperDom.onmouseup = event=>{
             // console.log('测试',this.moveClickCell,this.clickCell)
             this.setSelectedCellBorderDomBgColor('transparent')
-            if(!this.moveClickCell){
+            if(!this.moveClickCell || this.moveClickCell.isMerge){
                 return
             }
             const { SelectPlugin } = this.core.plugins
@@ -413,7 +444,7 @@ export default class ContentComponent{
         const curCell = this.core.plugins.SelectPlugin.searchRectAddr(event.offsetX+offsetX - cellHeight,event.offsetY+offsetY - cellHeight)
         this.moveClickCell = curCell;
         // console.log('this.moveClickCell',this.moveClickCell)
-        this.showSelectedCellDom(curCell.x+cellHeight-offsetX,curCell.y-offsetY+cellHeight)
+        this.showSelectedCellDom(curCell.x+cellHeight-offsetX,curCell.y-offsetY+cellHeight,curCell.isMerge?curCell.mergeWidth:curCell.width,curCell.isMerge?curCell.mergeHeight:curCell.height)
     }
 
     /**
