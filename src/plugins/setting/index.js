@@ -21,6 +21,10 @@ export default class setting{
      * @type {HTMLElement}
      */
     fontSizeSelectDom = null
+    /**
+     * @type {HTMLElement}
+     */
+    fontColorSelectDom = null
 
     constructor(selectorDom,layer,options={},components={},core) {
         this.contentComponent = components.ContentComponent
@@ -78,12 +82,24 @@ export default class setting{
     }
 
     /**
+     * @param {string} fontColor
+     */
+    cellFontColorChange(fontColor){
+        if(!this.contentComponent.clickCell){
+            return
+        }
+        this.contentComponent.clickCell.fontColor = fontColor
+        this.core.freshContent()
+    }
+
+    /**
      * @param {object} attr
      */
     setCellAttrInHeader(attr){
         this.fontHorAddrGroup.setAttribute('value',attr.textAlign)
         this.fontVerAddrGroup.setAttribute('value',attr.textBaseline)
         this.fontSizeSelectDom.setAttribute('value',attr.fontSize)
+        this.fontColorSelectDom.value = attr.fontColor
         this.setLabelCon(attr.label)
         this.setCellCon(attr.text)
     }
@@ -135,7 +151,7 @@ export default class setting{
                     this.contentComponent.clickCell.text = evt.target.value
                 },
                 onfocus:_=>{
-                    console.log('fxInputDom----onfocus',this.contentComponent.clickCell)
+                    // console.log('fxInputDom----onfocus',this.contentComponent.clickCell)
                     if(!this.contentComponent.clickCell){
                         return
                     }
@@ -308,7 +324,30 @@ export default class setting{
         })
         this.fontSizeSelectDom = fontSizeSelectDom
 
+        const fontColorSelectDom = h('input',{
+            attr:{
+                type:'color',
+                className:'e-sheet-color-select',
+                oninput:evt=>{
+                    this.cellFontColorChange(evt.target.value)
+                    // console.log('evt',evt.target.value)
+                }
+            }
+        })
+
+        const fontColorSelectTipConDom = h('e-sheet-tip',{
+            attribute:{
+                'tip-label':'字体颜色',
+                'left':2,
+                'top':22,
+            }
+        })
+
+        fontColorSelectTipConDom.appendChild(fontColorSelectDom)
+        this.fontColorSelectDom = fontColorSelectDom
+
         fontSizeAndFamilyLayoutDom.appendChild(fontSizeSelectDom)
+        fontSizeAndFamilyLayoutDom.appendChild(fontColorSelectTipConDom)
 
         settingTopDom.appendChild(fontSizeAndFamilyLayoutDom)
 

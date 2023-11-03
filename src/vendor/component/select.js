@@ -41,7 +41,7 @@ export default class Select extends HTMLElement {
             }
             const {x,y} = this.getBoundingClientRect()
             tipDom.style.left = x+12+'px'
-            tipDom.style.top = y+22+'px'
+            tipDom.style.top = y+24+'px'
             document.body.appendChild(tipDom)
         })
         this.addEventListener('mouseleave',evt=>{
@@ -81,6 +81,7 @@ export default class Select extends HTMLElement {
                 composed: true,
                 detail: this.value
             }));
+            tipDom.remove()
 
             this.close()
             // console.log('this.optionLayoutDom',this.optionLayoutDom)
