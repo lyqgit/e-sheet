@@ -9,6 +9,10 @@
   display: flex;
   align-items: center;
   height: 20px;
+  padding: 2px 4px;
+  &:hover{
+    background-color: var(--e-sheet-radio-button-selected-color);
+  }
   .arrow-layout{
     display: flex;
     align-items: center;

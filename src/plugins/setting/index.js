@@ -231,7 +231,7 @@ export default class setting{
             ]),
             h('e-sheet-radio-button',{
                 style:{
-                    paddingLeft:'6px'
+                    marginLeft:'6px'
                 },
                 attribute:{
                     label:'居中对齐',
@@ -247,7 +247,7 @@ export default class setting{
             ]),
             h('e-sheet-radio-button',{
                 style:{
-                    paddingLeft:'6px'
+                    marginLeft:'6px'
                 },
                 attribute:{
                     label:'右对齐',
@@ -285,7 +285,7 @@ export default class setting{
             ]),
             h('e-sheet-radio-button',{
                 style:{
-                    paddingLeft:'6px'
+                    marginLeft:'6px'
                 },
                 attribute:{
                     label:'垂直居中',
@@ -301,7 +301,7 @@ export default class setting{
             ]),
             h('e-sheet-radio-button',{
                 style:{
-                    paddingLeft:'6px'
+                    marginLeft:'6px'
                 },
                 attribute:{
                     label:'底部对齐',
