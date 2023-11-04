@@ -158,7 +158,7 @@ export default class ScrollPlugin{
                 // console.log('eA',eA)
                 this.layer.setCursorDefault()
                 requestAnimationFrame(()=>{
-                    const leftDis = eA.pageX - (this.canvasWrapperDom.offsetLeft + this.options.cellHeight) -e.offsetX
+                    const leftDis = eA.pageX - (this.canvasWrapperDom.getBoundingClientRect().x + this.options.cellHeight) -e.offsetX
                     this.horMoveFunc(leftDis,proportion)
                 })
 
@@ -222,7 +222,8 @@ export default class ScrollPlugin{
                 requestAnimationFrame(()=>{
                     // console.log('eA',eA)
                     // console.log('leftDis',leftDis)
-                    const topDis = eA.pageY - (this.canvasWrapperDom.offsetTop + this.options.cellHeight) - e.offsetY
+                    const topDis = eA.pageY - (this.canvasWrapperDom.getBoundingClientRect().y + this.options.cellHeight) - e.offsetY
+                    // console.log('topDis',topDis,this.canvasWrapperDom.getBoundingClientRect())
                     this.verMoveFunc(topDis,proportion)
 
                 })

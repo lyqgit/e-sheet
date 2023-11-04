@@ -25,7 +25,7 @@ export default class AppExcel{
         'Sheet1':[]
     }
 
-    row= 160
+    row= 1160
 
     col = 52
 
