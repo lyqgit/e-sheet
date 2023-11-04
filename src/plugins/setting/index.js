@@ -25,6 +25,10 @@ export default class setting{
      * @type {HTMLElement}
      */
     fontColorSelectDom = null
+    /**
+     * @type {HTMLElement}
+     */
+    bgColorSelectDom = null
 
     constructor(selectorDom,layer,options={},components={},core) {
         this.contentComponent = components.ContentComponent
@@ -93,13 +97,25 @@ export default class setting{
     }
 
     /**
+     * @param {string} bgColor
+     */
+    cellBgColorChange(bgColor){
+        if(!this.contentComponent.clickCell){
+            return
+        }
+        this.contentComponent.clickCell.bgColor = bgColor
+        this.core.freshContent()
+    }
+
+    /**
      * @param {object} attr
      */
     setCellAttrInHeader(attr){
         this.fontHorAddrGroup.setAttribute('value',attr.textAlign)
         this.fontVerAddrGroup.setAttribute('value',attr.textBaseline)
         this.fontSizeSelectDom.setAttribute('value',attr.fontSize)
-        this.fontColorSelectDom.value = attr.fontColor
+        // this.fontColorSelectDom.setAttribute('color',attr.fontColor)
+        // this.bgColorSelectDom.setAttribute('color',attr.bgColor)
         this.setLabelCon(attr.label)
         this.setCellCon(attr.text)
     }
@@ -214,6 +230,9 @@ export default class setting{
                 })
             ]),
             h('e-sheet-radio-button',{
+                style:{
+                    paddingLeft:'6px'
+                },
                 attribute:{
                     label:'居中对齐',
                     value:'center'
@@ -227,6 +246,9 @@ export default class setting{
                 })
             ]),
             h('e-sheet-radio-button',{
+                style:{
+                    paddingLeft:'6px'
+                },
                 attribute:{
                     label:'右对齐',
                     value:'right'
@@ -262,6 +284,9 @@ export default class setting{
                 })
             ]),
             h('e-sheet-radio-button',{
+                style:{
+                    paddingLeft:'6px'
+                },
                 attribute:{
                     label:'垂直居中',
                     value:'middle'
@@ -275,6 +300,9 @@ export default class setting{
                 })
             ]),
             h('e-sheet-radio-button',{
+                style:{
+                    paddingLeft:'6px'
+                },
                 attribute:{
                     label:'底部对齐',
                     value:'bottom'
@@ -322,23 +350,29 @@ export default class setting{
                 className:'font-position-layout'
             }
         })
+
+        const fontColorAndBgColorDom = h('div',{
+            attr:{
+                className:'font-position-layout'
+            }
+        })
+
         this.fontSizeSelectDom = fontSizeSelectDom
 
-        const fontColorSelectDom = h('input',{
-            attr:{
-                type:'color',
-                className:'e-sheet-color-select',
-                oninput:evt=>{
-                    this.cellFontColorChange(evt.target.value)
-                    // console.log('evt',evt.target.value)
-                }
+        const fontColorSelectDom = h('e-sheet-icon-color-svg',{
+            attribute:{
+                category:'font-color'
             }
+        })
+
+        fontColorSelectDom.addEventListener('e-sheet-icon-color-svg-onchange',evt=>{
+            this.cellFontColorChange(evt.detail)
         })
 
         const fontColorSelectTipConDom = h('e-sheet-tip',{
             attribute:{
                 'tip-label':'字体颜色',
-                'left':2,
+                'left':-10,
                 'top':22,
             }
         })
@@ -347,9 +381,36 @@ export default class setting{
         this.fontColorSelectDom = fontColorSelectDom
 
         fontSizeAndFamilyLayoutDom.appendChild(fontSizeSelectDom)
-        fontSizeAndFamilyLayoutDom.appendChild(fontColorSelectTipConDom)
+
+        fontColorAndBgColorDom.appendChild(fontColorSelectTipConDom)
+
+        const bgColorSelectTipConDom = h('e-sheet-tip',{
+            attribute:{
+                'tip-label':'字体颜色',
+                'left':-10,
+                'top':22,
+            }
+        })
+
+        const bgColorSelectDom = h('e-sheet-icon-color-svg',{
+            attribute:{
+                category:'bg-color'
+            }
+        })
+
+        this.bgColorSelectDom = bgColorSelectDom
+
+        bgColorSelectTipConDom.appendChild(bgColorSelectDom)
+
+        bgColorSelectDom.addEventListener('e-sheet-icon-color-svg-onchange',evt=>{
+            this.cellBgColorChange(evt.detail)
+        })
+
+        fontColorAndBgColorDom.appendChild(bgColorSelectTipConDom)
+
 
         settingTopDom.appendChild(fontSizeAndFamilyLayoutDom)
+        settingTopDom.appendChild(fontColorAndBgColorDom)
 
         this.selectorDom.insertBefore(settingTopDom,settingDom)
 

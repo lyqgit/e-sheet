@@ -1,4 +1,25 @@
 
+.e-sheet-icon-color-svg{
+  display: flex;
+  align-items: center;
+  height: 20px;
+  .arrow-layout{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .no-draw-input{
+    width: 0px;
+    height: 0px;
+    padding: 0px;
+    margin: 0px;
+    outline: none;
+    border: none;
+    visibility: hidden;
+  }
+}
+
+
 .e-sheet-tip{
   display: flex;
 }

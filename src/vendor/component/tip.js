@@ -11,7 +11,7 @@ export default class Tip extends HTMLElement {
         this.className = 'e-sheet-tip'
 
         this.addEventListener('mouseover',evt=>{
-            console.log('evt',this.getBoundingClientRect())
+            // console.log('evt',this.getBoundingClientRect())
             if(!tipDom){
                 tipDom = document.createElement('div')
                 tipDom.className = 'e-sheet-radio-button-tip'
