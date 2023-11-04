@@ -12,15 +12,13 @@ export default class Tip extends HTMLElement {
 
         this.addEventListener('mouseover',evt=>{
             // console.log('evt',this.getBoundingClientRect())
-            if(!tipDom){
-                tipDom = document.createElement('div')
-                tipDom.className = 'e-sheet-radio-button-tip'
-                tipDom.innerText = this.label
+            if(!document.body.contains(tipDom)){
+                const {x,y} = this.getBoundingClientRect()
+                tipDom.style.left = x+this.left+'px'
+                tipDom.style.top = y+this.top+'px'
+                document.body.appendChild(tipDom)
             }
-            const {x,y} = this.getBoundingClientRect()
-            tipDom.style.left = x+this.left+'px'
-            tipDom.style.top = y+this.top+'px'
-            document.body.appendChild(tipDom)
+
         })
         this.addEventListener('mouseleave',evt=>{
             tipDom.remove()

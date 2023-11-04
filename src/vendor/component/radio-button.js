@@ -29,18 +29,17 @@ export default class RadioButton extends HTMLElement{
         })
         this.addEventListener('mouseover',evt=>{
             // console.log('evt',this.getBoundingClientRect())
-            if(!tipDom){
-                tipDom = document.createElement('div')
-                tipDom.className = 'e-sheet-radio-button-tip'
-                tipDom.innerText = this.label
+            if(!document.body.contains(tipDom)){
+                const {x,y} = this.getBoundingClientRect()
+                tipDom.style.left = x - this.label.length*12/2 + 4 +'px'
+                tipDom.style.top = y+20+'px'
+                document.body.appendChild(tipDom)
             }
-            const {x,y} = this.getBoundingClientRect()
-            tipDom.style.left = x-10+'px'
-            tipDom.style.top = y+20+'px'
-            document.body.appendChild(tipDom)
+
         })
         this.addEventListener('mouseleave',evt=>{
             tipDom.remove()
+            console.log(tipDom)
         })
         shadowDOM.appendChild(slotDom);
     }

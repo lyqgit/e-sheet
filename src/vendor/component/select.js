@@ -114,9 +114,9 @@ export default class Select extends HTMLElement {
                 this.optionLayoutDom.appendChild(temp)
             }))
             // console.log('evt',this.getBoundingClientRect())
-            const {y} = this.getBoundingClientRect()
-            this.optionLayoutDom.style.left = 0+'px'
-            this.optionLayoutDom.style.top = y+1+'px'
+            const {height} = this.getBoundingClientRect()
+            this.optionLayoutDom.style.left = -1+'px'
+            this.optionLayoutDom.style.top = height+'px'
             this.appendChild(this.optionLayoutDom)
 
         })
