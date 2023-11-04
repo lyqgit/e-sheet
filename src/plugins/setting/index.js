@@ -386,7 +386,7 @@ export default class setting{
 
         const bgColorSelectTipConDom = h('e-sheet-tip',{
             attribute:{
-                'tip-label':'字体颜色',
+                'tip-label':'背景颜色',
                 'left':-10,
                 'top':22,
             }
