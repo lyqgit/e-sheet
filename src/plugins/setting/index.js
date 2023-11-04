@@ -336,7 +336,6 @@ export default class setting{
         fontPositionDom.appendChild(fontVerAddrGroup)
         fontPositionDom.appendChild(fontHorAddrGroup)
 
-        settingTopDom.appendChild(fontPositionDom)
 
         const fontSizeSelectDom = h('e-sheet-select',{})
 
@@ -408,8 +407,17 @@ export default class setting{
 
         fontColorAndBgColorDom.appendChild(bgColorSelectTipConDom)
 
+        const divideLine = h('div',{
+            attr:{
+                className:'e-sheet-divide-line'
+            }
+        })
+
+        settingTopDom.appendChild(fontPositionDom)
+        settingTopDom.appendChild(divideLine.cloneNode())
 
         settingTopDom.appendChild(fontSizeAndFamilyLayoutDom)
+        settingTopDom.appendChild(divideLine.cloneNode())
         settingTopDom.appendChild(fontColorAndBgColorDom)
 
         this.selectorDom.insertBefore(settingTopDom,settingDom)

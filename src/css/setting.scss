@@ -1,4 +1,10 @@
 
+.e-sheet-divide-line{
+  background-color: rgba(17, 31, 44, 0.12);
+  width: 1px;
+  margin: 0 6px;
+}
+
 .e-sheet-icon-color-svg{
   display: flex;
   align-items: center;
@@ -50,6 +56,7 @@
   align-items: center;
   padding: 0 2px;
   box-sizing: border-box;
+  background-color: #ffffff;
   .select-text{
     flex: 1;
     font-size: 14px;
@@ -82,13 +89,13 @@
 
 .e-sheet-setting-layout{
   display: flex;
+  background-color: #F7F9FE;
+  padding: 6px 6px 4px;
   .font-position-layout{
     display: flex;
     flex-direction: column;
-    align-items: center;
-    :first-child{
-      padding-bottom: 2px;
-    }
+    justify-content: space-around;
+    height: 52px;
   }
 }
 
