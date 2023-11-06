@@ -610,6 +610,9 @@ export default class setting{
         cellMergerBtnDom.onclick=_=>{
             const { clickCell,mergeSelectedCell } = this.contentComponent
             this.core.plugins.ContextmenuPlugin.mergeCell(clickCell,mergeSelectedCell)
+            if(mergeSelectedCell.some(item=>item.isMerge) || mergeSelectedCell.length === 0){
+                return
+            }
             cellMergerBtnDom.style.display = 'none'
             cellSplitBtnDom.style.display = 'flex'
         }
