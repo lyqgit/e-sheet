@@ -272,6 +272,8 @@ export default class AppExcel{
                     fontColor:'#000000',
                     font:null,
                     fontSize:12,
+                    fontWeight:'',
+                    fontItalic:'',
                     fontFamily:'Calibre',
                     textAlign:'center',
                     textBaseline:'middle',

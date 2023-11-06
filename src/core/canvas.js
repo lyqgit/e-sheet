@@ -92,7 +92,7 @@ export default class Canvas{
         rectWidth = rectWidth??cellWidth
         rectHeight = rectHeight??cellHeight
 
-        ctx.font = font?`${font.fontSize}px ${font.fontFamily}`:'12px Calibre'
+        ctx.font = font?`${font.fontWeight+' '}${font.fontItalic+' '}${font.fontSize}px ${font.fontFamily}`:'12px Calibre'
         ctx.fillStyle= color?color:"black";
         const baseX = x+rectWidth/2
         const baseY = y+rectHeight/2

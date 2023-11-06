@@ -39,7 +39,7 @@ export default class RadioButton extends HTMLElement{
         })
         this.addEventListener('mouseleave',evt=>{
             tipDom.remove()
-            console.log(tipDom)
+            // console.log(tipDom)
         })
         shadowDOM.appendChild(slotDom);
     }

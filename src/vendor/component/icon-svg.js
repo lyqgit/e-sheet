@@ -60,6 +60,18 @@ export default class IconSvg extends HTMLElement{
                 return;
             }
         }
+
+        if(this.category === 'font'){
+            this.className = 'e-sheet-cell-svg-layout e-sheet-svg-20-20'
+            switch (this.position) {
+                case 'weight':
+                    this.innerHTML = '<svg width="20" height="20" fill="none" viewBox="0 0 20 20" size="20"><defs><clipPath id="master_svg0_6926_00081"><rect width="20" height="20" rx="0"></rect></clipPath></defs><g clip-path="url(#master_svg0_6926_00081)"><path fill="currentColor" d="M5.8 3.05a.75.75 0 0 0-.75.75v12.5c0 .414.336.75.75.75h5.5c2.297 0 3.75-1.862 3.75-4 0-1.415-.637-2.71-1.734-3.423.734-.635 1.234-1.588 1.234-2.827 0-2.424-1.91-3.75-3.75-3.75h-5Zm5 6H6.55v-4.5h4.25c1.16 0 2.25.796 2.25 2.25s-1.09 2.25-2.25 2.25Zm-4.25 1.5h4.75c1.314 0 2.25 1.027 2.25 2.5s-.936 2.5-2.25 2.5H6.55v-5Z" data-spm-anchor-id=""></path></g></svg>'
+                    return;
+                case 'italic':
+                    this.innerHTML = '<svg width="20" height="20" fill="none" viewBox="0 0 20 20" size="20" data-spm-anchor-id=""><defs><clipPath id="master_svg0_7600_9375"><rect width="20" height="20" rx="0"></rect></clipPath></defs><g clip-path="url(#master_svg0_7600_9375)"><path fill="currentColor" d="M12 4h3V3H8v1h2.769l-2.77 12H5v1h7v-1H9.231l2.77-12Z"></path></g></svg>'
+                    return;
+            }
+        }
     }
 
 }

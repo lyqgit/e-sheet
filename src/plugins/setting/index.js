@@ -29,6 +29,14 @@ export default class setting{
      * @type {HTMLElement}
      */
     bgColorSelectDom = null
+    /**
+     * @type {HTMLElement}
+     */
+    fontItalicBtnDom = null
+    /**
+     * @type {HTMLElement}
+     */
+    fontWeightBtnDom = null
 
     constructor(selectorDom,layer,options={},components={},core) {
         this.contentComponent = components.ContentComponent
@@ -108,12 +116,36 @@ export default class setting{
     }
 
     /**
+     * @param {string} fontWeight
+     */
+    cellFontWeightChange(fontWeight){
+        if(!this.contentComponent.clickCell){
+            return
+        }
+        this.contentComponent.clickCell.fontWeight = fontWeight
+        this.core.freshContent()
+    }
+
+    /**
+     * @param {string} fontItalic
+     */
+    cellFontItalicChange(fontItalic){
+        if(!this.contentComponent.clickCell){
+            return
+        }
+        this.contentComponent.clickCell.fontItalic = fontItalic
+        this.core.freshContent()
+    }
+
+    /**
      * @param {object} attr
      */
     setCellAttrInHeader(attr){
         this.fontHorAddrGroup.setAttribute('value',attr.textAlign)
         this.fontVerAddrGroup.setAttribute('value',attr.textBaseline)
         this.fontSizeSelectDom.setAttribute('value',attr.fontSize)
+        this.fontWeightBtnDom.setAttribute('current',attr.fontWeight)
+        this.fontItalicBtnDom.setAttribute('current',attr.fontItalic)
         // this.fontColorSelectDom.setAttribute('color',attr.fontColor)
         // this.bgColorSelectDom.setAttribute('color',attr.bgColor)
         this.setLabelCon(attr.label)
@@ -337,6 +369,8 @@ export default class setting{
         fontPositionDom.appendChild(fontHorAddrGroup)
 
 
+        // 字体大小设置
+
         const fontSizeSelectDom = h('e-sheet-select',{})
 
         fontSizeSelectDom.addEventListener('e-sheet-select-onchange',evt=>{
@@ -358,6 +392,83 @@ export default class setting{
 
         this.fontSizeSelectDom = fontSizeSelectDom
 
+        fontSizeAndFamilyLayoutDom.appendChild(fontSizeSelectDom)
+
+
+        // 字体粗体和斜体设置
+
+        const fontWeightBtnDom =
+            h('e-sheet-radio-button',{
+                attribute:{
+                    label:'粗体',
+                    value:'bold'
+                },
+            },[
+                h('e-sheet-icon-svg',{
+                    attribute:{
+                        category:'font',
+                        position:'weight'
+                    }
+                })
+            ])
+
+        this.fontWeightBtnDom = fontWeightBtnDom
+        fontWeightBtnDom.addEventListener('e-sheet-radio-group-change',evt=>{
+            // console.log('evt',evt)
+            if(fontWeightBtnDom.getAttribute('current') === ''){
+                fontWeightBtnDom.setAttribute('current',evt.detail)
+                this.cellFontWeightChange(evt.detail)
+            }else{
+                fontWeightBtnDom.setAttribute('current','')
+                this.cellFontWeightChange('')
+            }
+        })
+
+        const fontItalicBtnDom = h('e-sheet-radio-button',{
+            style:{
+                marginLeft:'6px'
+            },
+            attribute:{
+                label:'斜体',
+                value:'italic'
+            },
+        },[
+            h('e-sheet-icon-svg',{
+                attribute:{
+                    category:'font',
+                    position:'italic'
+                }
+            })
+        ])
+
+        this.fontItalicBtnDom = fontItalicBtnDom
+
+        fontItalicBtnDom.addEventListener('e-sheet-radio-group-change',evt=>{
+            // console.log('evt',evt)
+            if(fontItalicBtnDom.getAttribute('current') === ''){
+                fontItalicBtnDom.setAttribute('current',evt.detail)
+                this.cellFontItalicChange(evt.detail)
+            }else{
+                fontItalicBtnDom.setAttribute('current','')
+                this.cellFontItalicChange('')
+            }
+
+
+        })
+
+        const fontStyleGroupDom = h('div',{
+            attr:{
+                className:'e-sheet-font-style-layout'
+            }
+        },[
+            fontWeightBtnDom,
+            fontItalicBtnDom
+        ])
+
+        fontSizeAndFamilyLayoutDom.appendChild(fontStyleGroupDom)
+
+
+        // 字体颜色设置
         const fontColorSelectDom = h('e-sheet-icon-color-svg',{
             attribute:{
                 category:'font-color'
@@ -379,10 +490,11 @@ export default class setting{
         fontColorSelectTipConDom.appendChild(fontColorSelectDom)
         this.fontColorSelectDom = fontColorSelectDom
 
-        fontSizeAndFamilyLayoutDom.appendChild(fontSizeSelectDom)
 
         fontColorAndBgColorDom.appendChild(fontColorSelectTipConDom)
 
+
+        // 背景颜色设置
         const bgColorSelectTipConDom = h('e-sheet-tip',{
             attribute:{
                 'tip-label':'背景颜色',

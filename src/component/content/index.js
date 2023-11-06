@@ -128,7 +128,7 @@ export default class ContentComponent{
                     // console.log('单个选中框',this.clickCell)
                     this.layer.drawStrokeRect(clickCell.x+cellHeight-offsetX,clickCell.y-offsetY+cellHeight,clickCell.width,clickCell.height,item.userColor,'destination-over',2)
                 }
-                this.layer.drawText(clickCell.x+cellHeight-offsetX+6,clickCell.y-offsetY+cellHeight-16,item.userName,clickCell.width,20,'destination-over','#ffffff','left',null,'top')
+                this.layer.drawText(clickCell.x+cellHeight-offsetX+6,clickCell.y-offsetY+cellHeight-16,item.userName,clickCell.width,20,'destination-over','#ffffff','left',{fontSize:clickCell.fontSize,fontFamily:clickCell.fontFamily,fontWeight:clickCell.fontWeight,fontItalic:clickCell.fontItalic},'top')
                 this.layer.drawFillRect(clickCell.x+cellHeight-offsetX,clickCell.y-offsetY+cellHeight-20,clickCell.width,20,item.userColor,'destination-over')
             }
 
@@ -948,21 +948,21 @@ export default class ContentComponent{
                         const {mergeWidth,mergeHeight} = tempRect
                         // console.log('背景色',tempRect)
                         this.layer.drawStrokeRect(x-offsetX+cellHeight,y-offsetY+cellHeight,mergeWidth,mergeHeight,borderColor,'destination-over',1)
-                        this.layer.drawText(x-offsetX+cellHeight,y-offsetY+cellHeight,text,mergeWidth,mergeHeight,'destination-over',tempRect.fontColor,tempRect.textAlign,{fontSize:tempRect.fontsize,fontFamily:tempRect.fontFamily},tempRect.textBaseline)
+                        this.layer.drawText(x-offsetX+cellHeight,y-offsetY+cellHeight,text,mergeWidth,mergeHeight,'destination-over',tempRect.fontColor,tempRect.textAlign,{fontSize:tempRect.fontsize,fontFamily:tempRect.fontFamily,fontWeight:tempRect.fontWeight,fontItalic:tempRect.fontItalic},tempRect.textBaseline)
                         this.layer.drawFillRect(x-offsetX+cellHeight,y-offsetY+cellHeight,mergeWidth,mergeHeight,tempRect.bgColor?tempRect.bgColor:nonSelectBgColor,'destination-over',1)
                     }else{
                         // 如果左上角不在屏幕内，渲染左上角
                         const tempMergeStartRect = this.searchRectByLabel(tempRect.mergeStartLabel)
                         if(!((tempMergeStartRect.col>=startCol && tempMergeStartRect.col<=endCol) && (tempMergeStartRect.row>=startRow && tempMergeStartRect.row<=endRow))){
                             this.layer.drawStrokeRect(tempMergeStartRect.x-offsetX+cellHeight,tempMergeStartRect.y-offsetY+cellHeight,tempMergeStartRect.mergeWidth,tempMergeStartRect.mergeHeight,borderColor,'destination-over',1)
-                            this.layer.drawText(tempMergeStartRect.x-offsetX+cellHeight,tempMergeStartRect.y-offsetY+cellHeight,tempMergeStartRect.text,tempMergeStartRect.mergeWidth,tempMergeStartRect.mergeHeight,'destination-over',tempMergeStartRect.fontColor,tempMergeStartRect.textAlign,{fontsize:tempMergeStartRect.fontSize,fontFamily:tempMergeStartRect.fontFamily},tempMergeStartRect.textBaseline)
+                            this.layer.drawText(tempMergeStartRect.x-offsetX+cellHeight,tempMergeStartRect.y-offsetY+cellHeight,tempMergeStartRect.text,tempMergeStartRect.mergeWidth,tempMergeStartRect.mergeHeight,'destination-over',tempMergeStartRect.fontColor,tempMergeStartRect.textAlign,{fontsize:tempMergeStartRect.fontSize,fontFamily:tempMergeStartRect.fontFamily,fontWeight:tempMergeStartRect.fontWeight,fontItalic:tempMergeStartRect.fontItalic},tempMergeStartRect.textBaseline)
                             this.layer.drawFillRect(tempMergeStartRect.x-offsetX+cellHeight,tempMergeStartRect.y-offsetY+cellHeight,tempMergeStartRect.mergeWidth,tempMergeStartRect.mergeHeight,tempMergeStartRect.bgColor?tempMergeStartRect.bgColor:nonSelectBgColor,'destination-over',1)
                         }
                     }
 
                 }else if(!tempRect.isMerge){
                     this.layer.drawStrokeRect(x-offsetX+cellHeight,y-offsetY+cellHeight,width,height,borderColor,'destination-over',1)
-                    this.layer.drawText(x-offsetX+cellHeight,y-offsetY+cellHeight,text,width,height,'destination-over',tempRect.fontColor,tempRect.textAlign,{fontSize:tempRect.fontSize,fontFamily:tempRect.fontFamily},tempRect.textBaseline)
+                    this.layer.drawText(x-offsetX+cellHeight,y-offsetY+cellHeight,text,width,height,'destination-over',tempRect.fontColor,tempRect.textAlign,{fontSize:tempRect.fontSize,fontFamily:tempRect.fontFamily,fontWeight:tempRect.fontWeight,fontItalic:tempRect.fontItalic},tempRect.textBaseline)
                     this.layer.drawFillRect(x-offsetX+cellHeight,y-offsetY+cellHeight,width,height,tempRect.bgColor?tempRect.bgColor:nonSelectBgColor,'destination-over',1)
                 }
                 // this.layer.drawFillRect(x-offsetX+cellHeight,y-offsetY+cellHeight,width,height,'#EBF4FF','destination-over',1)
