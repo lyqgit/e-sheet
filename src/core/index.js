@@ -21,9 +21,12 @@ export default class AppExcel{
 
     workBook = {}
 
-    eSheetWorkBook = {
-        'Sheet1':[]
-    }
+    eSheetWorkBook = [
+        {
+            label:'Sheet1',
+            sheet:[]
+        }
+    ]
 
     row= 160
 
@@ -223,6 +226,12 @@ export default class AppExcel{
         }
     }
 
+    // 切换sheet
+    switchSheet(sheetIndex){
+        const sheet = this.eSheetWorkBook[sheetIndex].sheet
+        this.components.ContentComponent.installContentDataByData(sheet)
+    }
+
     initExcelData(sheetName = 'Sheet1'){
 
         const { row,col,cellWidth,cellHeight } = this.options
@@ -236,7 +245,20 @@ export default class AppExcel{
 
         // this.core.sheetWidth += cellHeight
         // this.core.sheetHeight += cellHeight
-        this.eSheetWorkBook[sheetName] = []
+
+        const sheetIndex = this.eSheetWorkBook.findIndex(item=>item.label === sheetName)
+        let currentIndex = 0
+
+        if(sheetIndex === -1){
+            this.eSheetWorkBook.push({
+                label: sheetName,
+                sheet:[]
+            })
+        }else{
+            currentIndex = sheetIndex
+        }
+
+        this.eSheetWorkBook[currentIndex].sheet = []
 
         for(let i=0;i<row;i++){
             colWidth = 0
@@ -249,7 +271,7 @@ export default class AppExcel{
 
                 let label = transformNumToLabel(j+1)+(i+1)
 
-                this.eSheetWorkBook[sheetName].push({
+                this.eSheetWorkBook[currentIndex].sheet.push({
                     row:i+1,
                     col:j+1,
                     text:this.workBook[sheetName]?((this.workBook[sheetName][String.fromCharCode(65 + j)+(i+1)]?.v)??''):'',
@@ -300,7 +322,7 @@ export default class AppExcel{
         }
 
         this.initExcelData(Object.keys(oriData)[0])
-        this.components.ContentComponent.installContentData(Object.keys(oriData)[0])
+        this.components.ContentComponent.installContentDataByName(Object.keys(oriData)[0])
         this.components.ContentComponent.hideClickRect()
         this.fresh()
     }

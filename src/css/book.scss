@@ -1,0 +1,53 @@
+
+.e-sheet-book-layout{
+  background-color: rgb(242, 242, 246);
+  .e-sheet-book-con{
+    display: flex;
+    height: 34px;
+    background-color: transparent;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    padding: 0px 10px;
+    overflow: hidden;
+    .menu-layout{
+      display: flex;
+      align-items: center;
+      padding: 0px 8px 0px 16px;
+    }
+    .sheet-arr-layout{
+      flex: 1;
+      overflow: hidden;
+      .item-span{
+        padding: 8px 12px;
+        cursor: pointer;
+        font-size: 13px;
+        line-height: 20px;
+        white-space: nowrap;
+        user-select: none;
+        display: inline-block;
+        border-left: 1px solid rgba(88,104,144,0.24);
+      }
+      .active-item-span{
+        color: var(--wdn_common_brand1);
+        background-color: rgb(255, 255, 255);
+      }
+    }
+    .scroll-handle-layout{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0px 4px;
+      box-shadow: rgba(23, 26, 29, 0.24) -5px 0px 10px -5px;
+      .arrow{
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        &:hover{
+          background-color: rgba(25, 31, 37, 0.08);
+        }
+      }
+    }
+  }
+}
+

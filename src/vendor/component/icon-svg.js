@@ -84,6 +84,25 @@ export default class IconSvg extends HTMLElement{
                     return;
             }
         }
+
+        if(this.category === 'book'){
+            this.className = 'e-sheet-cell-svg-layout e-sheet-svg-20-20'
+            switch (this.position) {
+                case 'menu':
+                    this.innerHTML = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" data-spm-anchor-id=""><path d="M6 5H18V4H6V5ZM18 10H6V9H18V10ZM18 15H6V14H18V15ZM2 5H4V4H2V5ZM4 10H2V9H4V10ZM4 15H2V14H4V15Z" fill="rgba(40,50,72,1)"></path></svg>'
+                    return;
+                case 'plus':
+                    this.innerHTML = '<svg width="20" height="20" fill="none" viewBox="0 0 20 20"><defs><clipPath id="master_svg0_30306_58308"><rect width="20" height="20" rx="0"></rect></clipPath></defs><g clip-path="url(#master_svg0_30306_58308)"><path fill="currentColor" fill-opacity="0.94" d="M9.5 4.5v5h-5a.5.5 0 0 0 0 1h5v5a.5.5 0 0 0 1 0v-5h5a.5.5 0 0 0 0-1h-5v-5a.5.5 0 0 0-1 0Z"></path></g></svg>'
+                return;
+                case 'arrow-left':
+                    this.innerHTML = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" class="wdn-icon" data-spm-anchor-id=""><path d="m12.646 3.646.708.708L7.707 10l5.647 5.646-.707.708L6.292 10l6.353-6.354Z" fill="currentColor"></path></svg>'
+                return;
+                case 'arrow-right':
+                    this.innerHTML = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" class="wdn-icon"><path d="m7.353 3.646-.707.708L12.293 10l-5.647 5.646.707.708L13.707 10 7.353 3.646Z" fill="currentColor"></path></svg>'
+                    return;
+            }
+        }
+
     }
 
 }

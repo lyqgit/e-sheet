@@ -30,9 +30,11 @@ export default class RadioButton extends HTMLElement{
         this.addEventListener('mouseover',evt=>{
             // console.log('evt',this.getBoundingClientRect())
             if(!document.body.contains(tipDom)){
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+                const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft;
                 const {x,y} = this.getBoundingClientRect()
-                tipDom.style.left = x - this.label.length*12/2 + 4 +'px'
-                tipDom.style.top = y+20+'px'
+                tipDom.style.left = x - this.label.length*12/2 + 4 + scrollLeft +'px'
+                tipDom.style.top = y+scrollTop+24+'px'
                 document.body.appendChild(tipDom)
             }
 

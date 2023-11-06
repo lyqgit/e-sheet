@@ -13,9 +13,11 @@ export default class Tip extends HTMLElement {
         this.addEventListener('mouseover',evt=>{
             // console.log('evt',this.getBoundingClientRect())
             if(!document.body.contains(tipDom)){
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+                const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft;
                 const {x,y} = this.getBoundingClientRect()
-                tipDom.style.left = x+this.left+'px'
-                tipDom.style.top = y+this.top+'px'
+                tipDom.style.left = x+this.left+scrollLeft+'px'
+                tipDom.style.top = y+this.top+scrollTop+'px'
                 document.body.appendChild(tipDom)
             }
 

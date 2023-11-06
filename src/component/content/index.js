@@ -68,7 +68,7 @@ export default class ContentComponent{
         this.canvasDom = core.canvasDom
         this.selectorDom = core.selectorDom
         this.canvasWrapperDom = core.canvasWrapperDom
-        this.installContentData()
+        this.installContentDataByName()
         // console.log('this.core.sheetWidth',this.core.sheetWidth)
         // console.log('this.core.sheetHeight',this.core.sheetHeight)
         // this.initDraw()
@@ -79,8 +79,14 @@ export default class ContentComponent{
 
 
     // Load Data
-    installContentData(sheetName='Sheet1'){
-        this.contentGroup = this.core.eSheetWorkBook[sheetName]
+    installContentDataByName(sheetName='Sheet1'){
+        const sheetIndex = this.core.eSheetWorkBook.findIndex(item=>item.label === sheetName)
+        this.contentGroup = this.core.eSheetWorkBook[sheetIndex].sheet
+        // console.log('sheetName',this.contentGroup)
+    }
+
+    installContentDataByData(sheet){
+        this.contentGroup = sheet
         // console.log('sheetName',this.contentGroup)
     }
 
