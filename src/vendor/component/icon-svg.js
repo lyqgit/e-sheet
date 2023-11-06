@@ -72,6 +72,18 @@ export default class IconSvg extends HTMLElement{
                     return;
             }
         }
+
+        if(this.category === 'cell'){
+            this.className = 'e-sheet-cell-svg-layout e-sheet-svg-20-20'
+            switch (this.position) {
+                case 'merge':
+                    this.innerHTML = '<svg width="20" height="20" fill="none" viewBox="0 0 20 20"><defs><clipPath id="master_svg0_31608_94416"><rect width="20" height="20" rx="0"></rect></clipPath></defs><g clip-path="url(#master_svg0_31608_94416)"><path fill="#0089FF" d="M15 10.5H5v-1h10v1Z"></path><path fill="currentColor" d="M6.5 3A1.5 1.5 0 0 1 8 4.5V6H7V4.5a.5.5 0 0 0-.5-.5h-2a.5.5 0 0 0-.5.5v11a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5V14h1v1.5A1.5 1.5 0 0 1 6.5 17h-2A1.5 1.5 0 0 1 3 15.5v-11A1.5 1.5 0 0 1 4.5 3h2Zm7 0A1.5 1.5 0 0 0 12 4.5V6h1V4.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5v11a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5V14h-1v1.5a1.5 1.5 0 0 0 1.5 1.5h2a1.5 1.5 0 0 0 1.5-1.5v-11A1.5 1.5 0 0 0 15.5 3h-2Z"></path></g></svg>'
+                    return;
+                case 'split':
+                    this.innerHTML = '<svg width="20" height="20" fill="none" viewBox="0 0 20 20"><defs><clipPath id="master_svg0_31608_94446"><rect width="20" height="20" rx="0"></rect></clipPath></defs><g clip-path="url(#master_svg0_31608_94446)"><path fill="currentColor" fill-rule="evenodd" d="M4 4.5A1.5 1.5 0 0 1 5.5 3h2A1.5 1.5 0 0 1 9 4.5v11A1.5 1.5 0 0 1 7.5 17h-2A1.5 1.5 0 0 1 4 15.5V14h1v1.5a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5v-11a.5.5 0 0 0-.5-.5h-2a.5.5 0 0 0-.5.5V6H4V4.5ZM16 4.5A1.5 1.5 0 0 0 14.5 3h-2A1.5 1.5 0 0 0 11 4.5v11a1.5 1.5 0 0 0 1.5 1.5h2a1.5 1.5 0 0 0 1.5-1.5V14h-1v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5V6h1V4.5Z"></path><path fill="#0089FF" fill-rule="evenodd" d="M7 10.5H4v-1h3v1ZM16 10.5h-3v-1h3v1Z"></path><path fill="#0089FF" d="m18 10-3-2.5v5l3-2.5ZM2 10l3-2.5v5L2 10Z"></path></g></svg>'
+                    return;
+            }
+        }
     }
 
 }

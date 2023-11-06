@@ -1,4 +1,14 @@
 
+.e-sheet-cell-hover{
+  &:hover{
+    background-color: var(--e-sheet-radio-button-selected-color);
+  }
+}
+
+.e-sheet-cell-font{
+  font-size: 12px;
+}
+
 .e-sheet-font-style-layout{
   display: flex;
   align-items: center;
@@ -142,6 +152,9 @@
   height: 20px;
   cursor: pointer;
   position: relative;
+  &:hover{
+    background-color: var(--e-sheet-radio-button-selected-color);
+  }
 }
 
 .e-sheet-radio-button-tip{

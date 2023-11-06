@@ -37,6 +37,14 @@ export default class setting{
      * @type {HTMLElement}
      */
     fontWeightBtnDom = null
+    /**
+     * @type {HTMLElement}
+     */
+    cellMergerBtnDom = null
+    /**
+     * @type {HTMLElement}
+     */
+    cellSplitBtnDom = null
 
     constructor(selectorDom,layer,options={},components={},core) {
         this.contentComponent = components.ContentComponent
@@ -146,6 +154,13 @@ export default class setting{
         this.fontSizeSelectDom.setAttribute('value',attr.fontSize)
         this.fontWeightBtnDom.setAttribute('current',attr.fontWeight)
         this.fontItalicBtnDom.setAttribute('current',attr.fontItalic)
+        if(attr.isMerge){
+            this.cellMergerBtnDom.style.display = 'none'
+            this.cellSplitBtnDom.style.display = 'flex'
+        }else{
+            this.cellMergerBtnDom.style.display = 'flex'
+            this.cellSplitBtnDom.style.display = 'none'
+        }
         // this.fontColorSelectDom.setAttribute('color',attr.fontColor)
         // this.bgColorSelectDom.setAttribute('color',attr.bgColor)
         this.setLabelCon(attr.label)
@@ -525,12 +540,109 @@ export default class setting{
             }
         })
 
+
+        const cellMergerBtnDom = h('e-sheet-tip',{
+            attribute:{
+                'tip-label':'合并单元格',
+                left:4,
+                top:24,
+            }
+        },[
+            h('div',{
+                attr:{
+                    className:'e-sheet-font-style-layout e-sheet-cell-hover'
+                },
+                style:{
+                    cursor:'pointer',
+                    padding:'2px'
+                }
+            },[
+                h('e-sheet-icon-svg',{
+                    attribute:{
+                        category:'cell',
+                        position:'merge'
+                    }
+                }),
+                h('div',{
+                    attr:{
+                        innerText: '合并单元格',
+                        className:'e-sheet-cell-font'
+                    }
+                })
+            ])
+        ])
+
+        const cellSplitBtnDom = h('e-sheet-tip',{
+            style:{
+                display:'none'
+            }
+        },[
+            h('div',{
+                attr:{
+                    className:'e-sheet-font-style-layout e-sheet-cell-hover'
+                },
+                style:{
+                    cursor:'pointer',
+                    padding:'2px'
+                }
+            },[
+                h('e-sheet-icon-svg',{
+                    attribute:{
+                        category:'cell',
+                        position:'split'
+                    }
+                }),
+                h('div',{
+                    attr:{
+                        innerText: '拆分单元格',
+                        className:'e-sheet-cell-font'
+                    }
+                })
+            ])
+        ])
+
+        const cellMergeAndSplitLayoutDom = h('div',{
+            attr:{
+                className:'font-position-layout'
+            }
+        })
+
+        cellMergerBtnDom.onclick=_=>{
+            const { clickCell,mergeSelectedCell } = this.contentComponent
+            this.core.plugins.ContextmenuPlugin.mergeCell(clickCell,mergeSelectedCell)
+            cellMergerBtnDom.style.display = 'none'
+            cellSplitBtnDom.style.display = 'flex'
+        }
+        cellSplitBtnDom.onclick=_=>{
+            const { clickCell } = this.contentComponent
+            this.core.plugins.ContextmenuPlugin.splitCell(clickCell)
+            cellMergerBtnDom.style.display = 'flex'
+            cellSplitBtnDom.style.display = 'none'
+        }
+
+        this.cellMergerBtnDom = cellMergerBtnDom
+        this.cellSplitBtnDom = cellSplitBtnDom
+
+        cellMergeAndSplitLayoutDom.appendChild(cellMergerBtnDom)
+        cellMergeAndSplitLayoutDom.appendChild(cellSplitBtnDom)
+        cellMergeAndSplitLayoutDom.appendChild(h('div',{
+            attr:{
+                innerText:'单元格',
+                className:'e-sheet-font-style-layout e-sheet-cell-font'
+            },
+            style:{
+                justifyContent:'center'
+            }
+        }))
+
         settingTopDom.appendChild(fontPositionDom)
         settingTopDom.appendChild(divideLine.cloneNode())
 
         settingTopDom.appendChild(fontSizeAndFamilyLayoutDom)
         settingTopDom.appendChild(divideLine.cloneNode())
         settingTopDom.appendChild(fontColorAndBgColorDom)
+        settingTopDom.appendChild(divideLine.cloneNode())
+        settingTopDom.appendChild(cellMergeAndSplitLayoutDom)
 
         this.selectorDom.insertBefore(settingTopDom,settingDom)
 
