@@ -374,7 +374,7 @@ export default class ContentComponent{
             // console.log('this.moveClickCell',this.moveClickCell)
             SelectPlugin.transformTableDomStrToCanvasCell(tableDomStr,this.moveClickCell)
             this.moveClickCell = null
-            this.canvasWrapperDom.onmousemove = null
+            this.canvasDom.onmousemove = null
             this.canvasWrapperDom.onmouseup = null
         }
     }

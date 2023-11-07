@@ -127,6 +127,7 @@ $theme-color-blue:--eview-sheet-primary-color;
   width: 4px;
   background-color: transparent;
   cursor: pointer;
+  user-select: none;
 }
 
 .e-sheet-hor-cell-border{
@@ -134,6 +135,7 @@ $theme-color-blue:--eview-sheet-primary-color;
   height: 4px;
   background-color: transparent;
   cursor: pointer;
+  user-select: none;
 }
 
 

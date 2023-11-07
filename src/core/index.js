@@ -245,6 +245,8 @@ export default class AppExcel{
     }
 
     saveHandle(){
+        this.copyKey = false
+        this.copyCellDash = []
         if(this.components.ContentComponent && this.components.ContentComponent.clickCell){
             const preSheetBook = this.eSheetWorkBook[this.currentSheetIndex]
             preSheetBook.clickCell = this.components.ContentComponent.clickCell
