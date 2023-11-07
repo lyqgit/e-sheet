@@ -68,7 +68,7 @@ export default class ContentComponent{
         this.canvasDom = core.canvasDom
         this.selectorDom = core.selectorDom
         this.canvasWrapperDom = core.canvasWrapperDom
-        this.installContentDataByName()
+        this.installContentDataByData(this.core.eSheetWorkBook[this.core.currentSheetIndex].sheet)
         // console.log('this.core.sheetWidth',this.core.sheetWidth)
         // console.log('this.core.sheetHeight',this.core.sheetHeight)
         // this.initDraw()
@@ -112,6 +112,7 @@ export default class ContentComponent{
         this.secondClickCell = null
         this.clickCell = null
         this.moreSelectedCell = []
+        this.hideSelectedCellDom()
     }
 
     drawMulPersonSelected(offsetX = 0,offsetY = 0){
@@ -286,6 +287,8 @@ export default class ContentComponent{
         this.selectedCellBottomBorderDom.style.display = 'none'
         this.selectedCellLeftBorderDom.style.display = 'none'
         this.selectedCellRightBorderDom.style.display = 'none'
+
+        this.cellPainterDom.style.display = 'none'
     }
 
 

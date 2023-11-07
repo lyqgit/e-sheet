@@ -13,17 +13,55 @@ export default class BookPlugin{
         this.registryDom()
     }
 
-    currentSheetIndex = 0
+
+
+    createNewSheet(){
+        this.core.createNewSheet()
+        this.core.currentSheetIndex = this.core.eSheetWorkBook.length - 1
+        const sheetWork = this.core.eSheetWorkBook[this.core.currentSheetIndex]
+        this.core.switchSheet(this.core.currentSheetIndex)
+        this.sheetArrLayoutDom.childNodes.forEach(item=>{
+            item.className = 'item-span'
+        })
+        this.sheetArrLayoutDom.appendChild(this.core.h('span',{
+            attr:{
+                innerText:sheetWork.label,
+                className:'item-span active-item-span'
+            },
+            attribute:{
+                index:this.core.currentSheetIndex
+            }
+        }))
+    }
+
+    switchSheet(index){
+        this.core.switchSheet(index)
+        const { currentSheetIndex } = this.core
+        this.sheetArrLayoutDom.childNodes.forEach((item,index)=>{
+            console.log('item.className',item.className,'---------',currentSheetIndex,index,currentSheetIndex===index?'item-span active-item-span':'item-span')
+            item.className = currentSheetIndex===index?'item-span active-item-span':'item-span'
+        })
+        console.log('index',index,currentSheetIndex)
+
+    }
+
+    /**
+     * @type {HTMLElement}
+     */
+    sheetArrLayoutDom = null
 
     registryDom(){
 
-        const { currentSheetIndex } = this
-        const { h,eSheetWorkBook } = this.core
+        const { h,eSheetWorkBook,currentSheetIndex } = this.core
 
         const sheetArrLayoutDom = h('div',
             {
                 attr:{
-                    className:'sheet-arr-layout'
+                    className:'sheet-arr-layout',
+                    onclick:evt=>{
+                        console.log('sheetArrLayoutDom-evt',evt.target.getAttribute('index'))
+                        this.switchSheet(parseInt(evt.target.getAttribute('index')))
+                    }
                 }
             },
             eSheetWorkBook.map((item,index)=>{
@@ -31,10 +69,15 @@ export default class BookPlugin{
                     attr:{
                         innerText:item.label,
                         className:currentSheetIndex===index?'item-span active-item-span':'item-span'
+                    },
+                    attribute:{
+                        index
                     }
                 })
             })
         )
+
+        this.sheetArrLayoutDom = sheetArrLayoutDom
 
         const bookLayoutDom = h('div',{
             attr:{
@@ -83,6 +126,11 @@ export default class BookPlugin{
                                             'tip-label':'新增',
                                             left:-6,
                                             top:-36,
+                                        },
+                                        attr:{
+                                            onclick:_=>{
+                                                this.createNewSheet()
+                                            }
                                         }
                                     },
                                         [

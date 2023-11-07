@@ -21,12 +21,7 @@ export default class AppExcel{
 
     workBook = {}
 
-    eSheetWorkBook = [
-        {
-            label:'Sheet1',
-            sheet:[]
-        }
-    ]
+    eSheetWorkBook = []
 
     row= 160
 
@@ -77,6 +72,11 @@ export default class AppExcel{
     borderColor = '#ECEDEE'
     borderCellBgColor = '#F9FBFD'
 
+    /**
+     * @type {number}
+     */
+    currentSheetIndex = 0
+
     constructor(selectorDom,options={},components={},plugins={}) {
 
         // 默认设置容器宽和高为600
@@ -119,7 +119,7 @@ export default class AppExcel{
         this.options = options
         // console.log('this.options',this.options)
 
-        this.initExcelData()
+        this.createNewSheet()
 
         // 装载组件
         this.installComponents(components);
@@ -229,7 +229,83 @@ export default class AppExcel{
     // 切换sheet
     switchSheet(sheetIndex){
         const sheet = this.eSheetWorkBook[sheetIndex].sheet
+        this.currentSheetIndex = sheetIndex
         this.components.ContentComponent.installContentDataByData(sheet)
+        this.components.ContentComponent.hideClickRect()
+        this.fresh()
+    }
+
+    createNewSheet(sheetName = 'New Sheet'){
+
+        const { row,col,cellWidth,cellHeight } = this.options
+
+        let colWidth = 0
+        let colAbWidth = 0
+        let rowHeight = 0
+        let rowAbHeight = cellHeight
+        this.sheetWidth = 0
+        this.sheetHeight = 0
+
+        // this.core.sheetWidth += cellHeight
+        // this.core.sheetHeight += cellHeight
+
+        this.eSheetWorkBook.push({
+            label: sheetName,
+            sheet:[]
+        })
+
+        this.currentSheetIndex = this.eSheetWorkBook.length - 1
+
+        const sheet = this.eSheetWorkBook[this.eSheetWorkBook.length - 1].sheet
+
+        for(let i=0;i<row;i++){
+            colWidth = 0
+            colAbWidth = cellHeight
+            this.sheetHeight += cellHeight
+            for(let j=0;j<col;j++){
+                if(i===0){
+                    this.sheetWidth += cellWidth
+                }
+
+                let label = transformNumToLabel(j+1)+(i+1)
+
+                sheet.push({
+                    row:i+1,
+                    col:j+1,
+                    text:'',
+                    textAsNumber:NaN,
+                    width:cellWidth,
+                    height:cellHeight,
+                    x:colWidth,
+                    y:rowHeight,
+                    ltX:colAbWidth,
+                    ltY:rowAbHeight,
+                    mergeWidth:0,
+                    mergeHeight:0,
+                    mergeRow:1,
+                    mergeCol:1,
+                    mergeStartLabel:'',
+                    mergeEndLabel:'',
+                    mergeLabelGroup:[],
+                    isMerge:false,
+                    bgColor:'#ffffff',
+                    fontColor:'#000000',
+                    font:null,
+                    fontSize:12,
+                    fontWeight:'',
+                    fontItalic:'',
+                    fontFamily:'Calibre',
+                    textAlign:'center',
+                    textBaseline:'middle',
+                    label
+                })
+                colWidth += cellWidth
+                colAbWidth += cellWidth
+            }
+            rowHeight += cellHeight
+            rowAbHeight += cellHeight
+        }
+
     }
 
     initExcelData(sheetName = 'Sheet1'){
@@ -254,6 +330,7 @@ export default class AppExcel{
                 label: sheetName,
                 sheet:[]
             })
+            currentIndex = this.eSheetWorkBook.length - 1
         }else{
             currentIndex = sheetIndex
         }
