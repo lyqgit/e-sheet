@@ -68,13 +68,16 @@ export default class ContentComponent{
         this.canvasDom = core.canvasDom
         this.selectorDom = core.selectorDom
         this.canvasWrapperDom = core.canvasWrapperDom
-        this.installContentDataByData(this.core.eSheetWorkBook[this.core.currentSheetIndex].sheet)
+        const sheetBook = this.core.eSheetWorkBook[this.core.currentSheetIndex]
+        this.registrySelectedCellDom()
+        this.registryCellPainterDom()
+        this.installContentDataByData(sheetBook.sheet)
+        this.showClickRect(sheetBook.clickCell)
         // console.log('this.core.sheetWidth',this.core.sheetWidth)
         // console.log('this.core.sheetHeight',this.core.sheetHeight)
         // this.initDraw()
         this.trendsDraw(0,0)
-        this.registrySelectedCellDom()
-        this.registryCellPainterDom()
+
     }
 
 

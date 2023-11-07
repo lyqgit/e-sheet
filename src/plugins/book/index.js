@@ -38,10 +38,10 @@ export default class BookPlugin{
         this.core.switchSheet(index)
         const { currentSheetIndex } = this.core
         this.sheetArrLayoutDom.childNodes.forEach((item,index)=>{
-            console.log('item.className',item.className,'---------',currentSheetIndex,index,currentSheetIndex===index?'item-span active-item-span':'item-span')
+            // console.log('item.className',item.className,'---------',currentSheetIndex,index,currentSheetIndex===index?'item-span active-item-span':'item-span')
             item.className = currentSheetIndex===index?'item-span active-item-span':'item-span'
         })
-        console.log('index',index,currentSheetIndex)
+        // console.log('index',index,currentSheetIndex)
 
     }
 
@@ -59,7 +59,7 @@ export default class BookPlugin{
                 attr:{
                     className:'sheet-arr-layout',
                     onclick:evt=>{
-                        console.log('sheetArrLayoutDom-evt',evt.target.getAttribute('index'))
+                        // console.log('sheetArrLayoutDom-evt',evt.target.getAttribute('index'))
                         this.switchSheet(parseInt(evt.target.getAttribute('index')))
                     }
                 }

@@ -228,14 +228,33 @@ export default class AppExcel{
 
     // 切换sheet
     switchSheet(sheetIndex){
-        const sheet = this.eSheetWorkBook[sheetIndex].sheet
+
+        this.saveHandle()
+
+        const currentSheetBook = this.eSheetWorkBook[sheetIndex]
         this.currentSheetIndex = sheetIndex
-        this.components.ContentComponent.installContentDataByData(sheet)
-        this.components.ContentComponent.hideClickRect()
+        this.components.ContentComponent.installContentDataByData(currentSheetBook.sheet)
+        if(currentSheetBook.clickCell){
+            this.components.ContentComponent.showClickRect(currentSheetBook.clickCell)
+            this.plugins.SettingPlugin.setLabelCon(currentSheetBook.clickCell.label)
+            this.plugins.SettingPlugin.setCellCon(currentSheetBook.clickCell.text)
+        }else{
+
+        }
         this.fresh()
     }
 
-    createNewSheet(sheetName = 'New Sheet'){
+    saveHandle(){
+        if(this.components.ContentComponent && this.components.ContentComponent.clickCell){
+            const preSheetBook = this.eSheetWorkBook[this.currentSheetIndex]
+            preSheetBook.clickCell = this.components.ContentComponent.clickCell
+            this.components.ContentComponent.hideClickRect()
+        }
+    }
+
+    createNewSheet(sheetName = 'Sheet'){
+
+        this.saveHandle()
 
         const { row,col,cellWidth,cellHeight } = this.options
 
@@ -246,12 +265,50 @@ export default class AppExcel{
         this.sheetWidth = 0
         this.sheetHeight = 0
 
-        // this.core.sheetWidth += cellHeight
-        // this.core.sheetHeight += cellHeight
+        let currentIndex = 1
+
+        let newSheetName = sheetName+currentIndex
+
+        let sheetIndex = this.eSheetWorkBook.findIndex(item=>item.label === newSheetName)
+        while (sheetIndex !== -1){
+            currentIndex++;
+            newSheetName = sheetName+currentIndex
+            sheetIndex = this.eSheetWorkBook.findIndex(item=>item.label === newSheetName)
+        }
 
         this.eSheetWorkBook.push({
-            label: sheetName,
-            sheet:[]
+            label: newSheetName,
+            sheet:[],
+            clickCell: {
+                row:1,
+                col:1,
+                text:'',
+                textAsNumber:NaN,
+                width:cellWidth,
+                height:cellHeight,
+                x:0,
+                y:0,
+                ltX:cellHeight,
+                ltY:cellHeight,
+                mergeWidth:0,
+                mergeHeight:0,
+                mergeRow:1,
+                mergeCol:1,
+                mergeStartLabel:'',
+                mergeEndLabel:'',
+                mergeLabelGroup:[],
+                isMerge:false,
+                bgColor:'#ffffff',
+                fontColor:'#000000',
+                font:null,
+                fontSize:12,
+                fontWeight:'',
+                fontItalic:'',
+                fontFamily:'Calibre',
+                textAlign:'center',
+                textBaseline:'middle',
+                label:'A1'
+            }
         })
 
         this.currentSheetIndex = this.eSheetWorkBook.length - 1
