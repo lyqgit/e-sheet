@@ -103,7 +103,10 @@ export default class BookPlugin{
                     className:'sheet-arr-layout',
                     onclick:evt=>{
                         // console.log('sheetArrLayoutDom-evt',evt.target.getAttribute('index'))
-                        this.switchSheet(parseInt(evt.target.getAttribute('index')))
+                        const strIndex = evt.target.getAttribute('index')
+                        if(strIndex){
+                            this.switchSheet(parseInt(strIndex))
+                        }
                     },
                     ondblclick:evt=>{
                         // console.log('evt',evt)
@@ -128,7 +131,7 @@ export default class BookPlugin{
                             }
                         })
                         inputDom.value = itemDom.innerText
-                        console.log('itemDom.style.width',itemDom.getBoundingClientRect())
+                        // console.log('itemDom.style.width',itemDom.getBoundingClientRect())
                         inputDom.style.width = itemDom.getBoundingClientRect().width - 24 + 'px'
                         itemDom.innerText = ''
                         itemDom.appendChild(inputDom)
