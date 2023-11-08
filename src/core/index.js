@@ -6,7 +6,14 @@ import {transformNumToLabel} from '../util/cell.js'
  */
 export default class AppExcel{
 
+    /**
+     * @type {number}
+     */
+    scale = 1
 
+    /**
+     * @type {Array}
+     */
     mulPersonSelected = []
 
     /**
@@ -117,7 +124,7 @@ export default class AppExcel{
         this.selectorDom.appendChild(canvasWrapperDom)
         this.canvasDom = canvasDom
 
-        this.layer = new Canvas(canvasDom,options)
+        this.layer = new Canvas(canvasDom,options,this)
 
         this.options = options
         // console.log('this.options',this.options)
@@ -130,6 +137,7 @@ export default class AppExcel{
 
         // requestAnimationFrame(this.draw);
     }
+
 
     /**
      * @param {string} addr

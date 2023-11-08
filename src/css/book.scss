@@ -16,7 +16,8 @@
     }
     .sheet-arr-layout{
       flex: 1;
-      overflow: hidden;
+      overflow-y: hidden;
+      overflow-x: auto;
       .item-span{
         padding: 8px 12px;
         cursor: pointer;
@@ -30,6 +31,15 @@
       .active-item-span{
         color: var(--wdn_common_brand1);
         background-color: rgb(255, 255, 255);
+      }
+      .item-input{
+        color: var(--wdn_light_level1);
+        flex: 1 1 auto;
+        margin: 0px;
+        padding: 0px 4px;
+        outline: none;
+        border: 0px;
+        background-color: rgba(0, 0, 0, 0);
       }
     }
     .scroll-handle-layout{

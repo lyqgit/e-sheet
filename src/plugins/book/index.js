@@ -42,7 +42,50 @@ export default class BookPlugin{
             item.className = currentSheetIndex===index?'item-span active-item-span':'item-span'
         })
         // console.log('index',index,currentSheetIndex)
+    }
 
+    setSheetName(index,label){
+        this.core.eSheetWorkBook[index].label = label
+    }
+
+    /**
+     * @param {number} scale
+     */
+    setCanvasScale(scale){
+
+        const { width,height,cellHeight } = this.options
+
+        this.contentComponent.contentGroup.forEach(item=>{
+            item.width /= this.core.scale
+            item.height /= this.core.scale
+            item.x /= this.core.scale
+            item.y /= this.core.scale
+            item.ltX = cellHeight+item.x
+            item.ltY = cellHeight+item.y
+            item.mergeWidth /= this.core.scale
+            item.mergeHeight /= this.core.scale
+            // item.fontSize /= this.core.scale
+
+            item.width *= scale
+            item.height *= scale
+            item.x *= scale
+            item.y *= scale
+            item.ltX = scale*cellHeight+item.x
+            item.ltY = scale*cellHeight+item.y
+            item.mergeWidth *= scale
+            item.mergeHeight *= scale
+            // item.fontSize *= scale
+        })
+        this.core.scale = scale
+
+        const lastRect = this.contentComponent.contentGroup[this.contentComponent.contentGroup.length - 1]
+
+        this.core.sheetWidth = lastRect.ltX+lastRect.width
+        this.core.sheetHeight = lastRect.ltY+lastRect.height
+
+        this.layer.clearRect(0,0,width,height)
+        this.core.fresh()
+        this.core.freshScrollBar()
     }
 
     /**
@@ -61,11 +104,40 @@ export default class BookPlugin{
                     onclick:evt=>{
                         // console.log('sheetArrLayoutDom-evt',evt.target.getAttribute('index'))
                         this.switchSheet(parseInt(evt.target.getAttribute('index')))
+                    },
+                    ondblclick:evt=>{
+                        // console.log('evt',evt)
+                        const itemDom = evt.target
+                        const index = parseInt(evt.target.getAttribute('index'))
+                        const inputDom = h('input',{
+                            attr:{
+                                className:'item-input',
+                                onblur:_=>{
+                                    itemDom.innerText = inputDom.value
+                                    inputDom.remove()
+                                    this.setSheetName(index,itemDom.innerText)
+                                },
+                                onkeydown:keyEvent=>{
+                                    // console.log('keyEvent',keyEvent)
+                                    if(keyEvent.key === 'Enter'){
+                                        itemDom.innerText = inputDom.value
+                                        inputDom.remove()
+                                        this.setSheetName(index,itemDom.innerText)
+                                    }
+                                }
+                            }
+                        })
+                        inputDom.value = itemDom.innerText
+                        console.log('itemDom.style.width',itemDom.getBoundingClientRect())
+                        inputDom.style.width = itemDom.getBoundingClientRect().width - 24 + 'px'
+                        itemDom.innerText = ''
+                        itemDom.appendChild(inputDom)
+                        inputDom.focus()
                     }
                 }
             },
             eSheetWorkBook.map((item,index)=>{
-                return h('span',{
+                return h('div',{
                     attr:{
                         innerText:item.label,
                         className:currentSheetIndex===index?'item-span active-item-span':'item-span'
