@@ -15,11 +15,17 @@ import './vendor/component/index.js'
 
 export default class eSheet{
 
+    /**
+     * @type {HTMLElement}
+     */
     excelDom = null
 
+    /**
+     * @type {AppExcel}
+     */
     AppExcel = null
 
-    constructor(selector) {
+    constructor(selector,options={},plugins=[]) {
         if(Object.prototype.toString.call(selector) === '[object HTMLDivElement]'){
             this.excelDom = selector;
         }else{
@@ -33,7 +39,7 @@ export default class eSheet{
         // this.excelDom.style.overflow = 'hidden'
         // console.log('selector',selector)
 
-
+        return this.init(options,plugins)
 
     }
 

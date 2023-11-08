@@ -1,6 +1,9 @@
 import Canvas from './canvas.js'
 import {transformNumToLabel} from '../util/cell.js'
 
+/**
+ * @typedef {Object} AppExcel
+ */
 export default class AppExcel{
 
 
