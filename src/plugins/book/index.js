@@ -233,6 +233,12 @@ export default class BookPlugin{
                                 },
                                 style:{
                                     height:'100%'
+                                },
+                                attr:{
+                                    onclick:evt=>{
+                                        // console.log('sheetArrLayoutDom',sheetArrLayoutDom.scrollLeft)
+                                        sheetArrLayoutDom.scrollLeft -= 300
+                                    }
                                 }
                             },[
                                 h('div',{
@@ -254,6 +260,12 @@ export default class BookPlugin{
                                 },
                                 style:{
                                     height:'100%'
+                                },
+                                attr:{
+                                    onclick:evt=>{
+                                        // console.log('sheetArrLayoutDom',sheetArrLayoutDom.scrollLeft)
+                                        sheetArrLayoutDom.scrollLeft += 300
+                                    }
                                 }
                             },[
                                 h('div',{
