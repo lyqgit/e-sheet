@@ -138,6 +138,64 @@ export default class AppExcel{
         // requestAnimationFrame(this.draw);
     }
 
+    /**
+     * @description 导出sheet数据
+     * @returns {Array}
+     */
+    exportXlsxData(){
+        const book = []
+        this.eSheetWorkBook.forEach(item=>{
+
+            const mergeGroup = item.sheet.filter(itemA=>itemA.isMerge)
+
+            const merges = mergeGroup.filter(itemA=>itemA.mergeStartLabel === itemA.label).map(itemB=>{
+
+                const endIndex = mergeGroup.findIndex(itemC=>itemC.label === itemB.mergeEndLabel)
+
+                const endRect = mergeGroup[endIndex]
+
+                return {
+                    s:{
+                        c:itemB.col - 1,
+                        r:itemB.row - 1
+                    },
+                    e:{
+                        c:endRect.col - 1,
+                        r:endRect.row - 1
+                    }
+                }
+            })
+
+            const hasDataCellGroup = item.sheet.filter(itemA=>!!itemA.text).filter(itemB=>(itemB.isMerge && itemB.label === itemB.mergeStartLabel) || !itemB.isMerge)
+            const sheet = {}
+            hasDataCellGroup.forEach(itemB=>{
+                sheet[itemB.label] = {
+                    t:'s',
+                    v:itemB.text
+                }
+            })
+            if(hasDataCellGroup.length>1){
+                sheet['!ref'] = hasDataCellGroup[0].label+':'+hasDataCellGroup[hasDataCellGroup.length-1].label
+            }else if(hasDataCellGroup.length === 1){
+                sheet['!ref'] = hasDataCellGroup[0].label
+            }
+
+            const sheetBook = {
+                label:item.label,
+                sheet
+            };
+
+            if(merges.length > 0){
+                sheet['!merges'] = merges
+            }
+
+            book.push(sheetBook)
+
+        })
+
+        return book
+    }
+
 
     /**
      * @param {string} addr

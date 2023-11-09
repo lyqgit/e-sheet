@@ -26,6 +26,7 @@
     <input type="file" id="file-xlsx" >上传excel
     <input type="text" id="user-name">
     <button id="syncBtn">同步数据</button>
+    <button id="exportBtn">导出数据</button>
 </body>
 <script>
 
@@ -43,43 +44,6 @@
         excel.syncData()
     }
 
-    // const ws = new WebSocket('ws://localhost:8091')
-    //
-    // const userId = (new Date()).valueOf()
-    //
-    // const userName = document.querySelector('#user-name').value
-
-    // ws.onopen = function (evt) {
-    //     console.log('evt---onopen',evt)
-    //
-    //     /**
-    //      * 1.选中改变
-    //      * 2.单元格内容改变
-    //      * 3.横向距离改变
-    //      * 4.纵向距离改变
-    //      */
-    //
-    //     // ws.send(JSON.stringify({
-    //     //     type:1,
-    //     //     command:'ceshi1',
-    //     //     userId,
-    //     //     userName
-    //     // }))
-    // }
-
-    // ws.onmessage = function (evt) {
-    //     console.log('evt---onmessage',evt)
-    //     console.log(JSON.parse(JSON.parse(evt.data)))
-    // }
-
-    // ws.onerror = function (evt) {
-    //     console.log('evt---error',evt)
-    // }
-
-    // ws.onclose = function (evt) {
-    //     console.log('evt---onclose',evt)
-    // }
-
     // console.log(excel)
 
     // excel.installXlsxData(JSON.parse(localStorage.getItem('sheet')))
@@ -88,20 +52,61 @@
         const file = e.target.files[0]
         console.log('file',file)
         console.log('XLSX',XLSX)
-// 用FileReader来完成数据流的转换
+        // 用FileReader来完成数据流的转换
         let reader = new FileReader();
         reader.onload = function (e) {
             let data = e.target.result;;
-//通过XLSX来解析出workbook（工作簿）也就导入的excel文件
+            //通过XLSX来解析出workbook（工作簿）也就导入的excel文件
             let wb = XLSX.read(data, { type: "binary" });
             console.log(wb);
-            excel.installXlsxData(wb['Sheets'])
+            // excel.installXlsxData(wb['Sheets'])
             // localStorage.setItem('sheet',JSON.stringify(wb['Sheets']))
 
         };
         //readAsBinaryString需要File 或 Blob 对象的参数
         reader.readAsBinaryString(file);
-// console.log(XLSX.read(file, { type: "array" }));
+        // console.log(XLSX.read(file, { type: "array" }));
     }
+
+
+
+    function workbookToBlob(workbook) {
+        const wopts = { bookType:"xlsx", bookSST:false, type:"array" }
+
+        const wbout = XLSX.write(workbook,wopts);
+
+        return new Blob([wbout], {
+            type: 'application/octet-stream'
+        });
+    }
+
+    /**
+     * @param {ArrayBuffer} blob
+     * @param {string} fileName
+     */
+    function downBlobFile(blob,fileName="新文件.xlsx") {
+        if(typeof blob === 'object' && blob instanceof Blob){
+            blob = URL.createObjectURL(blob)
+        }
+        const aLink = document.createElement('a');
+        aLink.href = blob
+        aLink.download = fileName;
+        aLink.click()
+    }
+
+    document.querySelector('#exportBtn').onclick = function () {
+        const jsonData = excel.exportXlsxData();
+        const wb = XLSX.utils.book_new()
+        console.log('jsonData',jsonData)
+        jsonData.forEach(item=>{
+            XLSX.utils.book_append_sheet(wb,item.sheet,item.label)
+        })
+
+        console.log('wb',wb)
+
+        downBlobFile(workbookToBlob(wb))
+    }
+
+
 </script>
 </html>
