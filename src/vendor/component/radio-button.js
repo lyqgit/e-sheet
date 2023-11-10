@@ -7,6 +7,8 @@ export default class RadioButton extends HTMLElement{
     connectedCallback(){
         this.label = this.getAttribute('label')
         this.value = this.getAttribute('value')
+        this.left = this.getAttribute('left')
+        this.top = this.getAttribute('top')
         this.className = 'e-sheet-radio-button'
         const shadowDOM = this.attachShadow({ mode: 'open' });
         let tipDom = document.createElement('div')
@@ -33,8 +35,10 @@ export default class RadioButton extends HTMLElement{
                 const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
                 const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft;
                 const {x,y} = this.getBoundingClientRect()
-                tipDom.style.left = x - this.label.length*12/2 + 4 + scrollLeft +'px'
-                tipDom.style.top = y+scrollTop+24+'px'
+                const customLeft = this.left?parseInt(this.left):(- this.label.length*12/2 + 4);
+                const customTop = this.top?parseInt(this.top):24
+                tipDom.style.left = x + customLeft + scrollLeft +'px'
+                tipDom.style.top = y+scrollTop+customTop+'px'
                 document.body.appendChild(tipDom)
             }
 

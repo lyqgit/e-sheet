@@ -185,6 +185,78 @@ export default class setting{
         this.core.fresh()
     }
 
+    changeStepArr(obj){
+        const curSheet = this.core.getCurrentSheet()
+        if(curSheet.stepNum !== curSheet.step.length-1){
+            if(curSheet.stepNum === -1){
+                curSheet.step.splice(curSheet.stepNum+1,curSheet.step.length,obj)
+            }else{
+                curSheet.step.splice(curSheet.stepNum+1,curSheet.step.length - 1 - curSheet.stepNum,obj)
+            }
+        }else{
+            curSheet.step.push(obj)
+        }
+
+        curSheet.stepNum += 1
+    }
+
+
+    forwardSetSheet(){
+
+        const { core,contentComponent } = this
+
+        const curSheet = core.getCurrentSheet()
+
+        // console.log('curSheet',curSheet)
+
+        if(curSheet.stepNum === curSheet.step.length-1){
+            return;
+        }
+
+        const fObj = curSheet.step[curSheet.stepNum + 1]
+
+        switch (fObj.type){
+            case 1:
+                // 1.更改单元格内容
+                const selectedCell = contentComponent.searchRectByLabel(fObj.label)
+                selectedCell.text = fObj.nextText
+                contentComponent.showClickRect(selectedCell)
+                core.freshContent()
+                break;
+        }
+
+        // console.log('步骤减1')
+        curSheet.stepNum += 1
+    }
+
+
+    fallbackSetSheet(){
+
+        const { core,contentComponent } = this
+
+        const curSheet = core.getCurrentSheet()
+
+        // console.log('curSheet',curSheet)
+
+        if(curSheet.stepNum === -1){
+            return;
+        }
+        const fObj = curSheet.step[curSheet.stepNum === 0?0:curSheet.stepNum]
+
+        switch (fObj.type){
+            case 1:
+                // 1.更改单元格内容
+                const selectedCell = contentComponent.searchRectByLabel(fObj.label)
+                selectedCell.text = fObj.preText
+                contentComponent.showClickRect(selectedCell)
+                core.freshContent()
+            break;
+        }
+
+        // console.log('步骤减1')
+        curSheet.stepNum -= 1
+    }
+
     registrySettingDom(){
         const { h } = this.core
 
@@ -204,6 +276,8 @@ export default class setting{
 
         this.labelInputDom = labelInputDom
 
+        let fxInputCellLabel = 'A1'
+
         const fxInputDom = h('input',{
             attr:{
                 className:'fx-input',
@@ -211,17 +285,29 @@ export default class setting{
                     // console.log('fxInputDom----oninput')
                     // console.log('evt',evt.target.value)
                     this.core.plugins.InputPlugin.inputDom.value = evt.target.value
-                    this.contentComponent.clickCell.text = evt.target.value
+                    // this.contentComponent.clickCell.text = evt.target.value
+
                 },
                 onfocus:_=>{
                     // console.log('fxInputDom----onfocus',this.contentComponent.clickCell)
                     if(!this.contentComponent.clickCell){
                         return
                     }
+                    fxInputCellLabel = this.contentComponent.clickCell.label
                     this.core.plugins.InputPlugin.showInput(this.contentComponent.clickCell)
                 },
                 onblur:_=>{
-                    // console.log('fxInputDom----onblur')
+                    // console.log('fxInputDom----onblur',fxInputDom.value,evt)
+                    this.changeStepArr({
+                        type:1,
+                        label:fxInputCellLabel,
+                        preText:this.contentComponent.clickCell.text,
+                        nextText:this.core.plugins.InputPlugin.inputDom.value
+                    })
+
+                    const focusClickCell = this.contentComponent.searchRectByLabel(fxInputCellLabel)
+
+                    focusClickCell.text = this.core.plugins.InputPlugin.inputDom.value
                     this.core.freshContent()
                     this.core.plugins.InputPlugin.hideInput()
                 }
@@ -553,8 +639,8 @@ export default class setting{
                     className:'e-sheet-font-style-layout e-sheet-cell-hover'
                 },
                 style:{
-                    cursor:'pointer',
-                    padding:'2px'
+                    padding:'2px',
+                    userSelect:'none'
                 }
             },[
                 h('e-sheet-icon-svg',{
@@ -637,6 +723,74 @@ export default class setting{
                 justifyContent:'center'
             }
         }))
+
+        // 撤销和重做
+
+        const stepForwardDom =
+            h('e-sheet-radio-button',{
+                attribute:{
+                    label:'撤销(Ctrl+Z)',
+                    value:'fallback',
+                    top:24,
+                    left:-24
+                },
+                attr:{
+                    onclick:_=>{
+                        this.fallbackSetSheet()
+                    }
+                }
+            },[
+                h('e-sheet-icon-svg',{
+                    attribute:{
+                        category:'step',
+                        position:'fallback'
+                    }
+                })
+            ])
+
+        const stepFallbackDom =
+            h('e-sheet-radio-button',{
+                attribute:{
+                    label:'重做(Ctrl+Y)',
+                    value:'forward',
+                    top:24,
+                    left:-24
+                },
+                attr:{
+                    onclick:_=>{
+                        this.forwardSetSheet()
+                    }
+                }
+            },[
+                h('e-sheet-icon-svg',{
+                    attribute:{
+                        category:'step',
+                        position:'forward'
+                    }
+                })
+            ])
+
+        document.addEventListener('keydown',evt=>{
+            // console.log('evt',evt)
+            if(evt.ctrlKey && evt.key === 'z'){
+                this.fallbackSetSheet()
+            }
+            if(evt.ctrlKey && evt.key === 'y'){
+                this.forwardSetSheet()
+            }
+        })
+
+        const stepLayout = h('div',{
+            attr:{
+                className:'font-position-layout'
+            }
+        })
+
+        stepLayout.appendChild(stepForwardDom)
+        stepLayout.appendChild(stepFallbackDom)
+
+        settingTopDom.appendChild(stepLayout)
+        settingTopDom.appendChild(divideLine.cloneNode())
 
         settingTopDom.appendChild(fontPositionDom)
         settingTopDom.appendChild(divideLine.cloneNode())

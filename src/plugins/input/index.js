@@ -40,6 +40,14 @@ export default class InputPlugin{
         this.inputDom.oninput = null
     }
 
+    setCellText(){
+
+        const { clickCell } = this.contentComponent
+
+        clickCell.text = this.inputDom.value
+
+    }
+
     /**
      * @param {object} attrs
      */
@@ -125,7 +133,16 @@ export default class InputPlugin{
             inputDom.onblur = evt=>{
                 // console.log('测试onblur',clickCell,inputDom.value,evt.target.value)
                 // console.log('测试inputDom.value',inputDom.value)
-                // console.log('测试evt.target.value',evt.target.value)
+                // console.log('测试evt.target',evt)
+                if(!(evt.relatedTarget && this.selectorDom.contains(evt.relatedTarget))){
+                    this.core.plugins.SettingPlugin.changeStepArr({
+                        type:1,
+                        label:clickCell.label,
+                        preText:clickCell.text,
+                        nextText:inputDom.value
+                    })
+                }
+
                 clickCell.text = inputDom.value
                 this.core.wsSend(2,clickCell)
                 this.inputDom.value = ''
@@ -136,7 +153,7 @@ export default class InputPlugin{
             inputDom.oninput=evt=>{
                 // console.log('测试',evt.target.value,clickCell)
                 this.core.plugins.SettingPlugin.setCellCon(evt.target.value)
-                clickCell.text = inputDom.value
+                // clickCell.text = inputDom.value
             }
         })
     }

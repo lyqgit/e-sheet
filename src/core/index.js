@@ -326,6 +326,10 @@ export default class AppExcel{
         }
     }
 
+    getCurrentSheet(){
+        return this.eSheetWorkBook[this.currentSheetIndex]
+    }
+
     createNewSheet(sheetName = 'Sheet'){
 
         this.saveHandle()
@@ -351,9 +355,12 @@ export default class AppExcel{
         }
 
         this.eSheetWorkBook.push({
+            id:(new Date).valueOf(),
             label: newSheetName,
             sheet:[],
-            clickCell: null
+            clickCell: null,
+            step:[],
+            stepNum:-1
         })
 
         this.currentSheetIndex = this.eSheetWorkBook.length - 1

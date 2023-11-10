@@ -519,7 +519,11 @@ export default class SelectPlugin{
     showClickHandler(){
 
         this.canvasDom.addEventListener('mousedown',event=>{
-            // console.log('测试',event)
+
+            // 如果输入框没关闭则
+            // if(this.core.plugins.InputPlugin.inputDom.style.display !== 'none'){
+            //     this.core.plugins.InputPlugin.setCellText()
+            // }
             // console.log('选中',this.core.dragSign)
             // console.log('event.button',event.button)
             if(event.button === 2 && this.contentComponent.secondClickCell){

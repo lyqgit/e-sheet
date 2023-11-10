@@ -103,6 +103,19 @@ export default class IconSvg extends HTMLElement{
             }
         }
 
+        if(this.category === 'step'){
+            this.className = 'e-sheet-cell-svg-layout e-sheet-svg-20-20'
+            switch (this.position) {
+                case 'forward':
+                    this.innerHTML = '<svg width="20" height="20" fill="none" viewBox="0 0 20 20" size="20" data-spm-anchor-id=""><defs><clipPath id="___SVG_ID__50__0___"><rect width="20" height="20" rx="0"></rect></clipPath></defs><g clip-path="url(#___SVG_ID__50__0___)"><path fill="currentColor" fill-opacity="0.94" d="M16.3 6H7.988C4.975 6 3 8.22 3 11s1.975 5 4.988 5h4.168v1H7.988C4.388 17 2 14.296 2 11s2.387-6 5.988-6h8.298l-2.14-2.147.708-.706 3.353 3.364-3.354 3.343-.706-.708L16.3 6Z"></path></g></svg>'
+                    return;
+                case 'fallback':
+                    this.innerHTML = '<svg width="20" height="20" fill="none" viewBox="0 0 20 20" size="20"><defs><clipPath id="___SVG_ID__49__0___"><rect width="20" height="20" rx="0"></rect></clipPath></defs><g clip-path="url(#___SVG_ID__49__0___)"><path fill="currentColor" fill-opacity="0.94" d="M6.354 2.353 3.714 5h8.298C15.612 5 18 7.704 18 11s-2.387 6-5.988 6H8v-1h4.012C15.025 16 17 13.78 17 11s-1.975-5-4.988-5H3.7l2.653 2.646-.706.708-3.854-3.843 3.853-3.864.708.706Z"></path></g></svg>'
+                    return;
+
+            }
+        }
+
     }
 
 }
