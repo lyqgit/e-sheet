@@ -72,7 +72,9 @@ export default class ContentComponent{
         this.registrySelectedCellDom()
         this.registryCellPainterDom()
         this.installContentDataByData(sheetBook.sheet)
-        this.showClickRect(sheetBook.clickCell)
+        if(sheetBook.clickCell){
+            this.showClickRect(sheetBook.clickCell)
+        }
         // console.log('this.core.sheetWidth',this.core.sheetWidth)
         // console.log('this.core.sheetHeight',this.core.sheetHeight)
         // this.initDraw()

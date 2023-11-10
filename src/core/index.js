@@ -135,6 +135,9 @@ export default class AppExcel{
         this.installComponents(components);
         this.installPlugins(plugins);
 
+        // 默认选中A1
+        this.plugins.SettingPlugin.changeFirstSelectedCell('A1');
+
         // requestAnimationFrame(this.draw);
     }
 
@@ -350,36 +353,7 @@ export default class AppExcel{
         this.eSheetWorkBook.push({
             label: newSheetName,
             sheet:[],
-            clickCell: {
-                row:1,
-                col:1,
-                text:'',
-                textAsNumber:NaN,
-                width:cellWidth,
-                height:cellHeight,
-                x:0,
-                y:0,
-                ltX:cellHeight,
-                ltY:cellHeight,
-                mergeWidth:0,
-                mergeHeight:0,
-                mergeRow:1,
-                mergeCol:1,
-                mergeStartLabel:'',
-                mergeEndLabel:'',
-                mergeLabelGroup:[],
-                isMerge:false,
-                bgColor:'#ffffff',
-                fontColor:'#000000',
-                font:null,
-                fontSize:12,
-                fontWeight:'',
-                fontItalic:'',
-                fontFamily:'Calibre',
-                textAlign:'center',
-                textBaseline:'middle',
-                label:'A1'
-            }
+            clickCell: null
         })
 
         this.currentSheetIndex = this.eSheetWorkBook.length - 1
