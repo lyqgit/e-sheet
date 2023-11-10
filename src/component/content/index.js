@@ -757,7 +757,12 @@ export default class ContentComponent{
      * @param {number} y
      */
     showSelectedCellPainterDom(x,y){
-        this.cellPainterDom.style.display = 'block'
+        if(y<this.core.cellHeight){
+            this.cellPainterDom.style.display = 'none'
+        }else{
+            this.cellPainterDom.style.display = 'block'
+        }
+
         this.cellPainterDom.style.left = x-3+'px'
         this.cellPainterDom.style.top = y-3+'px'
         this.cellPainterDom.style.cursor = `url(${base64Img['crosshair']}) 18 18, crosshair`
