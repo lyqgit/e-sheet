@@ -133,7 +133,11 @@ export default class InputPlugin{
             inputDom.onblur = evt=>{
                 // console.log('测试onblur',clickCell,inputDom.value,evt.target.value)
                 // console.log('测试inputDom.value',inputDom.value)
-                // console.log('测试evt.target',evt)
+                // console.log('测试onblur-----evt.target',evt,clickCell)
+                if(!inputDom.value){
+                    this.hideInput()
+                    return
+                }
                 if(!(evt.relatedTarget && this.selectorDom.contains(evt.relatedTarget))){
                     this.core.plugins.SettingPlugin.changeStepArr({
                         type:1,

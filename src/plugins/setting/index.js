@@ -221,7 +221,7 @@ export default class setting{
                 const selectedCell = contentComponent.searchRectByLabel(fObj.label)
                 selectedCell.text = fObj.nextText
                 contentComponent.showClickRect(selectedCell)
-                core.freshContent()
+                core.fresh()
                 break;
         }
 
@@ -249,7 +249,7 @@ export default class setting{
                 const selectedCell = contentComponent.searchRectByLabel(fObj.label)
                 selectedCell.text = fObj.preText
                 contentComponent.showClickRect(selectedCell)
-                core.freshContent()
+                core.fresh()
             break;
         }
 
@@ -298,6 +298,10 @@ export default class setting{
                 },
                 onblur:_=>{
                     // console.log('fxInputDom----onblur',fxInputDom.value,evt)
+                    if(!this.core.plugins.InputPlugin.inputDom.value){
+                        this.core.plugins.InputPlugin.hideInput()
+                        return
+                    }
                     this.changeStepArr({
                         type:1,
                         label:fxInputCellLabel,
