@@ -2787,7 +2787,7 @@ var ScrollPlugin = /*#__PURE__*/function () {
     // 竖向鼠标中间滚动条
   }, {
     key: "registryWheel",
-    value: function registryWheel(barDom, proportion) {
+    value: function registryWheel(barDom) {
       var _this2 = this;
       this.canvasWrapperDom.onmouseover = function () {
         _this2.canvasWrapperDom.onwheel = function (event) {
@@ -2802,7 +2802,7 @@ var ScrollPlugin = /*#__PURE__*/function () {
             // console.log('eA',eA)
             var topDis = _this2.recordDeltaY;
             // console.log('leftDis',leftDis)
-            _this2.verMoveFunc(topDis, proportion);
+            _this2.verMoveFunc(topDis);
           });
         };
       };
@@ -2873,7 +2873,7 @@ var ScrollPlugin = /*#__PURE__*/function () {
           _this3.layer.setCursorDefault();
           requestAnimationFrame(function () {
             var leftDis = eA.pageX - (_this3.canvasWrapperDom.getBoundingClientRect().x + _this3.options.cellHeight) - e.offsetX;
-            _this3.horMoveFunc(leftDis, proportion);
+            _this3.horMoveFunc(leftDis);
           });
         };
       };
@@ -2897,7 +2897,7 @@ var ScrollPlugin = /*#__PURE__*/function () {
       // bor-bar
       var barDom = document.createElement('div');
       this.verBarDom = barDom;
-      var proportion = (this.options.height - this.options.cellHeight - 10) / (this.options.cellHeight * this.options.row);
+      var proportion = (this.options.height - this.options.cellHeight - 10) / this.core.sheetHeight;
       barDom.style.width = this.barHeight + 'px';
       barDom.style.height = (this.options.height - this.options.cellHeight - 10) * proportion + 'px';
       // barDom.style.position = 'absolute'
@@ -2917,7 +2917,7 @@ var ScrollPlugin = /*#__PURE__*/function () {
 
       // console.log('proportion',proportion)
 
-      this.registryWheel(barDom, proportion);
+      this.registryWheel(barDom);
       barDom.onmousedown = function (e) {
         e.preventDefault();
         document.onmousemove = function (eA) {
@@ -2928,7 +2928,7 @@ var ScrollPlugin = /*#__PURE__*/function () {
             // console.log('leftDis',leftDis)
             var topDis = eA.pageY - (_this4.canvasWrapperDom.getBoundingClientRect().y + _this4.options.cellHeight) - e.offsetY;
             // console.log('topDis',topDis,this.canvasWrapperDom.getBoundingClientRect())
-            _this4.verMoveFunc(topDis, proportion);
+            _this4.verMoveFunc(topDis);
           });
         };
       };
@@ -2979,7 +2979,8 @@ var ScrollPlugin = /*#__PURE__*/function () {
     }
   }, {
     key: "verMoveFunc",
-    value: function verMoveFunc(topDis, proportion) {
+    value: function verMoveFunc(topDis) {
+      var proportion = (this.options.height - this.options.cellHeight - 10) / this.core.sheetHeight;
       var topBound = 0;
       var bottomBound = this.options.height - this.options.cellHeight - 10 - (this.options.height - this.options.cellHeight) * proportion;
 

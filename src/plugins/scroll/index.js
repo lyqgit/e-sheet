@@ -72,7 +72,7 @@ export default class ScrollPlugin{
     }
 
     // 竖向鼠标中间滚动条
-    registryWheel(barDom,proportion){
+    registryWheel(barDom){
         this.canvasWrapperDom.onmouseover = ()=>{
 
             this.canvasWrapperDom.onwheel = event=>{
@@ -87,7 +87,7 @@ export default class ScrollPlugin{
                     // console.log('eA',eA)
                     const topDis = this.recordDeltaY
                     // console.log('leftDis',leftDis)
-                    this.verMoveFunc(topDis,proportion,)
+                    this.verMoveFunc(topDis)
                 })
             }
         }
@@ -159,7 +159,7 @@ export default class ScrollPlugin{
                 this.layer.setCursorDefault()
                 requestAnimationFrame(()=>{
                     const leftDis = eA.pageX - (this.canvasWrapperDom.getBoundingClientRect().x + this.options.cellHeight) -e.offsetX
-                    this.horMoveFunc(leftDis,proportion)
+                    this.horMoveFunc(leftDis)
                 })
 
             }
@@ -186,7 +186,7 @@ export default class ScrollPlugin{
         // bor-bar
         const barDom = document.createElement('div')
         this.verBarDom = barDom
-        const proportion = (this.options.height - this.options.cellHeight - 10)/(this.options.cellHeight*this.options.row)
+        const proportion = (this.options.height - this.options.cellHeight - 10)/this.core.sheetHeight
 
         barDom.style.width = this.barHeight+'px'
         barDom.style.height = (this.options.height - this.options.cellHeight - 10)*proportion+'px'
@@ -210,7 +210,7 @@ export default class ScrollPlugin{
 
         // console.log('proportion',proportion)
 
-        this.registryWheel(barDom,proportion)
+        this.registryWheel(barDom)
 
         barDom.onmousedown = e=>{
             e.preventDefault()
@@ -224,7 +224,7 @@ export default class ScrollPlugin{
                     // console.log('leftDis',leftDis)
                     const topDis = eA.pageY - (this.canvasWrapperDom.getBoundingClientRect().y + this.options.cellHeight) - e.offsetY
                     // console.log('topDis',topDis,this.canvasWrapperDom.getBoundingClientRect())
-                    this.verMoveFunc(topDis,proportion)
+                    this.verMoveFunc(topDis)
 
                 })
 
@@ -281,7 +281,9 @@ export default class ScrollPlugin{
         }
     }
 
-    verMoveFunc(topDis,proportion){
+    verMoveFunc(topDis){
+
+        const proportion = (this.options.height - this.options.cellHeight - 10)/this.core.sheetHeight
 
         const topBound = 0
 

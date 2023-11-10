@@ -9,6 +9,11 @@ lerna-debug.log*
 
 node_modules
 dist-ssr
+examples/e-sheet.es.js
+examples/e-sheet.es.js.map
+examples/e-sheet.umd.js
+examples/e-sheet.umd.js.map
+examples/css
 *.local
 
 # Editor directories and files
