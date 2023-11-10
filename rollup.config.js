@@ -17,7 +17,7 @@ const isProduction = process.env.NODE_ENV === 'production'
 const pluginsWithEnv = isProduction ? [strip(),terser()] : [serve({
     port: 10001,
     contentBase: ['examples']
-}), livereload({watch: 'dist/e-sheet.umd.js'})]
+}), livereload({watch: 'examples/e-sheet.umd.js'})]
 
 export default {
     input: resolve(__dirname,'src/main.js'),

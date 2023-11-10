@@ -2942,6 +2942,8 @@
     }, {
       key: "horMoveFunc",
       value: function horMoveFunc(leftDis) {
+        // 关闭输入框
+        this.core.plugins.InputPlugin.hideInput();
         var proportion = (this.options.width - this.options.cellHeight - 10) / this.core.sheetWidth;
         var leftBound = 0;
         var rightBound = this.options.width - this.options.cellHeight - 10 - (this.options.width - this.options.cellHeight) * proportion;
@@ -2986,6 +2988,8 @@
     }, {
       key: "verMoveFunc",
       value: function verMoveFunc(topDis) {
+        // 关闭输入框
+        this.core.plugins.InputPlugin.hideInput();
         var proportion = (this.options.height - this.options.cellHeight - 10) / this.core.sheetHeight;
         var topBound = 0;
         var bottomBound = this.options.height - this.options.cellHeight - 10 - (this.options.height - this.options.cellHeight) * proportion;

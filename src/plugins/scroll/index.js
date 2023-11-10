@@ -235,6 +235,9 @@ export default class ScrollPlugin{
 
     horMoveFunc(leftDis){
 
+        // 关闭输入框
+        this.core.plugins.InputPlugin.hideInput()
+
         const proportion = (this.options.width - this.options.cellHeight - 10)/this.core.sheetWidth
 
         const leftBound = 0
@@ -282,6 +285,9 @@ export default class ScrollPlugin{
     }
 
     verMoveFunc(topDis){
+
+        // 关闭输入框
+        this.core.plugins.InputPlugin.hideInput()
 
         const proportion = (this.options.height - this.options.cellHeight - 10)/this.core.sheetHeight
 
