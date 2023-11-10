@@ -16,30 +16,30 @@ const __dirname = dirname(__filename)
 const isProduction = process.env.NODE_ENV === 'production'
 const pluginsWithEnv = isProduction ? [strip(),terser()] : [serve({
     port: 10001,
-    contentBase: ['dist', 'examples']
+    contentBase: ['examples']
 }), livereload({watch: 'dist/e-sheet.umd.js'})]
 
 export default {
     input: resolve(__dirname,'src/main.js'),
     output: [
         {
-            file: resolve(__dirname,'dist/e-sheet.es.js'),
+            file: resolve(__dirname,isProduction?'dist/e-sheet.es.js':'examples/e-sheet.es.js'),
             name:'eSheet',
             format: 'es',
-            sourcemap:true
+            sourcemap:!isProduction
         },
         {
-            file: resolve(__dirname,'dist/e-sheet.umd.js'),
+            file: resolve(__dirname,isProduction?'dist/e-sheet.umd.js':'examples/e-sheet.umd.js'),
             name:'eSheet',
             format: 'umd',
-            sourcemap:true,
+            sourcemap:!isProduction,
         }
     ],
     plugins: [
         babel({ babelHelpers: 'bundled' }),
         postcss({
             plugins: [autoprefixer(),cssnano],
-            extract:resolve(__dirname,'dist/css/index.css')
+            extract:resolve(__dirname,isProduction?'dist/css/index.css':'examples/css/index.css')
         }),
         externalResolve(),
         ...pluginsWithEnv
