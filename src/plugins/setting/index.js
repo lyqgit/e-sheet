@@ -185,6 +185,16 @@ export default class setting{
         this.core.fresh()
     }
 
+    convenientChangeStepArr(type,attr,nextValue){
+        const { clickCell } = this.contentComponent
+        this.changeStepArr({
+            type,
+            label:clickCell.label,
+            pre:clickCell[attr],
+            next:nextValue
+        })
+    }
+
     changeStepArr(obj){
         const curSheet = this.core.getCurrentSheet()
         if(curSheet.stepNum !== curSheet.step.length-1){
@@ -215,16 +225,37 @@ export default class setting{
 
         const fObj = curSheet.step[curSheet.stepNum + 1]
 
+        const selectedCell = contentComponent.searchRectByLabel(fObj.label)
+
         switch (fObj.type){
             case 1:
                 // 1.更改单元格内容
-                const selectedCell = contentComponent.searchRectByLabel(fObj.label)
-                selectedCell.text = fObj.nextText
+                selectedCell.text = fObj.next
                 contentComponent.showClickRect(selectedCell)
-                core.fresh()
                 break;
+            case 2: // 文字大小
+                selectedCell.fontSize = fObj.next
+                break;
+            case 3: // 文字垂直方向位置
+                selectedCell.textAlign = fObj.next
+                break
+            case 4: // 文字水平方向位置
+                selectedCell.textBaseline = fObj.next
+                break
+            case 5: // 文字粗体
+                selectedCell.fontWeight = fObj.next
+                break
+            case 6: // 文字斜体
+                selectedCell.fontItalic = fObj.next
+                break
+            case 7: // 文字颜色
+                selectedCell.fontColor = fObj.next
+                break
+            case 8: // 背景颜色
+                selectedCell.bgColor = fObj.next
+                break
         }
-
+        core.fresh()
         // console.log('步骤减1')
         curSheet.stepNum += 1
     }
@@ -242,16 +273,39 @@ export default class setting{
             return;
         }
         const fObj = curSheet.step[curSheet.stepNum === 0?0:curSheet.stepNum]
+        const selectedCell = contentComponent.searchRectByLabel(fObj.label)
 
         switch (fObj.type){
             case 1:
                 // 1.更改单元格内容
-                const selectedCell = contentComponent.searchRectByLabel(fObj.label)
-                selectedCell.text = fObj.preText
+                selectedCell.text = fObj.pre
                 contentComponent.showClickRect(selectedCell)
-                core.fresh()
-            break;
+                break;
+            case 2: // 文字大小
+                selectedCell.fontSize = fObj.pre
+                break;
+            case 3: // 文字垂直方向位置
+                selectedCell.textAlign = fObj.pre
+                break
+            case 4: // 文字水平方向位置
+                selectedCell.textBaseline = fObj.pre
+                break
+            case 5: // 文字粗体
+                selectedCell.fontWeight = fObj.pre
+                break
+            case 6: // 文字斜体
+                selectedCell.fontItalic = fObj.pre
+                break
+            case 7: // 文字颜色
+                selectedCell.fontColor = fObj.pre
+                break
+            case 8: // 背景颜色
+                selectedCell.bgColor = fObj.pre
+                break
         }
+
+        core.fresh()
+
 
         // console.log('步骤减1')
         curSheet.stepNum -= 1
@@ -305,8 +359,8 @@ export default class setting{
                     this.changeStepArr({
                         type:1,
                         label:fxInputCellLabel,
-                        preText:this.contentComponent.clickCell.text,
-                        nextText:this.core.plugins.InputPlugin.inputDom.value
+                        pre:this.contentComponent.clickCell.text,
+                        next:this.core.plugins.InputPlugin.inputDom.value
                     })
 
                     const focusClickCell = this.contentComponent.searchRectByLabel(fxInputCellLabel)
@@ -402,6 +456,8 @@ export default class setting{
         this.fontHorAddrGroup = fontHorAddrGroup
         fontHorAddrGroup.addEventListener('e-sheet-radio-group-onchange',evt=>{
             // console.log('evt',evt)
+            this.convenientChangeStepArr(4,'textAlign',evt.detail)
+
             this.cellFontTextAlignChange(evt.detail)
         })
 
@@ -457,6 +513,8 @@ export default class setting{
         this.fontVerAddrGroup = fontVerAddrGroup
         fontVerAddrGroup.addEventListener('e-sheet-radio-group-onchange',evt=>{
             // console.log('evt',evt)
+            this.convenientChangeStepArr(3,'textBaseLine',evt.detail)
+
             this.cellFontTextBaseLineChange(evt.detail)
         })
 
@@ -479,6 +537,8 @@ export default class setting{
         const fontSizeSelectDom = h('e-sheet-select',{})
 
         fontSizeSelectDom.addEventListener('e-sheet-select-onchange',evt=>{
+            this.convenientChangeStepArr(2,'fontSize',parseInt(evt.detail))
+
             this.cellFontSizeChange(evt.detail)
         })
         fontSizeSelectDom.setAttribute('label','字号')
@@ -522,9 +582,13 @@ export default class setting{
             // console.log('evt',evt)
             if(fontWeightBtnDom.getAttribute('current') === ''){
                 fontWeightBtnDom.setAttribute('current',evt.detail)
+                this.convenientChangeStepArr(5,'fontWeight',evt.detail)
+
                 this.cellFontWeightChange(evt.detail)
             }else{
                 fontWeightBtnDom.setAttribute('current','')
+                this.convenientChangeStepArr(5,'fontWeight','')
+
                 this.cellFontWeightChange('')
             }
         })
@@ -552,9 +616,13 @@ export default class setting{
             // console.log('evt',evt)
             if(fontItalicBtnDom.getAttribute('current') === ''){
                 fontItalicBtnDom.setAttribute('current',evt.detail)
+                this.convenientChangeStepArr(6,'fontItalic',evt.detail)
+
                 this.cellFontItalicChange(evt.detail)
             }else{
                 fontItalicBtnDom.setAttribute('current','')
+                this.convenientChangeStepArr(6,'fontItalic','')
+
                 this.cellFontItalicChange('')
             }
 
@@ -581,6 +649,8 @@ export default class setting{
         })
 
         fontColorSelectDom.addEventListener('e-sheet-icon-color-svg-onchange',evt=>{
+            this.convenientChangeStepArr(7,'fontColor',evt.detail)
+
             this.cellFontColorChange(evt.detail)
         })
 
@@ -619,6 +689,8 @@ export default class setting{
         bgColorSelectTipConDom.appendChild(bgColorSelectDom)
 
         bgColorSelectDom.addEventListener('e-sheet-icon-color-svg-onchange',evt=>{
+            this.convenientChangeStepArr(8,'bgColor',evt.detail)
+
             this.cellBgColorChange(evt.detail)
         })
 

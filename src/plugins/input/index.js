@@ -142,8 +142,8 @@ export default class InputPlugin{
                     this.core.plugins.SettingPlugin.changeStepArr({
                         type:1,
                         label:clickCell.label,
-                        preText:clickCell.text,
-                        nextText:inputDom.value
+                        pre:clickCell.text,
+                        next:inputDom.value
                     })
                 }
 
