@@ -40,8 +40,8 @@ const excel = new eSheet('#elt',{
 
 // umd
 
+<link rel="stylesheet" href="dist/css/index.css">
 <script lang="javascript" src="dist/e-sheet.umd.js"></script>
-<script lang="javascript" src="dist/dist/css/index.css"></script>
 
 const excel = new eSheet('#elt',{
     width:1200,
