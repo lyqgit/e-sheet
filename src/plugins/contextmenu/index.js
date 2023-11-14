@@ -401,7 +401,8 @@ export default class ContextmenuPlugin{
 
         mergeBtn.onclick = _=>{
             const { clickCell,mergeSelectedCell } = this.contentComponent
-            this.mergeCell(clickCell,mergeSelectedCell)
+            const tempGroupCell = [clickCell,...mergeSelectedCell].sort((a,b)=>{return (a.row - b.row)+(a.col - b.col) })
+            this.mergeCell(tempGroupCell[0],tempGroupCell.slice(0))
         }
 
         splitBtn.onclick = _=>{
