@@ -1,6 +1,6 @@
 {
   "name": "e-sheet",
-  "version": "1.0.0",
+  "version": "1.1.1",
   "author": "lyqgit",
   "description": "web excel",
   "keywords": ["web","excel"],
@@ -10,8 +10,8 @@
     "assets"
   ],
   "type": "module",
-  "main": "./src/main.js",
-  "module": "./src/main.js",
+  "main": "./dist/e-sheet.es.js",
+  "module": "./dist/e-sheet.es.js",
   "scripts": {
     "build": "cross-env NODE_ENV=production rollup -c",
     "dev": "cross-env NODE_ENV=development rollup -c -w"

@@ -30,6 +30,7 @@ npm i e-sheet
 // es
 
 import eSheet from 'e-sheet'
+import 'e-sheet/dist/css/index.css'
 
 const excel = new eSheet('#elt',{
     width:1200,
@@ -40,6 +41,7 @@ const excel = new eSheet('#elt',{
 // umd
 
 <script lang="javascript" src="dist/e-sheet.umd.js"></script>
+<script lang="javascript" src="dist/dist/css/index.css"></script>
 
 const excel = new eSheet('#elt',{
     width:1200,
