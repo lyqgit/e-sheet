@@ -12,6 +12,9 @@
   "type": "module",
   "main": "./dist/e-sheet.es.js",
   "module": "./dist/e-sheet.es.js",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
   "scripts": {
     "build": "cross-env NODE_ENV=production rollup -c",
     "dev": "cross-env NODE_ENV=development rollup -c -w"
