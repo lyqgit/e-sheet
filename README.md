@@ -57,6 +57,7 @@ const excel = new eSheet('#elt',{
 - [x] painter
 - [x] merge
 - [x] split
+- [x] drag
 - [x] add row
 - [x] add col
 - [x] font-family
@@ -66,5 +67,5 @@ const excel = new eSheet('#elt',{
 - [x] vertical-alignment
 - [x] export-data
 - [ ] import-data
-- [ ] forward
-- [ ] fallback
+- [ ] forward（Partial operation support）
+- [ ] fallback（Partial operation support）
