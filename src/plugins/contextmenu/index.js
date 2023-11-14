@@ -179,6 +179,7 @@ export default class ContextmenuPlugin{
         clickCell.mergeHeight = mergeHeight
         // console.log('合并完成',clickCell)
         this.contentComponent.setSecondClickCell(null)
+        this.contentComponent.showClickRect(clickCell)
         this.core.freshContent()
         this.hideContextMenu()
     }

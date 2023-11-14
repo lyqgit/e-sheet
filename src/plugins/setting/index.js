@@ -254,6 +254,18 @@ export default class setting{
             case 8: // 背景颜色
                 selectedCell.bgColor = fObj.next
                 break
+            case 9: // 合并单元格
+                const mergeSelectedCell = []
+                for(let i=1;i<fObj.next.length;i++){
+                    mergeSelectedCell.push(contentComponent.searchRectByLabel(fObj.next[i]))
+                }
+                const firstCell = contentComponent.searchRectByLabel(fObj.next[0])
+                this.core.plugins.ContextmenuPlugin.mergeCell(firstCell,mergeSelectedCell)
+                break
+            case 10: // 拆分单元格
+                const mergeStartCell = contentComponent.searchRectByColAndRow(fObj.next.col,fObj.next.row)
+                this.core.plugins.ContextmenuPlugin.splitCell(mergeStartCell)
+                break
         }
         core.fresh()
         // console.log('步骤减1')
@@ -301,6 +313,24 @@ export default class setting{
                 break
             case 8: // 背景颜色
                 selectedCell.bgColor = fObj.pre
+                break
+            case 9: // 合并单元格
+                const mergeStartCell = contentComponent.searchRectByLabel(fObj.pre)
+                this.core.plugins.ContextmenuPlugin.splitCell(mergeStartCell)
+                break
+            case 10: // 拆分单元格
+                const mergeSelectedCell = []
+                for(let i=0;i<fObj.pre.mergeRow;i++){
+                    for(let j=0;j<fObj.pre.mergeCol;j++){
+                        if(i===0&&j===0){
+                            continue
+                        }
+                        mergeSelectedCell.push(contentComponent.searchRectByColAndRow(fObj.pre.col+j,fObj.pre.row+i))
+                    }
+                }
+                const firstCell = contentComponent.searchRectByLabel(fObj.pre.mergeStartLabel)
+                console.log('firstCell',firstCell,mergeSelectedCell)
+                this.core.plugins.ContextmenuPlugin.mergeCell(firstCell,mergeSelectedCell)
                 break
         }
 
@@ -771,15 +801,46 @@ export default class setting{
 
         cellMergerBtnDom.onclick=_=>{
             const { clickCell,mergeSelectedCell } = this.contentComponent
-            this.core.plugins.ContextmenuPlugin.mergeCell(clickCell,mergeSelectedCell)
-            if(mergeSelectedCell.some(item=>item.isMerge) || mergeSelectedCell.length === 0){
-                return
+            const stepObj = {
+                type:9,
+                label:clickCell.label
             }
+            const tempGroupCell = [clickCell,...mergeSelectedCell].sort((a,b)=>{return (a.row - b.row)+(a.col - b.col) })
+
+            this.core.plugins.ContextmenuPlugin.mergeCell(tempGroupCell[0],tempGroupCell.slice(0))
+            stepObj.pre = tempGroupCell[0].label
+            stepObj.next = tempGroupCell.map(item=>item.label)
+            this.changeStepArr(stepObj)
+            // if(mergeSelectedCell.some(item=>item.isMerge) || mergeSelectedCell.length === 0){
+            //     return
+            // }
             cellMergerBtnDom.style.display = 'none'
             cellSplitBtnDom.style.display = 'flex'
         }
         cellSplitBtnDom.onclick=_=>{
             const { clickCell } = this.contentComponent
+            this.changeStepArr({
+                type:10,
+                label:clickCell.label,
+                pre:{
+                    row:clickCell.row,
+                    col:clickCell.col,
+                    mergeRow:clickCell.mergeRow,
+                    mergeCol:clickCell.mergeCol,
+                    mergeStartLabel:clickCell.mergeStartLabel,
+                    mergeEndLabel:clickCell.mergeEndLabel,
+                    isMerge:true,
+                },
+                next:{
+                    row:clickCell.row,
+                    col:clickCell.col,
+                    mergeRow:clickCell.mergeRow,
+                    mergeCol:clickCell.mergeCol,
+                    mergeStartLabel:clickCell.mergeStartLabel,
+                    mergeEndLabel:clickCell.mergeEndLabel,
+                    isMerge:false,
+                }
+            })
             this.core.plugins.ContextmenuPlugin.splitCell(clickCell)
             cellMergerBtnDom.style.display = 'flex'
             cellSplitBtnDom.style.display = 'none'
