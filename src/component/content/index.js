@@ -247,29 +247,35 @@ export default class ContentComponent{
         this.selectedCellWidth = width
         this.selectedCellHeight = height
 
-        // top
-        this.selectedCellTopBorderDom.style.display = 'block'
-        this.selectedCellTopBorderDom.style.left = x+'px'
-        this.selectedCellTopBorderDom.style.top = y+'px'
-        this.selectedCellTopBorderDom.style.width = width+'px'
+        if(y<this.core.cellHeight || x<this.core.cellHeight){
+            this.hideSelectedCellDom()
+        }else{
+            // top
+            this.selectedCellTopBorderDom.style.display = 'block'
+            this.selectedCellTopBorderDom.style.left = x+'px'
+            this.selectedCellTopBorderDom.style.top = y+'px'
+            this.selectedCellTopBorderDom.style.width = width+'px'
 
-        // bottom
-        this.selectedCellBottomBorderDom.style.display = 'block'
-        this.selectedCellBottomBorderDom.style.left = x+'px'
-        this.selectedCellBottomBorderDom.style.top = y+height-4+'px'
-        this.selectedCellBottomBorderDom.style.width = width+'px'
+            // bottom
+            this.selectedCellBottomBorderDom.style.display = 'block'
+            this.selectedCellBottomBorderDom.style.left = x+'px'
+            this.selectedCellBottomBorderDom.style.top = y+height-4+'px'
+            this.selectedCellBottomBorderDom.style.width = width+'px'
 
-        // left
-        this.selectedCellLeftBorderDom.style.display = 'block'
-        this.selectedCellLeftBorderDom.style.left = x+'px'
-        this.selectedCellLeftBorderDom.style.top = y+'px'
-        this.selectedCellLeftBorderDom.style.height = height+'px'
+            // left
+            this.selectedCellLeftBorderDom.style.display = 'block'
+            this.selectedCellLeftBorderDom.style.left = x+'px'
+            this.selectedCellLeftBorderDom.style.top = y+'px'
+            this.selectedCellLeftBorderDom.style.height = height+'px'
 
-        // right
-        this.selectedCellRightBorderDom.style.display = 'block'
-        this.selectedCellRightBorderDom.style.left = x+width-4+'px'
-        this.selectedCellRightBorderDom.style.top = y+'px'
-        this.selectedCellRightBorderDom.style.height = height+'px'
+            // right
+            this.selectedCellRightBorderDom.style.display = 'block'
+            this.selectedCellRightBorderDom.style.left = x+width-4+'px'
+            this.selectedCellRightBorderDom.style.top = y+'px'
+            this.selectedCellRightBorderDom.style.height = height+'px'
+        }
+
+
 
         // dot
         this.showSelectedCellPainterDom(x+width,y+height)
@@ -759,7 +765,7 @@ export default class ContentComponent{
      * @param {number} y
      */
     showSelectedCellPainterDom(x,y){
-        if(y<this.core.cellHeight){
+        if(y<this.core.cellHeight || x<this.core.cellHeight){
             this.cellPainterDom.style.display = 'none'
         }else{
             this.cellPainterDom.style.display = 'block'
