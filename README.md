@@ -13,7 +13,7 @@
 
 * using Canvas to draw Excel tables, supporting some basic table operation functions, and supporting copying and pasting data with Alibaba in Excel documents and WPS
 
-![example](assets/example.jpg)
+![example](assets/example1.jpg)
 
 ## install
 

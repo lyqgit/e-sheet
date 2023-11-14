@@ -13,7 +13,7 @@
 
 * 使用canvas绘制excel表格，支持部分基础的表格操作功能，可支持和阿里在excel文档和wps互相复制粘贴数据
 
-![example](assets/example.jpg)
+![example](assets/example1.jpg)
 
 ## 安装
 
