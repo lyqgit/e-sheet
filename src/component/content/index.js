@@ -369,7 +369,7 @@ export default class ContentComponent{
         this.canvasDom.onmousemove = event=>{
             this.moveCell(event)
         }
-        this.canvasWrapperDom.onmouseup = event=>{
+        this.canvasWrapperDom.onmouseup = _=>{
             // console.log('测试',this.moveClickCell,this.clickCell)
             this.setSelectedCellBorderDomBgColor('transparent')
             if(!this.moveClickCell || this.moveClickCell.isMerge){

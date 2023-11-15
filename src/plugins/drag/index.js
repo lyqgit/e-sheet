@@ -4,6 +4,10 @@ export default class DragPlugin{
     dragShowDis = 6
 
     dragCell = null
+    /**
+     * @type {object}
+     */
+    stepObj = {}
 
     constructor(selectorDom,layer,options={},components={},core) {
         this.contentComponent = components.ContentComponent
@@ -63,6 +67,10 @@ export default class DragPlugin{
         // console.log('this.dragCell.width>=cellHeight',this.dragCell.width<cellHeight)
 
         if(!this.dragCell || ((this.dragCell.width+dis)<cellHeight && dis<0)){
+            this.stepObj.next = {
+                width:cellHeight
+            }
+            this.stepObj.type = 11
             this.dragCell = null
             return;
         }
@@ -109,6 +117,10 @@ export default class DragPlugin{
         // console.log('this.dragCell.width>=cellHeight',this.dragCell.width<cellHeight)
 
         if(!this.dragCell || ((this.dragCell.height+dis)<cellHeight && dis<0)){
+            this.stepObj.next = {
+                height:cellHeight
+            }
+            this.stepObj.type = 12
             this.dragCell = null
             return;
         }
@@ -147,11 +159,16 @@ export default class DragPlugin{
 
     registerDragEvent(){
 
-        this.canvasDom.addEventListener('mouseup',_=>{
+        this.canvasDom.addEventListener('mouseup',evt=>{
             // console.log('evt',evt,this.dragCell)
             if(this.dragCell){
+                this.stepObj.next = {
+                    width:this.dragCell.width,
+                    height:this.dragCell.height,
+                }
                 this.core.wsSend(3,this.dragCell)
             }
+            this.core.plugins.SettingPlugin.changeStepArr(JSON.parse(JSON.stringify(this.stepObj)))
         })
 
         this.canvasDom.addEventListener('mousedown',evtA=>{
@@ -163,6 +180,13 @@ export default class DragPlugin{
             if(!this.dragCell || !this.core.dragSign){
                 return
             }
+
+            this.stepObj.pre = {}
+            this.stepObj.label = this.dragCell.label
+
+            this.stepObj.pre.width = this.dragCell.width
+            this.stepObj.pre.height = this.dragCell.height
+
             let dragEndX = 0
             let dragStartX = evtA.pageX
             let dragEndY = 0
