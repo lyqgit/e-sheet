@@ -15,6 +15,12 @@
 
 ![example](assets/example1.jpg)
 
+## preview
+
+<p>
+    <a href="https://lyqgit.github.io">https://lyqgit.github.io</a>
+</p>
+
 ## install
 
 ```

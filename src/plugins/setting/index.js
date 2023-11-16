@@ -270,7 +270,7 @@ export default class setting{
                 this.core.plugins.DragPlugin.expandWidthNoDrag(selectedCell.col,fObj.next.width - fObj.pre.width)
                 break
             case 12: // 拉伸高度
-                selectedCell.height = fObj.next.height
+                this.core.plugins.DragPlugin.expandHeightNoDrag(selectedCell.row,fObj.next.height - fObj.pre.height)
                 break
         }
         core.fresh()
@@ -341,7 +341,7 @@ export default class setting{
                 this.core.plugins.DragPlugin.expandWidthNoDrag(selectedCell.col,fObj.pre.width - fObj.next.width)
                 break
             case 12: // 拉伸高度
-                selectedCell.height = fObj.pre.height
+                this.core.plugins.DragPlugin.expandHeightNoDrag(selectedCell.row,fObj.pre.height - fObj.next.height)
                 break
         }
 

@@ -58,6 +58,41 @@ export default class DragPlugin{
         this.core.fresh()
     }
 
+    expandHeightNoDrag(row,dis){
+        const { contentGroup } = this.contentComponent
+
+        for(let i=0;i<contentGroup.length;i++){
+            const tempRect = contentGroup[i]
+
+            if(tempRect.row === row){
+                tempRect.height += dis
+
+
+                // console.log('dis',dis)
+            }else if(tempRect.row>row){
+                tempRect.y += dis
+                tempRect.ltY += dis
+
+            }
+            if(tempRect.row === row && tempRect.col === 1){
+                this.core.sheetHeight += dis
+            }
+
+            if(tempRect.isMerge && tempRect.mergeStartLabel === tempRect.label && tempRect.row===row){
+                tempRect.mergeHeight += dis
+            }
+
+            if(tempRect.isMerge && tempRect.mergeStartLabel !== tempRect.label && tempRect.row===row){
+                const mergeStartRect = this.contentComponent.searchRectByLabel(tempRect.mergeStartLabel)
+                if(mergeStartRect.col === tempRect.col){
+                    mergeStartRect.mergeHeight += dis
+                }
+            }
+        }
+        this.core.freshScrollBar()
+        this.core.fresh()
+    }
+
     expandWidth(col,dis){
         // console.log('dis',dis)
         const { contentGroup } = this.contentComponent
