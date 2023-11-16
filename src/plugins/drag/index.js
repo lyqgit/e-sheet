@@ -70,7 +70,7 @@ export default class DragPlugin{
             this.stepObj.next = {
                 width:cellHeight
             }
-            this.stepObj.type = 11
+
             this.dragCell = null
             return;
         }
@@ -120,7 +120,7 @@ export default class DragPlugin{
             this.stepObj.next = {
                 height:cellHeight
             }
-            this.stepObj.type = 12
+
             this.dragCell = null
             return;
         }
@@ -159,21 +159,24 @@ export default class DragPlugin{
 
     registerDragEvent(){
 
-        this.canvasDom.addEventListener('mouseup',evt=>{
-            // console.log('evt',evt,this.dragCell)
+        this.canvasDom.addEventListener('mouseup',_=>{
+            // console.log('evt---this.dragCell',this.dragCell)
+            this.core.lockDrag = false
             if(this.dragCell){
                 this.stepObj.next = {
                     width:this.dragCell.width,
                     height:this.dragCell.height,
                 }
+                this.core.plugins.SettingPlugin.changeStepArr(JSON.parse(JSON.stringify(this.stepObj)))
                 this.core.wsSend(3,this.dragCell)
+
             }
-            this.core.plugins.SettingPlugin.changeStepArr(JSON.parse(JSON.stringify(this.stepObj)))
         })
 
         this.canvasDom.addEventListener('mousedown',evtA=>{
 
             // console.log('开始拖拽',this.core.dragSign)
+            // console.log('开始拖拽',this.dragCell)
 
             this.core.lockDrag = true
 
@@ -192,15 +195,19 @@ export default class DragPlugin{
             let dragEndY = 0
             let dragStartY = evtA.pageY
             this.canvasDom.onmousemove = evtB=>{
+                // console.log('横向拖拽',this.dragCell)
                 if(!this.dragCell){
                     return false
                 }
                 if(this.core.dragSignDirectionIsHor){
                     dragEndX = evtB.pageX
+                    this.stepObj.type = 11
+                    // console.log('横向拖拽')
                     this.expandWidth(this.dragCell.col,dragEndX-dragStartX)
                     dragStartX = dragEndX
                 }else{
                     dragEndY = evtB.pageY
+                    this.stepObj.type = 12
                     this.expandHeight(this.dragCell.row,dragEndY-dragStartY)
                     dragStartY = dragEndY
                 }
@@ -210,6 +217,9 @@ export default class DragPlugin{
         })
 
         this.canvasDom.addEventListener('mousemove',event=>{
+            if(this.core.lockDrag){
+                return false;
+            }
             // 横向
             const { headerRectGroup } = this.headerComponent
             const { sideRectGroup } = this.sideComponent
@@ -222,18 +232,21 @@ export default class DragPlugin{
             if(this.dragCell && ((x<this.dragCell.ltX+this.dragCell.width - dragShowDis)||(x>this.dragCell.ltX + this.dragCell.width + dragShowDis + 1))){
                 // console.log('离开拖拽')
                 this.core.dragSign = false
+                this.dragCell = null
             }
 
             if(this.dragCell && ((y<this.dragCell.ltY+this.dragCell.height - dragShowDis)||(x>this.dragCell.ltY + this.dragCell.height + dragShowDis + 1))){
                 // console.log('离开拖拽')
                 this.core.dragSign = false
+                this.dragCell = null
             }
 
             if(this.core.lockDrag){
                 return
             }
-            // console.log('col',event.offsetX)
+
             if(event.offsetY <= cellHeight){
+                // console.log('获取拖拽cell')
                 if(event.offsetX > cellHeight){
                     this.layer.setCursor('s-resize')
                 }

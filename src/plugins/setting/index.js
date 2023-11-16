@@ -266,6 +266,12 @@ export default class setting{
                 const mergeStartCell = contentComponent.searchRectByColAndRow(fObj.next.col,fObj.next.row)
                 this.core.plugins.ContextmenuPlugin.splitCell(mergeStartCell)
                 break
+            case 11: // 拉伸宽度
+                this.core.plugins.DragPlugin.expandWidthNoDrag(selectedCell.col,fObj.next.width - fObj.pre.width)
+                break
+            case 12: // 拉伸高度
+                selectedCell.height = fObj.next.height
+                break
         }
         core.fresh()
         // console.log('步骤减1')
@@ -329,8 +335,13 @@ export default class setting{
                     }
                 }
                 const firstCell = contentComponent.searchRectByLabel(fObj.pre.mergeStartLabel)
-                console.log('firstCell',firstCell,mergeSelectedCell)
                 this.core.plugins.ContextmenuPlugin.mergeCell(firstCell,mergeSelectedCell)
+                break
+            case 11: // 拉伸宽度
+                this.core.plugins.DragPlugin.expandWidthNoDrag(selectedCell.col,fObj.pre.width - fObj.next.width)
+                break
+            case 12: // 拉伸高度
+                selectedCell.height = fObj.pre.height
                 break
         }
 
