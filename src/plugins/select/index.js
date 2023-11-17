@@ -564,6 +564,7 @@ export default class SelectPlugin{
                 // 左上角
                 this.contentComponent.setSecondClickCell(null)
                 this.contentComponent.showClickRect({},true,true)
+                this.contentComponent.hideSelectedCellDom()
             }else if(event.offsetY<=cellHeight && event.offsetX>cellHeight){
                 // 顶部
                 const attr = this.searchHeaderRectAddr(event.offsetX+offsetX-cellHeight)
@@ -571,6 +572,7 @@ export default class SelectPlugin{
                     this.contentComponent.setSecondClickCell(null)
                     this.contentComponent.showClickRect(attr,true)
                 }
+                this.contentComponent.hideSelectedCellDom()
             }else if(event.offsetY>cellHeight && event.offsetX<=cellHeight){
                 // 左侧
                 const attr = this.searchSideRectAddr(event.offsetY+offsetY-cellHeight)
@@ -579,6 +581,7 @@ export default class SelectPlugin{
                     this.contentComponent.setSecondClickCell(null)
                     this.contentComponent.showClickRect(attr,false,true)
                 }
+                this.contentComponent.hideSelectedCellDom()
             }else{
                 let attrFirst = this.searchRectAddr(event.offsetX+offsetX - cellHeight,event.offsetY+offsetY - cellHeight)
                 // console.log('x,y',attrFirst)
