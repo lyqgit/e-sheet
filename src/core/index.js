@@ -91,8 +91,8 @@ export default class AppExcel{
 
         // 默认设置容器宽和高为600
         // 校验width、height、row、col
-        options.width = options.width && isNaN(options.width) && options.width>0?options.width:this.width;
-        options.height = options.height && isNaN(options.height) && options.height>0?options.height:this.width;
+        options.width = options.width && !isNaN(options.width) && options.width>0?options.width:this.width;
+        options.height = options.height && !isNaN(options.height) && options.height>0?options.height:this.width;
         options.row = options.row && options.row>this.row?options.row:this.row;
         options.col = options.col && options.col>this.col?options.col:this.col;
 
