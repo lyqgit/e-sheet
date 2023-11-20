@@ -33,9 +33,9 @@ export default class AppExcel{
 
     eSheetWorkBook = []
 
-    row= 160
+    row= 60
 
-    col = 52
+    col = 26
 
     // 以内容表格左上角为原点计算表格的坐标
 
@@ -90,10 +90,11 @@ export default class AppExcel{
     constructor(selectorDom,options={},components={},plugins={}) {
 
         // 默认设置容器宽和高为600
-        options.width = options.width??this.width;
-        options.height = options.height??this.width;
-        options.row = options.row??this.row;
-        options.col = options.col??this.col;
+        // 校验width、height、row、col
+        options.width = options.width && isNaN(options.width) && options.width>0?options.width:this.width;
+        options.height = options.height && isNaN(options.height) && options.height>0?options.height:this.width;
+        options.row = options.row && options.row>this.row?options.row:this.row;
+        options.col = options.col && options.col>this.col?options.col:this.col;
 
         // 固有属性
         options.cellWidth = this.cellWidth;
