@@ -87,7 +87,6 @@ export default class ContentComponent{
     installContentDataByName(sheetName='Sheet1'){
         const sheetIndex = this.core.eSheetWorkBook.findIndex(item=>item.label === sheetName)
         this.contentGroup = this.core.eSheetWorkBook[sheetIndex].sheet
-        console.log('sheetName',this.contentGroup)
     }
 
     installContentDataByData(sheet){
@@ -375,12 +374,14 @@ export default class ContentComponent{
             if(!this.moveClickCell || this.moveClickCell.isMerge){
                 return
             }
-            const { SelectPlugin } = this.core.plugins
+            const { SelectPlugin,SettingPlugin } = this.core.plugins
             const tableDomStr = SelectPlugin.transformCanvasCellToTableDomStr()
             // 初始化原来的表格
             this.initMoreSelectedCell()
             // console.log('this.moveClickCell',this.moveClickCell)
             SelectPlugin.transformTableDomStrToCanvasCell(tableDomStr,this.moveClickCell)
+            SettingPlugin.convenientGroupChangeStepArr()
+            this.setSecondClickCell(null)
             this.moveClickCell = null
             this.canvasDom.onmousemove = null
             this.canvasWrapperDom.onmouseup = null
