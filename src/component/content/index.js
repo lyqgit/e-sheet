@@ -87,7 +87,7 @@ export default class ContentComponent{
     installContentDataByName(sheetName='Sheet1'){
         const sheetIndex = this.core.eSheetWorkBook.findIndex(item=>item.label === sheetName)
         this.contentGroup = this.core.eSheetWorkBook[sheetIndex].sheet
-        // console.log('sheetName',this.contentGroup)
+        console.log('sheetName',this.contentGroup)
     }
 
     installContentDataByData(sheet){

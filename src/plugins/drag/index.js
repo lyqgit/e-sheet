@@ -202,7 +202,7 @@ export default class DragPlugin{
                     width:this.dragCell.width,
                     height:this.dragCell.height,
                 }
-                this.core.plugins.SettingPlugin.changeStepArr(JSON.parse(JSON.stringify(this.stepObj)))
+                this.core.plugins.SettingPlugin.convenientGroupChangeStepArr(null)
                 this.core.wsSend(3,this.dragCell)
 
             }

@@ -195,16 +195,24 @@ export default class setting{
         })
     }
 
+    convenientGroupChangeStepArr(label){
+        const { clickCell,contentGroup } = this.contentComponent
+        this.changeStepArr({
+            label:label??clickCell.label,
+            sheet:JSON.stringify(contentGroup)
+        })
+    }
+
     changeStepArr(obj){
         const curSheet = this.core.getCurrentSheet()
-        if(curSheet.stepNum !== curSheet.step.length-1){
+        if(curSheet.stepNum !== curSheet.stepArr.length-1){
             if(curSheet.stepNum === -1){
-                curSheet.step.splice(curSheet.stepNum+1,curSheet.step.length,obj)
+                curSheet.stepArr.splice(curSheet.stepNum+1,curSheet.stepArr.length,obj)
             }else{
-                curSheet.step.splice(curSheet.stepNum+1,curSheet.step.length - 1 - curSheet.stepNum,obj)
+                curSheet.stepArr.splice(curSheet.stepNum+1,curSheet.stepArr.length - 1 - curSheet.stepNum,obj)
             }
         }else{
-            curSheet.step.push(obj)
+            curSheet.stepArr.push(obj)
         }
 
         curSheet.stepNum += 1
@@ -219,60 +227,17 @@ export default class setting{
 
         // console.log('curSheet',curSheet)
 
-        if(curSheet.stepNum === curSheet.step.length-1){
+        if(curSheet.stepNum === curSheet.stepArr.length-1){
             return;
         }
 
-        const fObj = curSheet.step[curSheet.stepNum + 1]
+        const fObj = curSheet.stepArr[curSheet.stepNum + 1]
 
+        curSheet.sheet = JSON.parse(fObj.sheet)
+        contentComponent.installContentDataByName(curSheet.label)
         const selectedCell = contentComponent.searchRectByLabel(fObj.label)
+        contentComponent.showClickRect(selectedCell)
 
-        switch (fObj.type){
-            case 1:
-                // 1.更改单元格内容
-                selectedCell.text = fObj.next
-                contentComponent.showClickRect(selectedCell)
-                break;
-            case 2: // 文字大小
-                selectedCell.fontSize = fObj.next
-                break;
-            case 3: // 文字垂直方向位置
-                selectedCell.textAlign = fObj.next
-                break
-            case 4: // 文字水平方向位置
-                selectedCell.textBaseline = fObj.next
-                break
-            case 5: // 文字粗体
-                selectedCell.fontWeight = fObj.next
-                break
-            case 6: // 文字斜体
-                selectedCell.fontItalic = fObj.next
-                break
-            case 7: // 文字颜色
-                selectedCell.fontColor = fObj.next
-                break
-            case 8: // 背景颜色
-                selectedCell.bgColor = fObj.next
-                break
-            case 9: // 合并单元格
-                const mergeSelectedCell = []
-                for(let i=1;i<fObj.next.length;i++){
-                    mergeSelectedCell.push(contentComponent.searchRectByLabel(fObj.next[i]))
-                }
-                const firstCell = contentComponent.searchRectByLabel(fObj.next[0])
-                this.core.plugins.ContextmenuPlugin.mergeCell(firstCell,mergeSelectedCell)
-                break
-            case 10: // 拆分单元格
-                const mergeStartCell = contentComponent.searchRectByColAndRow(fObj.next.col,fObj.next.row)
-                this.core.plugins.ContextmenuPlugin.splitCell(mergeStartCell)
-                break
-            case 11: // 拉伸宽度
-                this.core.plugins.DragPlugin.expandWidthNoDrag(selectedCell.col,fObj.next.width - fObj.pre.width)
-                break
-            case 12: // 拉伸高度
-                this.core.plugins.DragPlugin.expandHeightNoDrag(selectedCell.row,fObj.next.height - fObj.pre.height)
-                break
-        }
         core.fresh()
         // console.log('步骤减1')
         curSheet.stepNum += 1
@@ -287,67 +252,17 @@ export default class setting{
 
         // console.log('curSheet',curSheet)
 
-        if(curSheet.stepNum === -1){
+        if(curSheet.stepNum === 0){
             return;
         }
-        const fObj = curSheet.step[curSheet.stepNum === 0?0:curSheet.stepNum]
-        const selectedCell = contentComponent.searchRectByLabel(fObj.label)
+        const fObj = curSheet.stepArr[curSheet.stepNum-1]
+        curSheet.sheet = JSON.parse(fObj.sheet)
 
-        switch (fObj.type){
-            case 1:
-                // 1.更改单元格内容
-                selectedCell.text = fObj.pre
-                contentComponent.showClickRect(selectedCell)
-                break;
-            case 2: // 文字大小
-                selectedCell.fontSize = fObj.pre
-                break;
-            case 3: // 文字垂直方向位置
-                selectedCell.textAlign = fObj.pre
-                break
-            case 4: // 文字水平方向位置
-                selectedCell.textBaseline = fObj.pre
-                break
-            case 5: // 文字粗体
-                selectedCell.fontWeight = fObj.pre
-                break
-            case 6: // 文字斜体
-                selectedCell.fontItalic = fObj.pre
-                break
-            case 7: // 文字颜色
-                selectedCell.fontColor = fObj.pre
-                break
-            case 8: // 背景颜色
-                selectedCell.bgColor = fObj.pre
-                break
-            case 9: // 合并单元格
-                const mergeStartCell = contentComponent.searchRectByLabel(fObj.pre)
-                this.core.plugins.ContextmenuPlugin.splitCell(mergeStartCell)
-                break
-            case 10: // 拆分单元格
-                const mergeSelectedCell = []
-                for(let i=0;i<fObj.pre.mergeRow;i++){
-                    for(let j=0;j<fObj.pre.mergeCol;j++){
-                        if(i===0&&j===0){
-                            continue
-                        }
-                        mergeSelectedCell.push(contentComponent.searchRectByColAndRow(fObj.pre.col+j,fObj.pre.row+i))
-                    }
-                }
-                const firstCell = contentComponent.searchRectByLabel(fObj.pre.mergeStartLabel)
-                this.core.plugins.ContextmenuPlugin.mergeCell(firstCell,mergeSelectedCell)
-                break
-            case 11: // 拉伸宽度
-                this.core.plugins.DragPlugin.expandWidthNoDrag(selectedCell.col,fObj.pre.width - fObj.next.width)
-                break
-            case 12: // 拉伸高度
-                this.core.plugins.DragPlugin.expandHeightNoDrag(selectedCell.row,fObj.pre.height - fObj.next.height)
-                break
-        }
+        contentComponent.installContentDataByName(curSheet.label)
+        const selectedCell = contentComponent.searchRectByLabel(fObj.label)
+        contentComponent.showClickRect(selectedCell)
 
         core.fresh()
-
-
         // console.log('步骤减1')
         curSheet.stepNum -= 1
     }
@@ -497,9 +412,9 @@ export default class setting{
         this.fontHorAddrGroup = fontHorAddrGroup
         fontHorAddrGroup.addEventListener('e-sheet-radio-group-onchange',evt=>{
             // console.log('evt',evt)
-            this.convenientChangeStepArr(4,'textAlign',evt.detail)
 
             this.cellFontTextAlignChange(evt.detail)
+            this.convenientGroupChangeStepArr()
         })
 
         // 操作文字纵向对齐
@@ -554,9 +469,9 @@ export default class setting{
         this.fontVerAddrGroup = fontVerAddrGroup
         fontVerAddrGroup.addEventListener('e-sheet-radio-group-onchange',evt=>{
             // console.log('evt',evt)
-            this.convenientChangeStepArr(3,'textBaseLine',evt.detail)
 
             this.cellFontTextBaseLineChange(evt.detail)
+            this.convenientGroupChangeStepArr()
         })
 
         const settingTopDom = h('div',{
@@ -578,9 +493,9 @@ export default class setting{
         const fontSizeSelectDom = h('e-sheet-select',{})
 
         fontSizeSelectDom.addEventListener('e-sheet-select-onchange',evt=>{
-            this.convenientChangeStepArr(2,'fontSize',parseInt(evt.detail))
 
             this.cellFontSizeChange(evt.detail)
+            this.convenientGroupChangeStepArr()
         })
         fontSizeSelectDom.setAttribute('label','字号')
 
@@ -623,14 +538,14 @@ export default class setting{
             // console.log('evt',evt)
             if(fontWeightBtnDom.getAttribute('current') === ''){
                 fontWeightBtnDom.setAttribute('current',evt.detail)
-                this.convenientChangeStepArr(5,'fontWeight',evt.detail)
 
                 this.cellFontWeightChange(evt.detail)
+                this.convenientGroupChangeStepArr()
             }else{
                 fontWeightBtnDom.setAttribute('current','')
-                this.convenientChangeStepArr(5,'fontWeight','')
 
                 this.cellFontWeightChange('')
+                this.convenientGroupChangeStepArr()
             }
         })
 
@@ -657,14 +572,14 @@ export default class setting{
             // console.log('evt',evt)
             if(fontItalicBtnDom.getAttribute('current') === ''){
                 fontItalicBtnDom.setAttribute('current',evt.detail)
-                this.convenientChangeStepArr(6,'fontItalic',evt.detail)
 
                 this.cellFontItalicChange(evt.detail)
+                this.convenientGroupChangeStepArr()
             }else{
                 fontItalicBtnDom.setAttribute('current','')
-                this.convenientChangeStepArr(6,'fontItalic','')
 
                 this.cellFontItalicChange('')
+                this.convenientGroupChangeStepArr()
             }
 
 
@@ -690,9 +605,9 @@ export default class setting{
         })
 
         fontColorSelectDom.addEventListener('e-sheet-icon-color-svg-onchange',evt=>{
-            this.convenientChangeStepArr(7,'fontColor',evt.detail)
 
             this.cellFontColorChange(evt.detail)
+            this.convenientGroupChangeStepArr()
         })
 
         const fontColorSelectTipConDom = h('e-sheet-tip',{
@@ -730,9 +645,9 @@ export default class setting{
         bgColorSelectTipConDom.appendChild(bgColorSelectDom)
 
         bgColorSelectDom.addEventListener('e-sheet-icon-color-svg-onchange',evt=>{
-            this.convenientChangeStepArr(8,'bgColor',evt.detail)
 
             this.cellBgColorChange(evt.detail)
+            this.convenientGroupChangeStepArr()
         })
 
         fontColorAndBgColorDom.appendChild(bgColorSelectTipConDom)
@@ -819,9 +734,10 @@ export default class setting{
             const tempGroupCell = [clickCell,...mergeSelectedCell].sort((a,b)=>{return (a.row - b.row)+(a.col - b.col) })
 
             this.core.plugins.ContextmenuPlugin.mergeCell(tempGroupCell[0],tempGroupCell.slice(0))
-            stepObj.pre = tempGroupCell[0].label
-            stepObj.next = tempGroupCell.map(item=>item.label)
-            this.changeStepArr(stepObj)
+            // stepObj.pre = tempGroupCell[0].label
+            // stepObj.next = tempGroupCell.map(item=>item.label)
+            // this.changeStepArr(stepObj)
+            this.convenientGroupChangeStepArr()
             // if(mergeSelectedCell.some(item=>item.isMerge) || mergeSelectedCell.length === 0){
             //     return
             // }
@@ -830,29 +746,30 @@ export default class setting{
         }
         cellSplitBtnDom.onclick=_=>{
             const { clickCell } = this.contentComponent
-            this.changeStepArr({
-                type:10,
-                label:clickCell.label,
-                pre:{
-                    row:clickCell.row,
-                    col:clickCell.col,
-                    mergeRow:clickCell.mergeRow,
-                    mergeCol:clickCell.mergeCol,
-                    mergeStartLabel:clickCell.mergeStartLabel,
-                    mergeEndLabel:clickCell.mergeEndLabel,
-                    isMerge:true,
-                },
-                next:{
-                    row:clickCell.row,
-                    col:clickCell.col,
-                    mergeRow:clickCell.mergeRow,
-                    mergeCol:clickCell.mergeCol,
-                    mergeStartLabel:clickCell.mergeStartLabel,
-                    mergeEndLabel:clickCell.mergeEndLabel,
-                    isMerge:false,
-                }
-            })
+            // this.changeStepArr({
+            //     type:10,
+            //     label:clickCell.label,
+            //     pre:{
+            //         row:clickCell.row,
+            //         col:clickCell.col,
+            //         mergeRow:clickCell.mergeRow,
+            //         mergeCol:clickCell.mergeCol,
+            //         mergeStartLabel:clickCell.mergeStartLabel,
+            //         mergeEndLabel:clickCell.mergeEndLabel,
+            //         isMerge:true,
+            //     },
+            //     next:{
+            //         row:clickCell.row,
+            //         col:clickCell.col,
+            //         mergeRow:clickCell.mergeRow,
+            //         mergeCol:clickCell.mergeCol,
+            //         mergeStartLabel:clickCell.mergeStartLabel,
+            //         mergeEndLabel:clickCell.mergeEndLabel,
+            //         isMerge:false,
+            //     }
+            // })
             this.core.plugins.ContextmenuPlugin.splitCell(clickCell)
+            this.convenientGroupChangeStepArr()
             cellMergerBtnDom.style.display = 'flex'
             cellSplitBtnDom.style.display = 'none'
         }

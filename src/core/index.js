@@ -360,13 +360,14 @@ export default class AppExcel{
             label: newSheetName,
             sheet:[],
             clickCell: null,
-            step:[],
-            stepNum:-1
+            stepArr:[],
+            stepNum:0
         })
 
         this.currentSheetIndex = this.eSheetWorkBook.length - 1
 
         const sheet = this.eSheetWorkBook[this.eSheetWorkBook.length - 1].sheet
+        const stepArr = this.eSheetWorkBook[this.eSheetWorkBook.length - 1].stepArr
 
         for(let i=0;i<row;i++){
             colWidth = 0
@@ -416,6 +417,10 @@ export default class AppExcel{
             rowAbHeight += cellHeight
         }
 
+        stepArr.push({
+            label:'A1',
+            sheet:JSON.stringify(sheet)
+        })
     }
 
     initExcelData(sheetName = 'Sheet1'){
