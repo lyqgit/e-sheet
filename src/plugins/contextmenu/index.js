@@ -67,7 +67,6 @@ export default class ContextmenuPlugin{
         this.contentComponent.hideClickRect()
         this.core.fresh()
         this.core.plugins.ScrollPlugin.changeVerBarHeight()
-        console.log('contentGroup',contentGroup)
     }
 
     insertCol=(col,num,isLeft = true)=>{
