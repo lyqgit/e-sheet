@@ -75,5 +75,5 @@ const excel = new eSheet('#elt',{
 - [x] vertical-alignment
 - [x] export-data
 - [ ] import-data
-- [ ] forward（Partial operation support）
-- [ ] fallback（Partial operation support）
+- [x] forward
+- [x] fallback
