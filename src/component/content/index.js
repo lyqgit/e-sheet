@@ -94,10 +94,6 @@ export default class ContentComponent{
         // console.log('sheetName',this.contentGroup)
     }
 
-    changeContentGroupByRectArr(selectedArr){
-        const firstCell = selectedArr[0]
-    }
-
     showClickRect(attr,col=false,row=false){
         this.clickCell = attr
         this.clickRectShow = true
@@ -676,7 +672,7 @@ export default class ContentComponent{
                     if(director === null){
                         return
                     }
-                    const { SelectPlugin } = this.core.plugins
+                    const { SelectPlugin,SettingPlugin } = this.core.plugins
                     const tableDomStr = SelectPlugin.transformCanvasCellToTableDomStr()
                     // 查找格式刷后的第一个cell
                     const startCellArr = []
@@ -708,6 +704,8 @@ export default class ContentComponent{
                     startCellArr.forEach(item=>{
                         SelectPlugin.transformTableDomStrToCanvasCell(tableDomStr,item)
                     })
+                    SettingPlugin.convenientGroupChangeStepArr()
+                    this.setSecondClickCell(null)
                     this.canvasDom.onmousemove = null
                     this.canvasWrapperDom.onmouseup = null
                     this.hidePainterBorderDom()

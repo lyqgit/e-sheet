@@ -240,6 +240,7 @@ export default class ContextmenuPlugin{
                                 this.insertCol(clickCell.col,event.target.valueAsNumber)
                             }
                             event.target.value = null
+                            this.core.plugins.SettingPlugin.convenientGroupChangeStepArr(clickCell.label)
                             this.hideContextMenu()
                         }
 
@@ -279,6 +280,7 @@ export default class ContextmenuPlugin{
                                 this.insertCol(clickCell.col,event.target.valueAsNumber,false)
                             }
                             event.target.value = null
+                            this.core.plugins.SettingPlugin.convenientGroupChangeStepArr(clickCell.label)
                             this.hideContextMenu()
                         }
 
@@ -318,6 +320,7 @@ export default class ContextmenuPlugin{
                                 this.insertRow(clickCell.row,event.target.valueAsNumber)
                             }
                             event.target.value = null
+                            this.core.plugins.SettingPlugin.convenientGroupChangeStepArr(clickCell.label)
                             this.hideContextMenu()
                         }
 
@@ -358,6 +361,7 @@ export default class ContextmenuPlugin{
                                 this.insertRow(clickCell.row,event.target.valueAsNumber,false)
                             }
                             event.target.value = null
+                            this.core.plugins.SettingPlugin.convenientGroupChangeStepArr(clickCell.label)
                             this.hideContextMenu()
                         }
 
