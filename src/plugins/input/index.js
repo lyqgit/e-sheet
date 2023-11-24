@@ -77,6 +77,7 @@ export default class InputPlugin{
         inputDom.oninput=evt=>{
             this.core.plugins.SettingPlugin.setCellCon(evt.target.value)
         }
+        this.contentComponent.hideCellPainterDom()
     }
 
     appendInput(){
@@ -154,6 +155,7 @@ export default class InputPlugin{
                 this.core.plugins.SettingPlugin.setCellCon(evt.target.value)
                 // clickCell.text = inputDom.value
             }
+            this.contentComponent.hideCellPainterDom()
         })
     }
 }

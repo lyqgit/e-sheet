@@ -775,6 +775,10 @@ export default class ContentComponent{
         this.cellPainterDom.style.cursor = `url(${base64Img['crosshair']}) 18 18, crosshair`
     }
 
+    hideCellPainterDom(){
+        this.cellPainterDom.style.display = 'none'
+    }
+
     /**
      * @param {number} offsetX
      * @param {number} offsetY
