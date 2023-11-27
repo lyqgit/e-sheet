@@ -56,6 +56,12 @@ const excel = new eSheet('#elt',{
 
 ```
 
+## api
+
+| ability |    function    |                          example                           |
+|:--------:|:--------------:|:----------------------------------------------------------:|
+|  export  | exportXlsxData | [{label:"sheet1",sheet:{!ref:"D10",D10:{t:"s",v:"测试内容"}}}] |
+
 ## function
 
 - [x] single choice

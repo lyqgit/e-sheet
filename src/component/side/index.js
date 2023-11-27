@@ -150,13 +150,15 @@ export default class SideComponent{
         // console.log('offsetX',offsetX,offsetY)
         const { contentGroup } = this.core.components.ContentComponent
 
+        const sideGroup = contentGroup.filter(item=>item.col === 1)
+
         let startX = 0;
         let endX = 0;
         let startY = 0;
         let endY = 0;
 
-        for(let i=0;i<contentGroup.length;i++){
-            const tempContentSin = contentGroup[i]
+        for(let i=0;i<sideGroup.length;i++){
+            const tempContentSin = sideGroup[i]
             startX = tempContentSin.x
             endX = startX+tempContentSin.width
 
@@ -168,7 +170,7 @@ export default class SideComponent{
             }
         }
 
-
+        return sideGroup[sideGroup.length-1]
 
     }
 }

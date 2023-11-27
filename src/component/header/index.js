@@ -164,13 +164,15 @@ export default class HeaderComponent{
 
         const { contentGroup } = this.core.components.ContentComponent
 
+        const headerGroup = contentGroup.filter(item=>item.row === 1)
+
         let startX = 0;
         let endX = 0;
         let startY = 0;
         let endY = 0;
 
-        for(let i=0;i<contentGroup.length;i++){
-            const tempContentSin = contentGroup[i]
+        for(let i=0;i<headerGroup.length;i++){
+            const tempContentSin = headerGroup[i]
             startX = tempContentSin.x
             endX = startX+tempContentSin.width
 
@@ -182,7 +184,7 @@ export default class HeaderComponent{
             }
         }
 
-
+        return headerGroup[headerGroup.length-1]
 
     }
 

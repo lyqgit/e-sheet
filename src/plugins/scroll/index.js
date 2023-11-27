@@ -124,7 +124,7 @@ export default class ScrollPlugin{
         // bor-bar
         const barDom = document.createElement('div')
         this.horBarDom = barDom
-        const proportion = (this.options.width - this.options.cellHeight - 10)/this.core.sheetWidth
+        const proportion = this.core.sheetWidth>this.options.width?((this.options.width - this.options.cellHeight - 10)/this.core.sheetWidth):1
 
         barDom.style.width = (this.options.width - this.options.cellHeight-10)*proportion+'px'
         barDom.style.height = this.barHeight+'px'
@@ -158,7 +158,8 @@ export default class ScrollPlugin{
                 // console.log('eA',eA)
                 this.layer.setCursorDefault()
                 requestAnimationFrame(()=>{
-                    const leftDis = eA.pageX - (this.canvasWrapperDom.getBoundingClientRect().x + this.options.cellHeight) -e.offsetX
+                    const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft;
+                    const leftDis = eA.pageX - scrollLeft - (this.canvasWrapperDom.getBoundingClientRect().x + this.options.cellHeight) -e.offsetX
                     this.horMoveFunc(leftDis)
                 })
 
@@ -186,7 +187,7 @@ export default class ScrollPlugin{
         // bor-bar
         const barDom = document.createElement('div')
         this.verBarDom = barDom
-        const proportion = (this.options.height - this.options.cellHeight - 10)/this.core.sheetHeight
+        const proportion = this.core.sheetHeight>this.options.height?((this.options.height - this.options.cellHeight - 10)/this.core.sheetHeight):1
 
         barDom.style.width = this.barHeight+'px'
         barDom.style.height = (this.options.height - this.options.cellHeight - 10)*proportion+'px'
@@ -222,8 +223,9 @@ export default class ScrollPlugin{
                 requestAnimationFrame(()=>{
                     // console.log('eA',eA)
                     // console.log('leftDis',leftDis)
-                    const topDis = eA.pageY - (this.canvasWrapperDom.getBoundingClientRect().y + this.options.cellHeight) - e.offsetY
-                    // console.log('topDis',topDis,this.canvasWrapperDom.getBoundingClientRect())
+                    const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+                    const topDis = eA.pageY - scrollTop - (this.canvasWrapperDom.getBoundingClientRect().y + this.options.cellHeight) - e.offsetY
+                    console.log('topDis',topDis)
                     this.verMoveFunc(topDis)
 
                 })
@@ -238,11 +240,11 @@ export default class ScrollPlugin{
         // 关闭输入框
         this.core.plugins.InputPlugin.hideInput()
 
-        const proportion = (this.options.width - this.options.cellHeight - 10)/this.core.sheetWidth
+        const proportion = this.core.sheetWidth>this.options.width?((this.options.width - this.options.cellHeight - 10)/this.core.sheetWidth):1
 
         const leftBound = 0
 
-        const rightBound = (this.options.width - this.options.cellHeight - 10 - (this.options.width - this.options.cellHeight)*proportion)
+        const rightBound = proportion === 1?0:(this.options.width - this.options.cellHeight - 10 - (this.options.width - this.options.cellHeight)*proportion)
 
         // bound
         if(leftDis <= leftBound){
@@ -272,10 +274,14 @@ export default class ScrollPlugin{
             return
         }
 
-        this.offsetX = Math.abs(this.leftDis)
-        // console.log('leftDis',leftDis)
-        // console.log('offsetX',this.leftDis)
-        this.contentMoveX()
+        if(proportion !== 1){
+            this.offsetX = Math.abs(this.leftDis)
+            // console.log('leftDis',leftDis)
+            // console.log('offsetX',this.leftDis)
+            this.contentMoveX()
+        }
+
+
         // bound
         if(leftDis <= leftBound){
             this.core.offsetXLock = true
@@ -289,11 +295,11 @@ export default class ScrollPlugin{
         // 关闭输入框
         this.core.plugins.InputPlugin.hideInput()
 
-        const proportion = (this.options.height - this.options.cellHeight - 10)/this.core.sheetHeight
+        const proportion = this.core.sheetHeight>this.options.height?((this.options.height - this.options.cellHeight - 10)/this.core.sheetHeight):1
 
         const topBound = 0
 
-        const bottomBound = (this.options.height - this.options.cellHeight - 10 - (this.options.height - this.options.cellHeight)*proportion)
+        const bottomBound = proportion === 1?0:(this.options.height - this.options.cellHeight - 10 - (this.options.height - this.options.cellHeight)*proportion)
 
 
         // console.log('this.core.offsetYLock',this.core.offsetYLock)
@@ -325,8 +331,11 @@ export default class ScrollPlugin{
             // console.log('临界点',this.topDis)
             return
         }
-        this.offsetY = Math.abs(this.topDis)
-        this.contentMoveY()
+        if(proportion !== 1){
+            this.offsetY = Math.abs(this.topDis)
+            this.contentMoveY()
+        }
+
         // bound
         if(topDis <= topBound){
             this.core.offsetYLock = true

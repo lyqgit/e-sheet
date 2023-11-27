@@ -794,21 +794,7 @@ export default class ContentComponent{
         // console.log('start1',lt)
         // console.log('start2',rb)
 
-
-        // const startCol = parseInt((offsetX/cellWidth).toFixed(1))
-        // const endCol = parseInt(((width - cellHeight +offsetX)/cellWidth).toFixed(1))
-        //
-        // const startRow = parseInt((offsetY/cellHeight).toFixed(1))
-        // const endRow = parseInt(((height - cellHeight + offsetY)/cellHeight).toFixed(1))
-
         this.layer.clearRect(cellHeight,cellHeight,width,height)
-
-        // for(let i=startRow;i<=endRow;i++){
-        //     for(let j=startCol;j<=endCol;j++){
-        //         this.layer.drawStrokeRect(j*cellWidth+cellHeight-offsetX,(i+1)*cellHeight-offsetY,cellWidth,cellHeight)
-        //         this.layer.drawText(j*cellWidth+cellHeight-offsetX,(i+1)*cellHeight-offsetY,'111',cellWidth,cellHeight)
-        //     }
-        // }
 
         const { copyCellDash } = this.core
 
@@ -1032,7 +1018,6 @@ export default class ContentComponent{
 
     searchScreenAddr(offsetX = 0,offsetY = 0){
 
-        const currentTime = performance.now();
 
         const { contentGroup } = this
 
@@ -1040,8 +1025,6 @@ export default class ContentComponent{
         let endX = 0;
         let startY = 0;
         let endY = 0;
-
-
 
         for(let i=0;i<contentGroup.length;i++){
             const tempContentSin = contentGroup[i]
@@ -1052,14 +1035,11 @@ export default class ContentComponent{
             endY = startY+tempContentSin.height
 
             if((startX<=offsetX && offsetX<=endX) && (startY<=offsetY && offsetY<=endY)){
-                const endTime = performance.now();
-
-                // console.log('endTime - currentTime',endTime - currentTime)
                 return tempContentSin
             }
         }
 
-
+        return contentGroup[contentGroup.length-1]
 
     }
 
