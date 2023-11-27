@@ -254,9 +254,6 @@ export default class ContextmenuPlugin{
         ])
 
         const insertRightColBtn = h('div',{
-            style:{
-                cursor:'pointer'
-            },
             attr:{
                 className: 'item-input-btn item-top-border'
             }
@@ -294,9 +291,6 @@ export default class ContextmenuPlugin{
         ])
 
         const insertTopRowBtn = h('div',{
-            style:{
-                cursor:'pointer'
-            },
             attr:{
                 className: 'item-input-btn item-top-border'
             }
@@ -335,9 +329,6 @@ export default class ContextmenuPlugin{
 
 
         const insertBottomRowBtn = h('div',{
-            style:{
-                cursor:'pointer'
-            },
             attr:{
                 className: 'item-input-btn item-top-border'
             }
@@ -388,7 +379,7 @@ export default class ContextmenuPlugin{
             }
             if(clickCell){
                 // show contextmenu
-                containerDom.style.display = 'flex'
+                containerDom.style.display = 'block'
                 containerDom.style.left = evt.offsetX+'px'//clickCell.ltX-offsetX+cellHeight+'px'
                 containerDom.style.top = evt.offsetY+'px'//clickCell.ltY-offsetY+'px'
                 if(clickCell.isMerge){
