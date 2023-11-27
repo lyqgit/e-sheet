@@ -225,7 +225,7 @@ export default class ScrollPlugin{
                     // console.log('leftDis',leftDis)
                     const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
                     const topDis = eA.pageY - scrollTop - (this.canvasWrapperDom.getBoundingClientRect().y + this.options.cellHeight) - e.offsetY
-                    console.log('topDis',topDis)
+                    // console.log('topDis',topDis)
                     this.verMoveFunc(topDis)
 
                 })
