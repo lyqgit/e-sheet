@@ -532,6 +532,7 @@ export default class SelectPlugin{
                 return;
             }
             this.core.plugins.ContextmenuPlugin.hideContextMenu()
+            this.core.plugins.BookPlugin.hideContextMenu()
             if(this.core.shiftKey || this.core.ctrlKey || this.core.dragSign){
                 return
             }

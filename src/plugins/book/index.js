@@ -1,4 +1,14 @@
 export default class BookPlugin{
+
+    /**
+     * @type HTMLElement
+     */
+    contextmenuDom = null
+    /**
+     * @type number
+     */
+    sheetSelectedIndex = 0
+
     constructor(selectorDom,layer,options={},components={},core) {
         this.contentComponent = components.ContentComponent
         this.headerComponent = components.HeaderComponent
@@ -11,6 +21,51 @@ export default class BookPlugin{
         this.core = core
 
         this.registryDom()
+        this.registryContextmenuDom()
+    }
+
+
+    hideContextMenu=()=>{
+        this.contextmenuDom.style.display = 'none'
+    }
+
+    registryContextmenuDom(){
+        const { h } = this.core
+        this.contextmenuDom = h('div',{
+            style:{
+                display:'none',
+            },
+            attr:{
+                className:'e-sheet-contextmenu-layout'
+            }
+        },[
+            h('div',{
+                style:{
+                    cursor:'pointer'
+                },
+                attr:{
+                    innerText:'删除',
+                    className: 'item-btn',
+                    onclick:evt=>{
+                        if(this.core.eSheetWorkBook.length === 1){
+                            return
+                        }
+                        const index = parseInt(evt.target.parentNode.dataset.select)
+                        this.core.eSheetWorkBook.splice(index,1)
+                        this.core.currentSheetIndex = this.core.eSheetWorkBook.length - 1
+                        this.core.switchSheet(this.core.currentSheetIndex)
+                        this.sheetArrLayoutDom.removeChild(this.sheetArrLayoutDom.childNodes[index])
+                        this.sheetArrLayoutDom.childNodes.forEach(item=>{
+                            item.className = 'item-span'
+                        })
+                        this.sheetArrLayoutDom.childNodes[index-1].className = 'item-span active-item-span'
+                        this.hideContextMenu()
+                    }
+                }
+            })
+        ])
+
+        this.selectorDom.appendChild(this.contextmenuDom)
     }
 
 
@@ -113,6 +168,7 @@ export default class BookPlugin{
                     className:'sheet-arr-layout',
                     onclick:evt=>{
                         // console.log('sheetArrLayoutDom-evt',evt.target.getAttribute('index'))
+                        this.hideContextMenu();
                         const strIndex = evt.target.getAttribute('index')
                         if(strIndex){
                             this.switchSheet(parseInt(strIndex))
@@ -156,6 +212,14 @@ export default class BookPlugin{
                         itemDom.innerText = ''
                         itemDom.appendChild(inputDom)
                         inputDom.focus()
+                    },
+                    oncontextmenu:evt=>{
+                        evt.preventDefault()
+                        // console.log('evt.offsetX',evt)
+                        this.contextmenuDom.dataset['select'] = evt.target.getAttribute('index')
+                        this.contextmenuDom.style.display = 'block'
+                        this.contextmenuDom.style.left = evt.x+'px'
+                        this.contextmenuDom.style.top = evt.y+'px'
                     }
                 }
             },
