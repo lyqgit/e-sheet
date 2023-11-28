@@ -764,7 +764,8 @@ export default class ContentComponent{
      * @param {number} y
      */
     showSelectedCellPainterDom(x,y){
-        if(y<this.core.cellHeight || x<this.core.cellHeight){
+        console.log('x,y',x,y)
+        if(y<this.core.cellHeight || x<this.core.cellHeight || x>this.options.width || y>this.options.height){
             this.cellPainterDom.style.display = 'none'
         }else{
             this.cellPainterDom.style.display = 'block'
