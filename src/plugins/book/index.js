@@ -44,8 +44,18 @@ export default class BookPlugin{
         // console.log('index',index,currentSheetIndex)
     }
 
+    /**
+     * @param {string} index
+     * @param {string} label
+     * @returns {boolean}
+     */
     setSheetName(index,label){
+        const labelArr = this.core.eSheetWorkBook.map(item=>item.label)
+        if(labelArr.includes(label) || !label){
+            return false
+        }
         this.core.eSheetWorkBook[index].label = label
+        return true
     }
 
     /**
@@ -112,20 +122,30 @@ export default class BookPlugin{
                         // console.log('evt',evt)
                         const itemDom = evt.target
                         const index = parseInt(evt.target.getAttribute('index'))
+                        const oriText = itemDom.innerText
                         const inputDom = h('input',{
                             attr:{
                                 className:'item-input',
                                 onblur:_=>{
-                                    itemDom.innerText = inputDom.value
-                                    inputDom.remove()
-                                    this.setSheetName(index,itemDom.innerText)
+                                    if(itemDom.contains(inputDom)){
+                                        if(this.setSheetName(index,itemDom.innerText)){
+                                            itemDom.innerText = inputDom.value
+                                        }else{
+                                            itemDom.innerText = oriText
+                                        }
+                                        inputDom.remove()
+                                    }
                                 },
                                 onkeydown:keyEvent=>{
                                     // console.log('keyEvent',keyEvent)
                                     if(keyEvent.key === 'Enter'){
-                                        itemDom.innerText = inputDom.value
+                                        if(this.setSheetName(index,itemDom.innerText)){
+                                            console.log('内容不写入')
+                                            itemDom.innerText = inputDom.value
+                                        }else{
+                                            itemDom.innerText = oriText
+                                        }
                                         inputDom.remove()
-                                        this.setSheetName(index,itemDom.innerText)
                                     }
                                 }
                             }
