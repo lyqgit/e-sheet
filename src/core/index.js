@@ -312,7 +312,10 @@ export default class AppExcel{
             this.plugins.SettingPlugin.setLabelCon(currentSheetBook.clickCell.label)
             this.plugins.SettingPlugin.setCellCon(currentSheetBook.clickCell.text)
         }else{
-
+            const clickCell = this.components.ContentComponent.searchRectByLabel('A1')
+            this.components.ContentComponent.showClickRect(clickCell)
+            this.plugins.SettingPlugin.setLabelCon(clickCell.label)
+            this.plugins.SettingPlugin.setCellCon(clickCell.text)
         }
         this.fresh()
     }
