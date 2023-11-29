@@ -183,6 +183,24 @@ export default class ContextmenuPlugin{
         this.hideContextMenu()
     }
 
+    eventInsertCol=(num,isLeft = true)=>{
+        const { clickCell } = this.contentComponent
+        if(!this.contentComponent.isHasMergerInRectArrByCol(clickCell.col)){
+            this.insertCol(clickCell.col,num,isLeft)
+        }
+        this.core.plugins.SettingPlugin.convenientGroupChangeStepArr(clickCell.label)
+        this.hideContextMenu()
+    }
+
+    eventInsertRow=(num,isTop = true)=>{
+        const { clickCell } = this.contentComponent
+        if(!this.contentComponent.isHasMergerInRectArrByRow(clickCell.row)){
+            this.insertRow(clickCell.row,num,isTop)
+        }
+        this.core.plugins.SettingPlugin.convenientGroupChangeStepArr(clickCell.label)
+        this.hideContextMenu()
+    }
+
     registryContextMenu(){
 
         const { h } = this.core
@@ -223,7 +241,10 @@ export default class ContextmenuPlugin{
         },[
             h('span',{
                 attr:{
-                    innerText:'左侧插入'
+                    innerText:'左侧插入',
+                    onclick:evt=>{
+                        this.eventInsertCol(evt.target.nextElementSibling.valueAsNumber)
+                    }
                 }
             }),
             h('input',{
@@ -231,16 +252,12 @@ export default class ContextmenuPlugin{
                     type:'number',
                     placeholder:'请输入列数',
                     className:'input-con',
+                    value:1,
                     onkeydown:event=>{
                         // console.log('event',event)
                         if(event.key==='Enter'){
-                            const { clickCell } = this.contentComponent
-                            if(!this.contentComponent.isHasMergerInRectArrByCol(clickCell.col)){
-                                this.insertCol(clickCell.col,event.target.valueAsNumber)
-                            }
-                            event.target.value = null
-                            this.core.plugins.SettingPlugin.convenientGroupChangeStepArr(clickCell.label)
-                            this.hideContextMenu()
+                            this.eventInsertCol(event.target.valueAsNumber)
+                            event.target.value = 1
                         }
 
                     }
@@ -260,7 +277,10 @@ export default class ContextmenuPlugin{
         },[
             h('span',{
                 attr:{
-                    innerText:'右侧插入'
+                    innerText:'右侧插入',
+                    onclick:evt=>{
+                        this.eventInsertCol(evt.target.nextElementSibling.valueAsNumber,false)
+                    }
                 }
             }),
             h('input',{
@@ -268,16 +288,12 @@ export default class ContextmenuPlugin{
                     type:'number',
                     placeholder:'请输入列数',
                     className:'input-con',
+                    value:1,
                     onkeydown:event=>{
                         // console.log('event',event)
                         if(event.key==='Enter'){
-                            const { clickCell } = this.contentComponent
-                            if(!this.contentComponent.isHasMergerInRectArrByCol(clickCell.col)){
-                                this.insertCol(clickCell.col,event.target.valueAsNumber,false)
-                            }
-                            event.target.value = null
-                            this.core.plugins.SettingPlugin.convenientGroupChangeStepArr(clickCell.label)
-                            this.hideContextMenu()
+                            this.eventInsertCol(event.target.valueAsNumber,false)
+                            event.target.value = 1
                         }
 
                     }
@@ -297,7 +313,10 @@ export default class ContextmenuPlugin{
         },[
             h('span',{
                 attr:{
-                    innerText:'上侧插入'
+                    innerText:'上侧插入',
+                    onclick:evt=>{
+                        this.eventInsertRow(evt.target.nextElementSibling.valueAsNumber)
+                    }
                 }
             }),
             h('input',{
@@ -305,16 +324,12 @@ export default class ContextmenuPlugin{
                     type:'number',
                     placeholder:'请输入行数',
                     className:'input-con',
+                    value:1,
                     onkeydown:event=>{
                         // console.log('event',event)
                         if(event.key==='Enter'){
-                            const { clickCell } = this.contentComponent
-                            if(!this.contentComponent.isHasMergerInRectArrByRow(clickCell.row)){
-                                this.insertRow(clickCell.row,event.target.valueAsNumber)
-                            }
-                            event.target.value = null
-                            this.core.plugins.SettingPlugin.convenientGroupChangeStepArr(clickCell.label)
-                            this.hideContextMenu()
+                            this.eventInsertRow(event.target.valueAsNumber)
+                            event.target.value = 1
                         }
 
                     }
@@ -335,7 +350,10 @@ export default class ContextmenuPlugin{
         },[
             h('span',{
                 attr:{
-                    innerText:'下侧插入'
+                    innerText:'下侧插入',
+                    onclick:evt=>{
+                        this.eventInsertRow(evt.target.nextElementSibling.valueAsNumber,false)
+                    }
                 }
             }),
             h('input',{
@@ -343,16 +361,13 @@ export default class ContextmenuPlugin{
                     type:'number',
                     placeholder:'请输入行数',
                     className:'input-con',
+                    value:1,
                     onkeydown:event=>{
                         // console.log('event',event)
                         if(event.key==='Enter'){
                             const { clickCell } = this.contentComponent
-                            if(!this.contentComponent.isHasMergerInRectArrByRow(clickCell.row)){
-                                this.insertRow(clickCell.row,event.target.valueAsNumber,false)
-                            }
-                            event.target.value = null
-                            this.core.plugins.SettingPlugin.convenientGroupChangeStepArr(clickCell.label)
-                            this.hideContextMenu()
+                            this.eventInsertRow(event.target.valueAsNumber,false)
+                            event.target.value = 1
                         }
 
                     }

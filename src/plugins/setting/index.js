@@ -206,7 +206,7 @@ export default class setting{
     changeStepArr(obj){
         const curSheet = this.core.getCurrentSheet()
         this.core.stepCallbackArr.forEach(item=>{
-            item(obj)
+            item(JSON.parse(obj))
         })
         if(curSheet.stepNum !== curSheet.stepArr.length-1){
             if(curSheet.stepNum === -1){
