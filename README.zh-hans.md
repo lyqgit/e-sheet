@@ -58,9 +58,10 @@ const excel = new eSheet('#elt',{
 
 ## api
 
-| 功能 |函数名|                             样例                             |
-|:--:|:---:|:----------------------------------------------------------:|
-| 导出 |exportXlsxData| [{label:"sheet1",sheet:{!ref:"D10",D10:{t:"s",v:"测试内容"}}}] |
+|  功能  |函数名|                             样例                             |
+|:----:|:---:|:----------------------------------------------------------:|
+|  导出  |exportXlsxData| [{label:"sheet1",sheet:{!ref:"D10",D10:{t:"s",v:"测试内容"}}}] |
+| 操作回调 | stepCallbackHandle |         excel.stepCallbackHandle((obj)=>{console.log(obj))         |
 
 ## 功能
 

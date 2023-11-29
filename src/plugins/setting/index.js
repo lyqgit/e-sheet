@@ -205,6 +205,9 @@ export default class setting{
 
     changeStepArr(obj){
         const curSheet = this.core.getCurrentSheet()
+        this.core.stepCallbackArr.forEach(item=>{
+            item(obj)
+        })
         if(curSheet.stepNum !== curSheet.stepArr.length-1){
             if(curSheet.stepNum === -1){
                 curSheet.stepArr.splice(curSheet.stepNum+1,curSheet.stepArr.length,obj)

@@ -58,9 +58,10 @@ const excel = new eSheet('#elt',{
 
 ## api
 
-| ability |    function    |                          example                           |
-|:--------:|:--------------:|:----------------------------------------------------------:|
-|  export  | exportXlsxData | [{label:"sheet1",sheet:{!ref:"D10",D10:{t:"s",v:"测试内容"}}}] |
+|    ability    |    function    |                              example                               |
+|:-------------:|:--------------:|:------------------------------------------------------------------:|
+|    export     | exportXlsxData | [{label:"sheet1",sheet:{!ref:"D10",D10:{t:"s",v:"test content"}}}] |
+| step callback | stepCallbackHandle |         excel.stepCallbackHandle((obj)=>{console.log(obj))         |
 
 ## function
 

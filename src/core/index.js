@@ -7,6 +7,11 @@ import {transformNumToLabel} from '../util/cell.js'
 export default class AppExcel{
 
     /**
+     * @type {Array}
+     */
+    stepCallbackArr = []
+
+    /**
      * @type {number}
      */
     scale = 1
@@ -140,6 +145,14 @@ export default class AppExcel{
         this.plugins.SettingPlugin.changeFirstSelectedCell('A1');
 
         // requestAnimationFrame(this.draw);
+    }
+
+    /**
+     * @description 操作回调
+     * @param {Function} callback
+     */
+    stepCallbackHandle(callback){
+        this.stepCallbackArr.push(callback)
     }
 
     /**

@@ -4,10 +4,6 @@ export default class BookPlugin{
      * @type HTMLElement
      */
     contextmenuDom = null
-    /**
-     * @type number
-     */
-    sheetSelectedIndex = 0
 
     constructor(selectorDom,layer,options={},components={},core) {
         this.contentComponent = components.ContentComponent
@@ -56,8 +52,9 @@ export default class BookPlugin{
                         this.core.currentSheetIndex = this.core.eSheetWorkBook.length - 1
                         this.core.switchSheet(this.core.currentSheetIndex)
                         this.sheetArrLayoutDom.removeChild(this.sheetArrLayoutDom.childNodes[index])
-                        this.sheetArrLayoutDom.childNodes.forEach(item=>{
+                        this.sheetArrLayoutDom.childNodes.forEach((item,index)=>{
                             item.className = 'item-span'
+                            item.setAttribute('index',index)
                         })
                         this.sheetArrLayoutDom.childNodes[index-1].className = 'item-span active-item-span'
                         this.hideContextMenu()
@@ -93,6 +90,7 @@ export default class BookPlugin{
     switchSheet(index){
         this.core.switchSheet(index)
         const { currentSheetIndex } = this.core
+        // console.log('index',index,'currentSheetIndex -----',currentSheetIndex)
         this.sheetArrLayoutDom.childNodes.forEach((item,index)=>{
             // console.log('item.className',item.className,'---------',currentSheetIndex,index,currentSheetIndex===index?'item-span active-item-span':'item-span')
             item.className = currentSheetIndex===index?'item-span active-item-span':'item-span'
