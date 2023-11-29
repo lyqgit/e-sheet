@@ -48,6 +48,7 @@ export default class BookPlugin{
                     className: 'item-btn',
                     onclick:evt=>{
                         if(this.core.eSheetWorkBook.length === 1){
+                            this.hideContextMenu()
                             return
                         }
                         const index = parseInt(evt.target.parentNode.dataset.select)
@@ -216,10 +217,12 @@ export default class BookPlugin{
                     oncontextmenu:evt=>{
                         evt.preventDefault()
                         // console.log('evt.offsetX',evt)
+                        const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+                        const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft;
                         this.contextmenuDom.dataset['select'] = evt.target.getAttribute('index')
                         this.contextmenuDom.style.display = 'block'
-                        this.contextmenuDom.style.left = evt.x+'px'
-                        this.contextmenuDom.style.top = evt.y+'px'
+                        this.contextmenuDom.style.left = scrollLeft+evt.x+'px'
+                        this.contextmenuDom.style.top = scrollTop+evt.y-34+'px'
                     }
                 }
             },
