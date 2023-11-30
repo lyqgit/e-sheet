@@ -286,6 +286,9 @@ export default class setting{
             case 13: // 左右插入列
                 this.core.plugins.ContextmenuPlugin.insertCol(fObj.next.col,fObj.next.num,fObj.next.isLeft)
                 break
+            case 14: // 上下插入行
+                this.core.plugins.ContextmenuPlugin.insertRow(fObj.next.row,fObj.next.num,fObj.next.isTop)
+                break
         }
 
         core.fresh()

@@ -54,9 +54,14 @@ export default class ContextmenuPlugin{
                     mergeLabelGroup:[],
                     isMerge:false,
                     bgColor:null,
-                    fontColor:null,
+                    fontColor:'#000000',
                     font:null,
+                    fontSize:12,
+                    fontWeight:'',
+                    fontItalic:'',
+                    fontFamily:'Calibre',
                     textAlign:'center',
+                    textBaseline:'middle',
                     label:'insert'
                 })
 
@@ -102,9 +107,14 @@ export default class ContextmenuPlugin{
                     mergeLabelGroup:[],
                     isMerge:false,
                     bgColor:null,
-                    fontColor:null,
+                    fontColor:'#000000',
                     font:null,
+                    fontSize:12,
+                    fontWeight:'',
+                    fontItalic:'',
+                    fontFamily:'Calibre',
                     textAlign:'center',
+                    textBaseline:'middle',
                     label:'insert'
                 })
 
