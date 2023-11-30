@@ -139,11 +139,16 @@ export default class InputPlugin{
                     this.hideInput()
                     return
                 }
-                clickCell.text = inputDom.value
-                if(!(evt.relatedTarget && this.selectorDom.contains(evt.relatedTarget))){
-                    this.core.plugins.SettingPlugin.convenientGroupChangeStepArr(clickCell.label)
-                }
 
+                if(!(evt.relatedTarget && this.selectorDom.contains(evt.relatedTarget))){
+                    this.core.plugins.SettingPlugin.changeStepArr({
+                        type:1,
+                        label:clickCell.label,
+                        pre:clickCell.text,
+                        next:inputDom.value
+                    })
+                }
+                clickCell.text = inputDom.value
                 this.core.wsSend(2,clickCell)
                 this.inputDom.value = ''
                 this.core.fresh()

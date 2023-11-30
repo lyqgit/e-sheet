@@ -403,7 +403,7 @@ export default class SelectPlugin{
             if(clickRectShow){
                 // 一个框
                 this.transformTableDomStrToCanvasCell(event.clipboardData.getData('text/html'),clickCell)
-                this.core.plugins.SettingPlugin.convenientGroupChangeStepArr(clickCell.label)
+                // this.core.plugins.SettingPlugin.convenientGroupChangeStepArr(clickCell.label)
                 this.contentComponent.setSecondClickCell(null)
                 // console.log('event-html',event.clipboardData.getData('text/html'))
                 // console.log('event-text',event.clipboardData.getData('text/plain'))

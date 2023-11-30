@@ -376,7 +376,6 @@ export default class ContentComponent{
             this.initMoreSelectedCell()
             // console.log('this.moveClickCell',this.moveClickCell)
             SelectPlugin.transformTableDomStrToCanvasCell(tableDomStr,this.moveClickCell)
-            SettingPlugin.convenientGroupChangeStepArr()
             this.setSecondClickCell(null)
             this.moveClickCell = null
             this.canvasDom.onmousemove = null
@@ -704,7 +703,7 @@ export default class ContentComponent{
                     startCellArr.forEach(item=>{
                         SelectPlugin.transformTableDomStrToCanvasCell(tableDomStr,item)
                     })
-                    SettingPlugin.convenientGroupChangeStepArr()
+                    // SettingPlugin.convenientGroupChangeStepArr()
                     this.setSecondClickCell(null)
                     this.canvasDom.onmousemove = null
                     this.canvasWrapperDom.onmouseup = null
@@ -1142,10 +1141,15 @@ export default class ContentComponent{
         return this.searchRectArrByRow(row).some(item=>item.isMerge)
     }
 
-    initContentGroupRowAndColByCol(startCol,num){
+    initContentGroupRowAndColByCol(startCol,num,isAdd = true){
         const { contentGroup } = this
         const { cellHeight } = this.options
-        this.core.col += num
+        if(isAdd){
+            this.core.col += num
+        }else{
+            this.core.col -= num
+        }
+
         const { col } = this.core
 
 
@@ -1211,10 +1215,14 @@ export default class ContentComponent{
 
     }
 
-    initContentGroupRowAndColByRow(startRow,num){
+    initContentGroupRowAndColByRow(startRow,num,isAdd = true){
         const { contentGroup } = this
         const { cellHeight } = this.options
-        this.core.row += num
+        if(isAdd){
+            this.core.row += num
+        }else{
+            this.core.row -= num
+        }
         const { col } = this.core
 
 

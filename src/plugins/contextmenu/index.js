@@ -118,6 +118,51 @@ export default class ContextmenuPlugin{
         this.core.plugins.ScrollPlugin.changeHorBarWidth()
     }
 
+    removeCol=(col,num,isLeft = true)=>{
+        // console.log('当前选中的col',col)
+        if(!num){
+            return
+        }
+        const { row } = this.core
+        const { cellWidth,cellHeight } = this.options
+        const { contentGroup } = this.contentComponent
+        this.core.sheetWidth -= num*cellWidth
+        // console.log('remove-col',col)
+        // console.log('remove-num',num)
+        // console.log('isLeft?col+num:col+1+num',isLeft?(col+num):(col+1+num))
+        for(let i = 1;i<=row;i++){
+            for(let n=0;n<num;n++){
+                const index = this.contentComponent.searchRectIndexByColAndRow(isLeft?(col+n):(col+1+n),i);
+                contentGroup.splice(index,1)
+            }
+            // console.log('index',index);
+        }
+        // console.log('contentGroup',contentGroup)
+        this.contentComponent.initContentGroupRowAndColByCol(col,num,false)
+        // console.log('contentGroup',contentGroup)
+        this.contentComponent.hideClickRect()
+        this.core.fresh()
+        this.core.plugins.ScrollPlugin.changeHorBarWidth()
+    }
+    removeRow=(row,num,isTop = true)=>{
+        // console.log('当前选中的row',row)
+        if(!num){
+            return
+        }
+        const { col } = this.core
+        const { cellWidth,cellHeight } = this.options
+        const { contentGroup } = this.contentComponent
+        this.core.sheetHeight -= num*cellHeight
+        const index = this.contentComponent.searchRectIndexByColAndRow(1,isTop?row:(row+1));
+        for(let i = 1;i<=num;i++){
+            contentGroup.splice(index,col)
+        }
+        this.contentComponent.initContentGroupRowAndColByRow(row,num,false)
+        this.contentComponent.hideClickRect()
+        this.core.fresh()
+        this.core.plugins.ScrollPlugin.changeVerBarHeight()
+    }
+
     splitCell=(clickCell)=>{
         if(!clickCell.isMerge){
             return
@@ -186,18 +231,44 @@ export default class ContextmenuPlugin{
     eventInsertCol=(num,isLeft = true)=>{
         const { clickCell } = this.contentComponent
         if(!this.contentComponent.isHasMergerInRectArrByCol(clickCell.col)){
+            this.core.plugins.SettingPlugin.changeStepArr({
+                type:13,
+                pre:{
+                    col:clickCell.col,
+                    num,
+                    isLeft
+                },
+                next:{
+                    col:clickCell.col,
+                    num,
+                    isLeft
+                }
+            })
             this.insertCol(clickCell.col,num,isLeft)
         }
-        this.core.plugins.SettingPlugin.convenientGroupChangeStepArr(clickCell.label)
+
         this.hideContextMenu()
     }
 
     eventInsertRow=(num,isTop = true)=>{
         const { clickCell } = this.contentComponent
         if(!this.contentComponent.isHasMergerInRectArrByRow(clickCell.row)){
+            this.core.plugins.SettingPlugin.changeStepArr({
+                type:14,
+                pre:{
+                    row:clickCell.row,
+                    num,
+                    isTop
+                },
+                next:{
+                    row:clickCell.row,
+                    num,
+                    isTop
+                }
+            })
             this.insertRow(clickCell.row,num,isTop)
         }
-        this.core.plugins.SettingPlugin.convenientGroupChangeStepArr(clickCell.label)
+
         this.hideContextMenu()
     }
 
