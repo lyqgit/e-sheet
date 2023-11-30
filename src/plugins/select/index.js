@@ -30,6 +30,22 @@ export default class SelectPlugin{
         this.displayColTextRegister()
     }
 
+    /**
+     * @param {Object} firstRect
+     * @param {Object} finalRect
+     * @returns {Boolean}
+     */
+    searchRectIsMergeInTwoCell(firstRect,finalRect){
+        const { contentGroup } = this
+
+        // console.log('startX,startY,endX,endY',startX,startY,endX,endY)
+        if(finalRect === null){
+            return firstRect.isMerge
+        }
+        // console.log('res',res)
+        return contentGroup.filter(item => item.col >= firstRect.col && item.row >= firstRect.row && item.col <= finalRect.col && item.row <= finalRect.row).some(item => item.isMerge)
+
+    }
 
     displayAllTextByCol(col,width){
 
@@ -425,6 +441,19 @@ export default class SelectPlugin{
 
         document.addEventListener('paste',event=>{
             const { clickRectShow,clickCell } = this.contentComponent
+            if(this.core.copyCellDash.length === 1){
+                if(this.searchRectIsMergeInTwoCell(clickCell,null)){
+                    return
+                }
+            }else if(this.core.copyCellDash.length > 1){
+                const firstCell = this.core.copyCellDash[0]
+                const finalCell = this.core.copyCellDash[this.core.copyCellDash.length - 1]
+                const finalRect = this.contentComponent.searchRectByColAndRow(clickCell.col+finalCell.col-firstCell.col,clickCell.row+finalCell.row-firstCell.row)
+                if(this.searchRectIsMergeInTwoCell(clickCell,finalRect)){
+                    return
+                }
+            }
+
             if(clickRectShow && this.core.copyCellDash.length>0){
                 const pasteStr = event.clipboardData.getData('text/html')
                 let beforePasteStr = ''
@@ -432,8 +461,8 @@ export default class SelectPlugin{
                     const firstCell = this.core.copyCellDash[0]
                     beforePasteStr = JSON.stringify(this.searchPastePositionCells(firstCell.mergeCol-1,firstCell.mergeRow-1,clickCell))
                 }else{
-                    const firstCell = this.core.copyCellDash[0]
-                    const finalCell = this.core.copyCellDash[this.core.copyCellDash.length - 1]
+
+
                     beforePasteStr = JSON.stringify(this.searchPastePositionCells(finalCell.col-firstCell.col,finalCell.row-firstCell.row,clickCell))
                 }
 
