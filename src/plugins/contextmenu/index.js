@@ -64,7 +64,7 @@ export default class ContextmenuPlugin{
 
         }
         this.contentComponent.initContentGroupRowAndColByRow(row,num)
-        this.contentComponent.hideClickRect()
+        // this.contentComponent.hideClickRect()
         this.core.fresh()
         this.core.plugins.ScrollPlugin.changeVerBarHeight()
     }
@@ -113,7 +113,7 @@ export default class ContextmenuPlugin{
         }
         // console.log('contentGroup',contentGroup)
         this.contentComponent.initContentGroupRowAndColByCol(col,num)
-        this.contentComponent.hideClickRect()
+        // this.contentComponent.hideClickRect()
         this.core.fresh()
         this.core.plugins.ScrollPlugin.changeHorBarWidth()
     }
@@ -140,7 +140,7 @@ export default class ContextmenuPlugin{
         // console.log('contentGroup',contentGroup)
         this.contentComponent.initContentGroupRowAndColByCol(col,num,false)
         // console.log('contentGroup',contentGroup)
-        this.contentComponent.hideClickRect()
+        // this.contentComponent.hideClickRect()
         this.core.fresh()
         this.core.plugins.ScrollPlugin.changeHorBarWidth()
     }
@@ -158,7 +158,7 @@ export default class ContextmenuPlugin{
             contentGroup.splice(index,col)
         }
         this.contentComponent.initContentGroupRowAndColByRow(row,num,false)
-        this.contentComponent.hideClickRect()
+        // this.contentComponent.hideClickRect()
         this.core.fresh()
         this.core.plugins.ScrollPlugin.changeVerBarHeight()
     }
