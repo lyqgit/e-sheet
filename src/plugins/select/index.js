@@ -163,7 +163,7 @@ export default class SelectPlugin{
         const html = domParser.parseFromString(tableDomStr,'text/html')
         const css = html.querySelector('style')?html.querySelector('style').sheet.cssRules:[]
         // console.log('table',html.querySelector('style'))
-        // console.log('table',html.querySelector('table'))
+        // console.log('html-table',html.querySelector('table'))
         const table = html.querySelector('table')
         if(!table){
             return
@@ -389,6 +389,31 @@ export default class SelectPlugin{
         }
     }
 
+    /**
+     * @param {number} diffCol
+     * @param {number} diffRow
+     * @param {Object} clickCell
+     * @returns {Array}
+     */
+    searchPastePositionCells(diffCol,diffRow,clickCell){
+        const moreCells = []
+        const finalCol = diffCol+clickCell.col
+        const finalRow = diffRow+clickCell.row
+        for(let i=clickCell.row;i<=finalRow;i++){
+            for(let j=clickCell.col;j<=finalCol;j++){
+                moreCells.push(this.contentComponent.searchRectByColAndRow(j,i))
+            }
+        }
+        return moreCells
+    }
+
+    forcePasteCellToNewCell(moreCells){
+        moreCells.forEach(item=>{
+            const tempRect = this.contentComponent.searchRectByLabel(item.label)
+            this.setCellAttr(tempRect,item)
+        })
+    }
+
     clearCopyDash(){
         this.copyText('')
         this.core.copyKey = false
@@ -400,9 +425,31 @@ export default class SelectPlugin{
 
         document.addEventListener('paste',event=>{
             const { clickRectShow,clickCell } = this.contentComponent
-            if(clickRectShow){
+            if(clickRectShow && this.core.copyCellDash.length>0){
+                const pasteStr = event.clipboardData.getData('text/html')
+                let beforePasteStr = ''
+                if(this.core.copyCellDash.length === 1){
+                    const firstCell = this.core.copyCellDash[0]
+                    beforePasteStr = JSON.stringify(this.searchPastePositionCells(firstCell.mergeCol-1,firstCell.mergeRow-1,clickCell))
+                }else{
+                    const firstCell = this.core.copyCellDash[0]
+                    const finalCell = this.core.copyCellDash[this.core.copyCellDash.length - 1]
+                    beforePasteStr = JSON.stringify(this.searchPastePositionCells(finalCell.col-firstCell.col,finalCell.row-firstCell.row,clickCell))
+                }
+
                 // 一个框
-                this.transformTableDomStrToCanvasCell(event.clipboardData.getData('text/html'),clickCell)
+                this.core.plugins.SettingPlugin.changeStepArr({
+                    type:15,
+                    pre:{
+                        label:clickCell.label,
+                        pasteStr:beforePasteStr
+                    },
+                    next:{
+                        label:clickCell.label,
+                        pasteStr
+                    }
+                })
+                this.transformTableDomStrToCanvasCell(pasteStr,clickCell)
                 // this.core.plugins.SettingPlugin.convenientGroupChangeStepArr(clickCell.label)
                 this.contentComponent.setSecondClickCell(null)
                 // console.log('event-html',event.clipboardData.getData('text/html'))

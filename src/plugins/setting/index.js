@@ -289,6 +289,10 @@ export default class setting{
             case 14: // 上下插入行
                 this.core.plugins.ContextmenuPlugin.insertRow(fObj.next.row,fObj.next.num,fObj.next.isTop)
                 break
+            case 15: // 复制粘贴
+                const clickCell = this.contentComponent.searchRectByLabel(fObj.next.label)
+                this.core.plugins.SelectPlugin.transformTableDomStrToCanvasCell(fObj.next.pasteStr,clickCell)
+                break
         }
 
         core.fresh()
@@ -367,6 +371,9 @@ export default class setting{
                 break
             case 14: // 上下插入行
                 this.core.plugins.ContextmenuPlugin.removeRow(fObj.pre.row,fObj.pre.num,fObj.pre.isTop)
+                break
+            case 15: // 复制粘贴
+                this.core.plugins.SelectPlugin.forcePasteCellToNewCell(JSON.parse(fObj.pre.pasteStr))
                 break
         }
 
