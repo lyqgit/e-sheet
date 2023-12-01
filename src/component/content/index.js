@@ -399,6 +399,7 @@ export default class ContentComponent{
     }
 
     /**
+     * @description 根据目标cell查找区域cell
      * @param {Object} targetCell
      * @param {Array} moreSelectedCells
      */
@@ -781,11 +782,28 @@ export default class ContentComponent{
 
                     // console.log('tableDomStr',tableDomStr)
                     // console.log('startCellArr',startCellArr)
+                    const pre = []
 
                     startCellArr.forEach(item=>{
+                        pre.push(JSON.stringify(this.searchAllCellsByMoreSelectedCellAndTargetCell(item,moreSelectedCell)))
+                    })
+
+                    const next = []
+
+                    startCellArr.forEach(item=>{
+                        next.push({
+                            tableDomStr,
+                            label:item.label
+                        })
                         SelectPlugin.transformTableDomStrToCanvasCell(tableDomStr,item)
                     })
-                    // SettingPlugin.convenientGroupChangeStepArr()
+
+                    SettingPlugin.changeStepArr({
+                        type:17,
+                        pre,
+                        next
+                    })
+
                     this.setSecondClickCell(null)
                     this.canvasDom.onmousemove = null
                     this.canvasWrapperDom.onmouseup = null

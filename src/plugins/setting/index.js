@@ -300,6 +300,12 @@ export default class setting{
                 const targetCell = this.contentComponent.searchRectByLabel(fObj.next.label)
                 this.core.plugins.SelectPlugin.transformTableDomStrToCanvasCell(fObj.next.lastStr,targetCell)
                 break
+            case 17: // 单元格格式刷
+                fObj.next.forEach(item=>{
+                    const cell = this.contentComponent.searchRectByLabel(item.label)
+                    this.core.plugins.SelectPlugin.transformTableDomStrToCanvasCell(item.tableDomStr,cell)
+                })
+                break
         }
 
         core.fresh()
@@ -391,6 +397,11 @@ export default class setting{
                 const targetCell = this.contentComponent.searchRectByLabel(fObj.next.label)
                 this.core.plugins.SelectPlugin.forcePasteCellToNewCellByTargetCell(JSON.parse(fObj.next.beforeStr),targetCell)
                 this.contentComponent.setSecondClickCell(null)
+                break
+            case 17: // 单元格格式刷
+                fObj.pre.forEach(item=>{
+                    this.core.plugins.SelectPlugin.forcePasteCellToNewCell(JSON.parse(item))
+                })
                 break
         }
 
