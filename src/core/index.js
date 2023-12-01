@@ -9,6 +9,26 @@ export default class AppExcel{
     /**
      * @type {Array}
      */
+    mulPersonSelected = []
+
+    /**
+     * @type {number}
+     */
+    userId = (new Date()).valueOf()
+
+    /**
+     * @type {string}
+     */
+    userName = (new Date()).valueOf().toString()
+
+    /**
+     * @type {string}
+     */
+    userColor = this.getRandomColor()
+
+    /**
+     * @type {Array}
+     */
     stepCallbackArr = []
 
     /**
@@ -17,20 +37,9 @@ export default class AppExcel{
     scale = 1
 
     /**
-     * @type {Array}
-     */
-    mulPersonSelected = []
-
-    /**
-     * @type {WebSocket}
+     * @type {WebsocketPlugin}
      */
     ws
-
-    userId = (new Date()).valueOf()
-
-    userName = (new Date()).valueOf()
-
-    userColor = this.getRandomColor()
 
     fontSize = 12
 
@@ -144,7 +153,21 @@ export default class AppExcel{
         // 默认选中A1
         this.plugins.SettingPlugin.changeFirstSelectedCell('A1');
 
+        this.ws = this.plugins.WebsocketPlugin
         // requestAnimationFrame(this.draw);
+    }
+
+    /**
+     * @description 获取随机颜色
+     * @returns {string}
+     */
+    getRandomColor( ) {
+        var rand = Math.floor(Math.random( ) * 0xFFFFFF).toString(16);
+        if(rand.length === 6){
+            return '#'+rand;
+        }else{
+            return this.getRandomColor();
+        }
     }
 
     /**
@@ -218,120 +241,13 @@ export default class AppExcel{
      * @param {string} addr
      */
     connectWebSocket(addr){
-
-        this.ws = new WebSocket(addr)
-
-        this.wsOpenCallback()
-
-        this.wsCloseCallback()
-
-        this.wsMsgCallback()
-
-    }
-
-    wsMsgCallback(){
-        this.ws.onmessage = evt=>{
-            console.log('evt---onmessage',evt)
-
-            const { DragPlugin } = this.plugins
-            const { ContentComponent } = this.components
-
-            /**
-             * 0.同步数据
-             * 1.选中改变
-             * 2.单元格内容改变
-             * 3.横向距离改变
-             * 4.纵向距离改变
-             */
-
-            /**
-             * 0.同步数据
-             * 1.更改单元格内容
-             * 2.文字大小
-             * 3.文字垂直方向位置
-             * 4.文字水平方向位置
-             * 5.文字粗体
-             * 6.文字斜体
-             * 7.文字颜色
-             * 8.背景颜色
-             * 9.合并单元格
-             * 10.拆分单元格
-             * 11.拉伸宽度
-             * 12.拉伸高度
-             * 13.左右插入列
-             * 14.上下插入行
-             * 15.复制粘贴
-             * 16.单元格边框拖拽
-             * 17.单元格格式刷
-             */
-
-            const data = JSON.parse(evt.data)
-            if(data.type === 0){
-                ContentComponent.contentGroup = data.command
-                this.mulPersonSelected.forEach(item=>{
-                    item.command = ContentComponent.searchRectByLabel(item.command.label)
-                })
-            } else if(data.type === 1){
-                const index = this.mulPersonSelected.findIndex(item=>item.userId === data.userId)
-                data.command = ContentComponent.searchRectByLabel(data.command.label)
-                if(index === -1){
-                    this.mulPersonSelected.push(data)
-                }else{
-                    this.mulPersonSelected[index] = data
-                }
-            }else if(data.type === 2){
-                this.components.ContentComponent.changeRectTextByLabel(data.command)
-            }else if(data.type === 3){
-                const oriRect = ContentComponent.searchRectByLabel(data.command.label)
-                DragPlugin.expandWidthNoDrag(data.command.col,data.command.width - oriRect.width)
-            }
-
-
-            this.fresh()
-        }
-    }
-
-    wsOpenCallback(){
-        this.ws.onopen = evt=>{
-            console.log('evt---onopen',evt)
-        }
-    }
-
-    wsCloseCallback(){
-        this.ws.onclose = evt=>{
-            console.log('evt---onclose',evt)
-            this.ws = null
-        }
+        this.ws.connect(addr)
     }
 
     setUserName(userName){
         this.userName = userName
     }
 
-    wsSend(type,data){
-        if(this.ws){
-            this.ws.send(JSON.stringify({
-                type,
-                command:data,
-                userId:this.userId,
-                userName:this.userName,
-                userColor:this.userColor
-            }))
-        }
-    }
-
-    syncData(){
-        this.wsSend(0,this.components.ContentComponent.contentGroup)
-    }
-
-    getRandomColor( ) {
-        var rand = Math.floor(Math.random( ) * 0xFFFFFF).toString(16);
-        if(rand.length === 6){
-            return '#'+rand;
-        }else{
-            return this.getRandomColor();
-        }
-    }
 
     // 切换sheet
     switchSheet(sheetIndex){

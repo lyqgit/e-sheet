@@ -771,7 +771,7 @@ export default class SelectPlugin{
                 // console.log('event.offsetY',event.offsetY)
                 if(attrFirst){
 
-                    this.core.wsSend(1,attrFirst)
+                    this.core.ws.wsSend(0,attrFirst)
 
                     this.contentComponent.showClickRect(attrFirst)
 

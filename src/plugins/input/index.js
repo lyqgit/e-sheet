@@ -149,7 +149,7 @@ export default class InputPlugin{
                     })
                 }
                 clickCell.text = inputDom.value
-                this.core.wsSend(2,clickCell)
+                this.core.ws.wsSend(1,clickCell)
                 this.inputDom.value = ''
                 this.core.fresh()
                 this.hideInput()

@@ -121,24 +121,20 @@ export default class ContentComponent{
 
         this.core.mulPersonSelected.forEach(item=>{
 
-            if(item.type === 1){
+            const clickCell = item.command
 
-                const clickCell = item.command
+            // console.log('item',item)
 
-                // console.log('item',item)
-
-                if(clickCell.isMerge){
-                    const {mergeWidth,mergeHeight} = clickCell
-                    // console.log('多个选中框',this.clickCell)
-                    this.layer.drawStrokeRect(clickCell.x+cellHeight-offsetX,clickCell.y-offsetY+cellHeight,mergeWidth,mergeHeight,item.userColor,'destination-over',2)
-                }else{
-                    // console.log('单个选中框',this.clickCell)
-                    this.layer.drawStrokeRect(clickCell.x+cellHeight-offsetX,clickCell.y-offsetY+cellHeight,clickCell.width,clickCell.height,item.userColor,'destination-over',2)
-                }
-                this.layer.drawText(clickCell.x+cellHeight-offsetX+6,clickCell.y-offsetY+cellHeight-16,item.userName,clickCell.width,20,'destination-over','#ffffff','left',{fontSize:clickCell.fontSize,fontFamily:clickCell.fontFamily,fontWeight:clickCell.fontWeight,fontItalic:clickCell.fontItalic},'top')
-                this.layer.drawFillRect(clickCell.x+cellHeight-offsetX,clickCell.y-offsetY+cellHeight-20,clickCell.width,20,item.userColor,'destination-over')
+            if(clickCell.isMerge){
+                const {mergeWidth,mergeHeight} = clickCell
+                // console.log('多个选中框',this.clickCell)
+                this.layer.drawStrokeRect(clickCell.x+cellHeight-offsetX,clickCell.y-offsetY+cellHeight,mergeWidth,mergeHeight,item.userColor,'destination-over',2)
+            }else{
+                // console.log('单个选中框',this.clickCell)
+                this.layer.drawStrokeRect(clickCell.x+cellHeight-offsetX,clickCell.y-offsetY+cellHeight,clickCell.width,clickCell.height,item.userColor,'destination-over',2)
             }
-
+            this.layer.drawText(clickCell.x+cellHeight-offsetX+6,clickCell.y-offsetY+cellHeight-16,item.userName,clickCell.width,20,'destination-over','#ffffff','left',{fontSize:clickCell.fontSize,fontFamily:clickCell.fontFamily,fontWeight:clickCell.fontWeight,fontItalic:clickCell.fontItalic},'top')
+            this.layer.drawFillRect(clickCell.x+cellHeight-offsetX,clickCell.y-offsetY+cellHeight-20,clickCell.width,20,item.userColor,'destination-over')
 
         })
 
@@ -1212,6 +1208,13 @@ export default class ContentComponent{
         const rect = this.searchRectByLabel(attr.label)
         if(rect){
             rect.text = attr.text
+        }
+    }
+
+    changeRectAttrByLabel(obj,attr){
+        const rect = this.searchRectByLabel(obj.label)
+        if(rect){
+            rect[attr] = obj[attr]
         }
     }
 

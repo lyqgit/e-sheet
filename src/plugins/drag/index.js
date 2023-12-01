@@ -203,7 +203,7 @@ export default class DragPlugin{
                     height:this.dragCell.height,
                 }
                 this.core.plugins.SettingPlugin.changeStepArr(JSON.parse(JSON.stringify(this.stepObj)))
-                this.core.wsSend(3,this.dragCell)
+                this.core.ws.wsSend(11,this.dragCell)
 
             }
         })

@@ -228,6 +228,8 @@ export default class setting{
 
         const curSheet = core.getCurrentSheet()
 
+        const { ws } = core
+
         // console.log('curSheet',curSheet)
 
         if(curSheet.stepNum === curSheet.stepArr.length-1){
@@ -242,6 +244,8 @@ export default class setting{
             case 1:// 更改单元格内容
                 selectedCell.text = fObj.next
                 contentComponent.showClickRect(selectedCell)
+                ws.wsSend(1,selectedCell)
+                ws.wsSend(0,selectedCell)
                 break;
             case 2: // 文字大小
                 selectedCell.fontSize = fObj.next
@@ -319,6 +323,8 @@ export default class setting{
 
         const curSheet = core.getCurrentSheet()
 
+        const { ws } = core
+
         // console.log('curSheet',curSheet)
 
         if(curSheet.stepNum === -1){
@@ -333,6 +339,8 @@ export default class setting{
                 // 1.更改单元格内容
                 selectedCell.text = fObj.pre
                 contentComponent.showClickRect(selectedCell)
+                ws.wsSend(1,selectedCell)
+                ws.wsSend(0,selectedCell)
                 break;
             case 2: // 文字大小
                 selectedCell.fontSize = fObj.pre
