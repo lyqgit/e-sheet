@@ -244,6 +244,27 @@ export default class AppExcel{
              * 4.纵向距离改变
              */
 
+            /**
+             * 0.同步数据
+             * 1.更改单元格内容
+             * 2.文字大小
+             * 3.文字垂直方向位置
+             * 4.文字水平方向位置
+             * 5.文字粗体
+             * 6.文字斜体
+             * 7.文字颜色
+             * 8.背景颜色
+             * 9.合并单元格
+             * 10.拆分单元格
+             * 11.拉伸宽度
+             * 12.拉伸高度
+             * 13.左右插入列
+             * 14.上下插入行
+             * 15.复制粘贴
+             * 16.单元格边框拖拽
+             * 17.单元格格式刷
+             */
+
             const data = JSON.parse(evt.data)
             if(data.type === 0){
                 ContentComponent.contentGroup = data.command

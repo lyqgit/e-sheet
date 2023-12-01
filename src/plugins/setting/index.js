@@ -239,8 +239,7 @@ export default class setting{
         const selectedCell = contentComponent.searchRectByLabel(fObj.label)
 
         switch (fObj.type){
-            case 1:
-                // 1.更改单元格内容
+            case 1:// 更改单元格内容
                 selectedCell.text = fObj.next
                 contentComponent.showClickRect(selectedCell)
                 break;
