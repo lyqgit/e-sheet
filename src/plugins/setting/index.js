@@ -293,6 +293,13 @@ export default class setting{
                 const clickCell = this.contentComponent.searchRectByLabel(fObj.next.label)
                 this.core.plugins.SelectPlugin.transformTableDomStrToCanvasCell(fObj.next.pasteStr,clickCell)
                 break
+            case 16: // 单元格边框拖拽
+                // 还原拖拽源头
+                this.core.plugins.SelectPlugin.forcePasteCellToNewCell(JSON.parse(fObj.pre.lastStr))
+                // 还原拖拽目标
+                const targetCell = this.contentComponent.searchRectByLabel(fObj.next.label)
+                this.core.plugins.SelectPlugin.transformTableDomStrToCanvasCell(fObj.next.lastStr,targetCell)
+                break
         }
 
         core.fresh()
@@ -374,6 +381,15 @@ export default class setting{
                 break
             case 15: // 复制粘贴
                 this.core.plugins.SelectPlugin.forcePasteCellToNewCell(JSON.parse(fObj.pre.pasteStr))
+                break
+            case 16: // 单元格边框拖拽
+                // 还原拖拽源头
+                // console.log('JSON.parse(fObj.pre.beforeStr)',JSON.parse(fObj.pre.beforeStr))
+                // console.log('this.contentComponent.contentGroup',this.contentComponent.contentGroup)
+                this.core.plugins.SelectPlugin.forcePasteCellToNewCell(JSON.parse(fObj.pre.beforeStr))
+                // 还原拖拽目标
+                const targetCell = this.contentComponent.searchRectByLabel(fObj.next.label)
+                this.core.plugins.SelectPlugin.forcePasteCellToNewCellByTargetCell(JSON.parse(fObj.next.beforeStr),targetCell)
                 break
         }
 

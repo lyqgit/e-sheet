@@ -297,10 +297,40 @@ export default class ContentComponent{
         this.cellPainterDom.style.display = 'none'
     }
 
+    /**
+     * @description 根据传入的左上角merge-cell找出在这个合并中所有已merge的cell
+     * @param {Object} mergeCell
+     * @returns {Array}
+     */
+    searchAllCellInMergeCell(mergeCell){
+        if(mergeCell || !mergeCell.isMerge){
+            return []
+        }
+        let ni = mergeCell.row+mergeCell.mergeRow
+        let nj = mergeCell.col+mergeCell.mergeCol
 
+        const mergeCellArr = []
+
+        for(let i=mergeCell.row;i<ni;i++){
+            for(let j=mergeCell.col;j<nj;j++){
+                mergeCellArr.push(this.searchRectByColAndRow(j,i))
+            }
+        }
+        return mergeCellArr
+    }
+
+    /**
+     * @description 初始化原来的表格
+     * @returns {Object}
+     */
     initMoreSelectedCell(){
         const { moreSelectedCell,clickCell } = this
+
+        let preCellStr = ''
+        let lastCellStr = ''
+
         if(moreSelectedCell.length > 0 ){
+            preCellStr  = JSON.stringify(moreSelectedCell)
             moreSelectedCell.forEach(item=>{
                 item.text = ''
                 item.fontColor = ''
@@ -315,12 +345,17 @@ export default class ContentComponent{
                 item.fontSize = 12
                 item.fontFamily = ''
             })
+            lastCellStr = JSON.stringify(moreSelectedCell)
         }else{
+
             if(clickCell.isMerge){
                 // 是单个合并的单元格
+                preCellStr = JSON.stringify(this.searchAllCellInMergeCell(clickCell))
 
                 let ni = clickCell.row+clickCell.mergeRow
                 let nj = clickCell.col+clickCell.mergeCol
+
+                const mergeCells = []
 
                 for(let i=clickCell.row;i<ni;i++){
                     for(let j=clickCell.col;j<nj;j++){
@@ -337,10 +372,12 @@ export default class ContentComponent{
                         oriRect.mergeRow = 1
                         oriRect.mergeCol = 1
                         oriRect.isMerge = false
+                        mergeCells.push(oriRect)
                     }
                 }
-
+                lastCellStr = JSON.stringify(mergeCells)
             }else{
+                preCellStr  = JSON.stringify([clickCell])
                 clickCell.text = ''
                 clickCell.fontColor = ''
                 clickCell.bgColor = ''
@@ -353,12 +390,37 @@ export default class ContentComponent{
                 clickCell.isMerge = false
                 clickCell.fontSize = 12
                 clickCell.fontFamily = ''
+                lastCellStr = JSON.stringify([clickCell])
             }
 
         }
+        return {preCellStr,lastCellStr}
 
     }
 
+    /**
+     * @param {Object} targetCell
+     * @param {Array} moreSelectedCells
+     */
+    searchAllCellsByMoreSelectedCellAndTargetCell(targetCell,moreSelectedCells){
+        const searchCells = []
+        if(moreSelectedCells.length > 1){
+            const firstCell = moreSelectedCells[0]
+            const finalCell = moreSelectedCells[moreSelectedCells.length - 1]
+            const diffCol = finalCell.col - firstCell.col
+            const diffRow = finalCell.row - firstCell.row
+            for(let i=targetCell.row,nR=targetCell.row+diffRow;i<=nR;i++){
+                for(let j=targetCell.col,nC=targetCell.col+diffCol;j<=nC;j++){
+                    searchCells.push(this.searchRectByColAndRow(j,i))
+                }
+            }
+        }
+        return searchCells
+    }
+
+    /**
+     * @description 边框拖拽-注册事件
+     */
     moveSelectedCellDom(){
         this.setSelectedCellBorderDomBgColor()
         this.canvasDom.onmousemove = event=>{
@@ -373,7 +435,25 @@ export default class ContentComponent{
             const { SelectPlugin,SettingPlugin } = this.core.plugins
             const tableDomStr = SelectPlugin.transformCanvasCellToTableDomStr()
             // 初始化原来的表格
-            this.initMoreSelectedCell()
+            const {preCellStr:preDragBeforeStr,lastCellStr:lastDragBeforeStr} = this.initMoreSelectedCell()
+            const targetMoreSelectedCells = this.searchAllCellsByMoreSelectedCellAndTargetCell(this.moveClickCell,JSON.parse(preDragBeforeStr))
+            // console.log('targetMoreSelectedCells',targetMoreSelectedCells)
+
+            // const secondCell = targetMoreSelectedCells.length>1?targetMoreSelectedCells[targetMoreSelectedCells.length - 1]:null
+            // const nextDragBeforeStr = SelectPlugin.transformCanvasCellToTableDomStrByParams(this.moveClickCell,secondCell,true,targetMoreSelectedCells)
+
+            SettingPlugin.changeStepArr({
+                type:16,
+                pre:{
+                    beforeStr:preDragBeforeStr,
+                    lastStr:lastDragBeforeStr
+                },
+                next:{
+                    beforeStr:JSON.stringify(targetMoreSelectedCells),
+                    lastStr:tableDomStr,
+                    label:this.moveClickCell.label
+                }
+            })
             // console.log('this.moveClickCell',this.moveClickCell)
             SelectPlugin.transformTableDomStrToCanvasCell(tableDomStr,this.moveClickCell)
             this.setSecondClickCell(null)
@@ -457,6 +537,7 @@ export default class ContentComponent{
     }
 
     /**
+     * @description 边框拖拽-鼠标拖拽移动中
      * @param {MouseEvent} event
      */
     moveCell=(event)=>{
@@ -564,6 +645,7 @@ export default class ContentComponent{
         }
 
         this.cellPainterDom.onmousedown = evt=>{
+            // cell右下角拖拽
             evt.stopImmediatePropagation()
             const painterDomLeft = parseInt(this.cellPainterDom.style.left)
             const painterDomTop = parseInt(this.cellPainterDom.style.top)

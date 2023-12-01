@@ -36,7 +36,7 @@ export default class SelectPlugin{
      * @returns {Boolean}
      */
     searchRectIsMergeInTwoCell(firstRect,finalRect){
-        const { contentGroup } = this
+        const { contentGroup } = this.contentComponent
 
         // console.log('startX,startY,endX,endY',startX,startY,endX,endY)
         if(finalRect === null){
@@ -147,6 +147,17 @@ export default class SelectPlugin{
             cell['mergeStartLabel'] = String.fromCharCode(65 + cell.col - 1)+(cell.row)
             cell['mergeEndLabel'] = String.fromCharCode(65 + cell.col+cell.mergeCol - 2)+(cell.row+cell.mergeRow-1)
             // console.log('cell',cell)
+        }
+    }
+
+    /**
+     * @param {Object} cell
+     * @param {Object} attr
+     *
+     */
+    copyCellAttr(cell,attr){
+        for(let k in attr){
+            cell[k] = attr[k]
         }
     }
 
@@ -323,6 +334,7 @@ export default class SelectPlugin{
                     // console.log('rowDiff',rowDiff)
                     // console.log('tempTd',tempTd.isMerge)
                     if(!tempSearchRect.isMerge){
+                        // 目标不是合并单元格
                         this.setCellAttr(tempSearchRect,tempTd)
                     }
                 }
@@ -406,6 +418,80 @@ export default class SelectPlugin{
     }
 
     /**
+     * @description 根据传入参数转化为dom-string clickCell与moreSelectedCell在一块
+     * @param {Object} clickCell
+     * @param {Object} secondClickCell
+     * @param {Boolean} clickRectShow
+     * @param {Array} moreSelectedCell
+     * @returns {string}
+     */
+    transformCanvasCellToTableDomStrByParams(clickCell,secondClickCell,clickRectShow,moreSelectedCell){
+        const { h } = this.core
+        if(clickRectShow){
+            // 一个框
+            // console.log('moreSelectedCell',moreSelectedCell)
+
+            const table = h('table')
+
+            const oriTr = h('tr')
+            const oriTd = h('td')
+
+            if(clickCell && !secondClickCell){
+
+                if(clickCell.isMerge){
+                    const finalRow = clickCell.row+clickCell.mergeRow
+                    for(let i=clickCell.row;i<finalRow;i++){
+                        const tr = oriTr.cloneNode()
+                        if(i === clickCell.row){
+                            const td = oriTd.cloneNode()
+                            this.setTdAttrs(td,clickCell)
+                            tr.appendChild(td)
+                            // console.log('td',td)
+                        }
+
+                        table.appendChild(tr)
+                    }
+                    // console.log('clickCell',clickCell)
+                }else{
+                    const tr = oriTr.cloneNode()
+                    const td = oriTd.cloneNode()
+                    this.setTdAttrs(td,clickCell)
+                    tr.appendChild(td)
+                    table.appendChild(tr)
+                    // console.log('table',table.outerHTML)
+                }
+                // console.log('clickCell',clickCell)
+            }else if(secondClickCell){
+                let tempRow = 0
+                let tr = null
+                for(let i=0;i<moreSelectedCell.length;i++){
+                    const tempRect = moreSelectedCell[i]
+                    if(tempRow !== tempRect.row){
+                        tempRow = tempRect.row
+                        tr = oriTr.cloneNode()
+                        table.appendChild(tr)
+                    }
+
+                    if((tempRect.isMerge && tempRect.label === tempRect.mergeStartLabel) || !tempRect.isMerge){
+                        const td = oriTd.cloneNode()
+                        this.setTdAttrs(td,tempRect)
+                        tr.appendChild(td)
+                    }
+                }
+                // 复制多个
+                // console.log('复制moreSelectedCell',moreSelectedCell)
+            }
+            // console.log('复制的table',table)
+            const tableDomStr = table.outerHTML
+
+            oriTr.remove()
+            oriTd.remove()
+            return tableDomStr
+            // this.copyText('<html><body><table><tr><td style="color:red">测试</td></tr></table></body></html>')
+        }
+    }
+
+    /**
      * @param {number} diffCol
      * @param {number} diffRow
      * @param {Object} clickCell
@@ -423,10 +509,27 @@ export default class SelectPlugin{
         return moreCells
     }
 
+    /**
+     * @description 强制更改cell
+     * @param {Array} moreCells
+     */
     forcePasteCellToNewCell(moreCells){
         moreCells.forEach(item=>{
             const tempRect = this.contentComponent.searchRectByLabel(item.label)
-            this.setCellAttr(tempRect,item)
+            this.copyCellAttr(tempRect,item)
+        })
+    }
+
+    /**
+     * @description 通过目标cell强制更改
+     * @param {Array} moreCells
+     * @param {Object} targetCell
+     */
+    forcePasteCellToNewCellByTargetCell(moreCells,targetCell){
+        const firstCell = moreCells[0]
+        moreCells.forEach(item=>{
+            const tempRect = this.contentComponent.searchRectByColAndRow(item.col - firstCell.col+targetCell.col,item.row-firstCell.row+targetCell.row)
+            this.copyCellAttr(tempRect,item)
         })
     }
 
