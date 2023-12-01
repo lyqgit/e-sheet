@@ -390,6 +390,7 @@ export default class setting{
                 // 还原拖拽目标
                 const targetCell = this.contentComponent.searchRectByLabel(fObj.next.label)
                 this.core.plugins.SelectPlugin.forcePasteCellToNewCellByTargetCell(JSON.parse(fObj.next.beforeStr),targetCell)
+                this.contentComponent.setSecondClickCell(null)
                 break
         }
 
