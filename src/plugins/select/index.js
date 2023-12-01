@@ -90,7 +90,9 @@ export default class SelectPlugin{
 
 
     copyText(text){
-        navigator.clipboard.writeText(text)
+        if(navigator.clipboard){
+            navigator.clipboard.writeText(text)
+        }
     }
 
     searchMergeArr(startCol,startRow,endCol,endRow){
