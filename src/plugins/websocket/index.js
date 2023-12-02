@@ -59,13 +59,13 @@ export default class WebsocketPlugin {
     }
 
     wsMsgCallbackType3(data){
-        // 文字水平方向
-        this.contentComponent.changeRectAttrByLabel(data.command,'textAlign')
+        // 文字垂直方向
+        this.contentComponent.changeRectAttrByLabel(data.command,'textBaseline')
     }
 
     wsMsgCallbackType4(data){
-        // 文字垂直方向
-        this.contentComponent.changeRectAttrByLabel(data.command,'textBaseline')
+        // 文字水平方向
+        this.contentComponent.changeRectAttrByLabel(data.command,'textAlign')
     }
 
     wsMsgCallbackType5(data){

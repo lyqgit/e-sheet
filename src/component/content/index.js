@@ -133,7 +133,7 @@ export default class ContentComponent{
                 // console.log('单个选中框',this.clickCell)
                 this.layer.drawStrokeRect(clickCell.x+cellHeight-offsetX,clickCell.y-offsetY+cellHeight,clickCell.width,clickCell.height,item.userColor,'destination-over',2)
             }
-            this.layer.drawText(clickCell.x+cellHeight-offsetX+6,clickCell.y-offsetY+cellHeight-16,item.userName,clickCell.width,20,'destination-over','#ffffff','left',{fontSize:clickCell.fontSize,fontFamily:clickCell.fontFamily,fontWeight:clickCell.fontWeight,fontItalic:clickCell.fontItalic},'top')
+            this.layer.drawText(clickCell.x+cellHeight-offsetX+6,clickCell.y-offsetY+cellHeight-16,item.userName,clickCell.width,20,'destination-over','#ffffff','left',{},'top')
             this.layer.drawFillRect(clickCell.x+cellHeight-offsetX,clickCell.y-offsetY+cellHeight-20,clickCell.width,20,item.userColor,'destination-over')
 
         })

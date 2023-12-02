@@ -311,6 +311,11 @@ export default class setting{
                 break
         }
 
+        // redo
+        if([1,2,3,4,5,6,7,8].includes(fObj.type)){
+            this.wsSendCellAttrByTypeAndData(fObj.type)
+        }
+
         core.fresh()
         // console.log('步骤减1')
         curSheet.stepNum += 1
@@ -412,9 +417,19 @@ export default class setting{
                 break
         }
 
+        // undo
+        if([1,2,3,4,5,6,7,8].includes(fObj.type)){
+            this.wsSendCellAttrByTypeAndData(fObj.type)
+        }
+
         core.fresh()
         // console.log('步骤减1')
         curSheet.stepNum -= 1
+    }
+
+    wsSendCellAttrByTypeAndData(type){
+        const { clickCell } = this.contentComponent
+        this.core.ws.wsSend(type,clickCell)
     }
 
     registrySettingDom(){
@@ -565,6 +580,7 @@ export default class setting{
             this.convenientChangeStepArr(4,'textAlign',evt.detail)
 
             this.cellFontTextAlignChange(evt.detail)
+            this.wsSendCellAttrByTypeAndData(4)
         })
 
         // 操作文字纵向对齐
@@ -621,6 +637,7 @@ export default class setting{
             // console.log('evt',evt)
             this.convenientChangeStepArr(3,'textBaseLine',evt.detail)
             this.cellFontTextBaseLineChange(evt.detail)
+            this.wsSendCellAttrByTypeAndData(3)
         })
 
         const settingTopDom = h('div',{
@@ -645,6 +662,7 @@ export default class setting{
 
             this.convenientChangeStepArr(2,'fontSize',parseInt(evt.detail))
             this.cellFontSizeChange(evt.detail)
+            this.wsSendCellAttrByTypeAndData(2)
         })
         fontSizeSelectDom.setAttribute('label','字号')
 
@@ -694,6 +712,7 @@ export default class setting{
                 this.convenientChangeStepArr(5,'fontWeight','')
                 this.cellFontWeightChange('')
             }
+            this.wsSendCellAttrByTypeAndData(5)
         })
 
         const fontItalicBtnDom = h('e-sheet-radio-button',{
@@ -726,7 +745,7 @@ export default class setting{
                 this.convenientChangeStepArr(6,'fontItalic','')
                 this.cellFontItalicChange('')
             }
-
+            this.wsSendCellAttrByTypeAndData(6)
 
         })
 
@@ -752,6 +771,7 @@ export default class setting{
         fontColorSelectDom.addEventListener('e-sheet-icon-color-svg-onchange',evt=>{
             this.convenientChangeStepArr(7,'fontColor',evt.detail)
             this.cellFontColorChange(evt.detail)
+            this.wsSendCellAttrByTypeAndData(7)
         })
 
         const fontColorSelectTipConDom = h('e-sheet-tip',{
@@ -791,6 +811,7 @@ export default class setting{
         bgColorSelectDom.addEventListener('e-sheet-icon-color-svg-onchange',evt=>{
             this.convenientChangeStepArr(8,'bgColor',evt.detail)
             this.cellBgColorChange(evt.detail)
+            this.wsSendCellAttrByTypeAndData(8)
         })
 
         fontColorAndBgColorDom.appendChild(bgColorSelectTipConDom)
