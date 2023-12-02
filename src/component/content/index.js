@@ -99,6 +99,7 @@ export default class ContentComponent{
         this.clickRectShow = true
         this.isColSelect = col
         this.isRowSelect = row
+        this.core.ws && this.core.ws.wsSend(0,attr)
     }
 
     setSecondClickCell(attr){

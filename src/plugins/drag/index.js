@@ -202,8 +202,15 @@ export default class DragPlugin{
                     width:this.dragCell.width,
                     height:this.dragCell.height,
                 }
+                let dis = 0
+                if(this.stepObj.type === 11){
+                    dis = this.stepObj.next.width - this.stepObj.pre.width
+                }
+                if(this.stepObj.type === 12){
+                    dis = this.stepObj.next.height - this.stepObj.pre.height
+                }
                 this.core.plugins.SettingPlugin.changeStepArr(JSON.parse(JSON.stringify(this.stepObj)))
-                this.core.ws.wsSend(11,this.dragCell)
+                this.core.ws.wsSend(this.stepObj.type, {dis,...this.stepObj})
 
             }
         })

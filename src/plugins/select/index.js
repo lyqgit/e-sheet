@@ -183,8 +183,9 @@ export default class SelectPlugin{
     /**
      * @param {string} tableDomStr
      * @param {Object} clickCell
+     * @param {Boolean} changeClickCell
      */
-    transformTableDomStrToCanvasCell(tableDomStr,clickCell){
+    transformTableDomStrToCanvasCell(tableDomStr,clickCell,changeClickCell = true){
 
         const { h } = this.core
 
@@ -347,8 +348,8 @@ export default class SelectPlugin{
             endSearchRect = null
         }
         // console.log('endSearchRect',endSearchRect)
-        this.contentComponent.showClickRect(clickCell)
-        this.contentComponent.setSecondClickCell(endSearchRect)
+        changeClickCell && this.contentComponent.showClickRect(clickCell)
+        // this.contentComponent.setSecondClickCell(endSearchRect)
         this.core.fresh()
     }
 
@@ -562,12 +563,11 @@ export default class SelectPlugin{
             if(clickRectShow && this.core.copyCellDash.length>0){
                 const pasteStr = event.clipboardData.getData('text/html')
                 let beforePasteStr = ''
+                const firstCell = this.core.copyCellDash[0]
+                const finalCell = this.core.copyCellDash[this.core.copyCellDash.length - 1]
                 if(this.core.copyCellDash.length === 1){
-                    const firstCell = this.core.copyCellDash[0]
                     beforePasteStr = JSON.stringify(this.searchPastePositionCells(firstCell.mergeCol-1,firstCell.mergeRow-1,clickCell))
                 }else{
-
-
                     beforePasteStr = JSON.stringify(this.searchPastePositionCells(finalCell.col-firstCell.col,finalCell.row-firstCell.row,clickCell))
                 }
 
@@ -583,6 +583,7 @@ export default class SelectPlugin{
                         pasteStr
                     }
                 })
+                this.core.ws.wsSend(15,{pasteStr,label:clickCell.label})
                 this.transformTableDomStrToCanvasCell(pasteStr,clickCell)
                 // this.core.plugins.SettingPlugin.convenientGroupChangeStepArr(clickCell.label)
                 this.contentComponent.setSecondClickCell(null)
@@ -772,8 +773,6 @@ export default class SelectPlugin{
                 // console.log('offsetY',offsetY)
                 // console.log('event.offsetY',event.offsetY)
                 if(attrFirst){
-
-                    this.core.ws.wsSend(0,attrFirst)
 
                     this.contentComponent.showClickRect(attrFirst)
 

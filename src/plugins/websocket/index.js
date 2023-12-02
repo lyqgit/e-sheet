@@ -88,6 +88,87 @@ export default class WebsocketPlugin {
         this.contentComponent.changeRectAttrByLabel(data.command,'bgColor')
     }
 
+    wsMsgCallbackType9(data){
+
+        if(data.command.undo){
+            // 拆分单元格
+            const mergeStartCell = this.contentComponent.searchRectByLabel(data.command.label)
+            this.core.plugins.ContextmenuPlugin.splitCell(mergeStartCell,false)
+        }else{
+            // 合并单元格
+            const mergeSelectedCell = []
+            for(let i=1;i<data.command.length;i++){
+                mergeSelectedCell.push(this.contentComponent.searchRectByLabel(data.command[i]))
+            }
+            const firstCell = this.contentComponent.searchRectByLabel(data.command[0])
+            this.core.plugins.ContextmenuPlugin.mergeCell(firstCell,mergeSelectedCell,false)
+        }
+
+    }
+
+    wsMsgCallbackType10(data){
+        if(data.command.undo){
+            const mergeSelectedCell = []
+            for(let i=0;i<data.command.mergeRow;i++){
+                for(let j=0;j<data.command.mergeCol;j++){
+                    if(i===0&&j===0){
+                        continue
+                    }
+                    mergeSelectedCell.push(this.contentComponent.searchRectByColAndRow(data.command.col+j,data.command.row+i))
+                }
+            }
+            const firstCell = this.contentComponent.searchRectByLabel(data.command.mergeStartLabel)
+            this.core.plugins.ContextmenuPlugin.mergeCell(firstCell,mergeSelectedCell,false)
+        }else{
+            // 拆分单元格
+            const mergeStartCell = this.contentComponent.searchRectByColAndRow(data.command.col,data.command.row)
+            this.core.plugins.ContextmenuPlugin.splitCell(mergeStartCell,false)
+        }
+    }
+
+    wsMsgCallbackType11(data){
+        // 拉伸宽度
+        const selectedCell = this.contentComponent.searchRectByLabel(data.command.label)
+        this.core.plugins.DragPlugin.expandWidthNoDrag(selectedCell.col,data.command.dis)
+    }
+
+    wsMsgCallbackType12(data){
+        // 拉伸高度
+        const selectedCell = this.contentComponent.searchRectByLabel(data.command.label)
+        this.core.plugins.DragPlugin.expandHeightNoDrag(selectedCell.row,data.command.dis)
+    }
+
+    wsMsgCallbackType13(data){
+
+        const fObj = data.command
+        if(fObj.undo){
+            // 删除行
+            this.core.plugins.ContextmenuPlugin.removeCol(fObj.col,fObj.num,fObj.isLeft)
+        }else{
+            // 左右插入列
+            this.core.plugins.ContextmenuPlugin.insertCol(fObj.col,fObj.num,fObj.isLeft)
+        }
+
+    }
+
+    wsMsgCallbackType14(data){
+        const fObj = data.command
+        if(fObj.undo){
+            // 删除行
+            this.core.plugins.ContextmenuPlugin.removeRow(fObj.row,fObj.num,fObj.isTop)
+        }else{
+            // 上下插入行
+            this.core.plugins.ContextmenuPlugin.insertRow(fObj.row,fObj.num,fObj.isTop)
+        }
+
+    }
+
+    wsMsgCallbackType15(data){
+        // 复制粘贴
+        const clickCell = this.contentComponent.searchRectByLabel(data.command.label)
+        this.core.plugins.SelectPlugin.transformTableDomStrToCanvasCell(data.command.pasteStr,clickCell,false)
+    }
+
     changeUserShow(data){
         const index = this.mulPersonSelected.findIndex(item=>item.userId === data.userId)
         data.command = this.contentComponent.searchRectByLabel(data.command.label)
@@ -100,10 +181,14 @@ export default class WebsocketPlugin {
 
     wsMsgCallback(){
         this.ws.onmessage = evt=>{
-            console.log('evt---onmessage',evt)
+            console.log('evt---onmessage-data',JSON.parse(evt.data))
 
             const { DragPlugin } = this.core.plugins
             const { ContentComponent } = this.core.components
+
+            const { clickCell } = ContentComponent
+
+            const curClickCell = JSON.stringify(clickCell)
 
             /**
              * delete
@@ -170,6 +255,27 @@ export default class WebsocketPlugin {
                 case 8:
                     this.wsMsgCallbackType8(data)
                     break
+                case 9:
+                    this.wsMsgCallbackType9(data)
+                    break
+                case 10:
+                    this.wsMsgCallbackType10(data)
+                    break
+                case 11:
+                    this.wsMsgCallbackType11(data)
+                    break
+                case 12:
+                    this.wsMsgCallbackType12(data)
+                    break
+                case 13:
+                    this.wsMsgCallbackType13(data)
+                    break
+                case 14:
+                    this.wsMsgCallbackType14(data)
+                    break
+                case 15:
+                    this.wsMsgCallbackType15(data)
+                    break
             }
 
 
@@ -177,8 +283,6 @@ export default class WebsocketPlugin {
             //     const oriRect = ContentComponent.searchRectByLabel(data.command.label)
             //     DragPlugin.expandWidthNoDrag(data.command.col,data.command.width - oriRect.width)
             // }
-
-
 
             this.core.fresh()
         }

@@ -244,7 +244,6 @@ export default class setting{
             case 1:// 更改单元格内容
                 selectedCell.text = fObj.next
                 contentComponent.showClickRect(selectedCell)
-                ws.wsSend(1,selectedCell)
                 ws.wsSend(0,selectedCell)
                 break;
             case 2: // 文字大小
@@ -274,22 +273,32 @@ export default class setting{
                     mergeSelectedCell.push(contentComponent.searchRectByLabel(fObj.next[i]))
                 }
                 const firstCell = contentComponent.searchRectByLabel(fObj.next[0])
+                this.wsSendInfoByTypeAndData(9,fObj.next)
                 this.core.plugins.ContextmenuPlugin.mergeCell(firstCell,mergeSelectedCell)
                 break
             case 10: // 拆分单元格
                 const mergeStartCell = contentComponent.searchRectByColAndRow(fObj.next.col,fObj.next.row)
+                this.wsSendInfoByTypeAndData(10, {...fObj.next})
                 this.core.plugins.ContextmenuPlugin.splitCell(mergeStartCell)
                 break
             case 11: // 拉伸宽度
                 this.core.plugins.DragPlugin.expandWidthNoDrag(selectedCell.col,fObj.next.width - fObj.pre.width)
+                this.core.ws.wsSend(11, {dis:(fObj.next.width - fObj.pre.width),...fObj})
                 break
             case 12: // 拉伸高度
                 this.core.plugins.DragPlugin.expandHeightNoDrag(selectedCell.row,fObj.next.height - fObj.pre.height)
+                this.core.ws.wsSend(12, {dis:(fObj.next.height - fObj.pre.height),...fObj})
                 break
             case 13: // 左右插入列
+                this.core.ws.wsSend(13,{
+                    ...fObj.next
+                })
                 this.core.plugins.ContextmenuPlugin.insertCol(fObj.next.col,fObj.next.num,fObj.next.isLeft)
                 break
             case 14: // 上下插入行
+                this.core.ws.wsSend(14,{
+                    ...fObj.next
+                })
                 this.core.plugins.ContextmenuPlugin.insertRow(fObj.next.row,fObj.next.num,fObj.next.isTop)
                 break
             case 15: // 复制粘贴
@@ -344,7 +353,6 @@ export default class setting{
                 // 1.更改单元格内容
                 selectedCell.text = fObj.pre
                 contentComponent.showClickRect(selectedCell)
-                ws.wsSend(1,selectedCell)
                 ws.wsSend(0,selectedCell)
                 break;
             case 2: // 文字大小
@@ -370,6 +378,7 @@ export default class setting{
                 break
             case 9: // 合并单元格
                 const mergeStartCell = contentComponent.searchRectByLabel(fObj.pre)
+                this.wsSendInfoByTypeAndData(9, {label:fObj.pre,undo:true})
                 this.core.plugins.ContextmenuPlugin.splitCell(mergeStartCell)
                 break
             case 10: // 拆分单元格
@@ -383,18 +392,29 @@ export default class setting{
                     }
                 }
                 const firstCell = contentComponent.searchRectByLabel(fObj.pre.mergeStartLabel)
+                this.wsSendInfoByTypeAndData(10, {...fObj.pre,undo:true})
                 this.core.plugins.ContextmenuPlugin.mergeCell(firstCell,mergeSelectedCell)
                 break
             case 11: // 拉伸宽度
                 this.core.plugins.DragPlugin.expandWidthNoDrag(selectedCell.col,fObj.pre.width - fObj.next.width)
+                this.core.ws.wsSend(11, {dis:(fObj.pre.width - fObj.next.width),...fObj})
                 break
             case 12: // 拉伸高度
                 this.core.plugins.DragPlugin.expandHeightNoDrag(selectedCell.row,fObj.pre.height - fObj.next.height)
+                this.core.ws.wsSend(12, {dis:(fObj.pre.height - fObj.next.height),...fObj})
                 break
             case 13: // 左右插入列
+                this.core.ws.wsSend(13,{
+                    ...fObj.pre,
+                    undo:true
+                })
                 this.core.plugins.ContextmenuPlugin.removeCol(fObj.pre.col,fObj.pre.num,fObj.pre.isLeft)
                 break
             case 14: // 上下插入行
+                this.core.ws.wsSend(14,{
+                    ...fObj.pre,
+                    undo:true
+                })
                 this.core.plugins.ContextmenuPlugin.removeRow(fObj.pre.row,fObj.pre.num,fObj.pre.isTop)
                 break
             case 15: // 复制粘贴
@@ -430,6 +450,10 @@ export default class setting{
     wsSendCellAttrByTypeAndData(type){
         const { clickCell } = this.contentComponent
         this.core.ws.wsSend(type,clickCell)
+    }
+
+    wsSendInfoByTypeAndData(type,data){
+        this.core.ws.wsSend(type,data)
     }
 
     registrySettingDom(){
@@ -897,10 +921,11 @@ export default class setting{
             }
             const tempGroupCell = [clickCell,...mergeSelectedCell].sort((a,b)=>{return (a.row - b.row)+(a.col - b.col) })
 
-            this.core.plugins.ContextmenuPlugin.mergeCell(tempGroupCell[0],tempGroupCell.slice(0))
             stepObj.pre = tempGroupCell[0].label
             stepObj.next = tempGroupCell.map(item=>item.label)
             this.changeStepArr(stepObj)
+            this.wsSendInfoByTypeAndData(9,stepObj.next)
+            this.core.plugins.ContextmenuPlugin.mergeCell(tempGroupCell[0],tempGroupCell.slice(0))
             // if(mergeSelectedCell.some(item=>item.isMerge) || mergeSelectedCell.length === 0){
             //     return
             // }
@@ -909,6 +934,15 @@ export default class setting{
         }
         cellSplitBtnDom.onclick=_=>{
             const { clickCell } = this.contentComponent
+            const next = {
+                row:clickCell.row,
+                col:clickCell.col,
+                mergeRow:clickCell.mergeRow,
+                mergeCol:clickCell.mergeCol,
+                mergeStartLabel:clickCell.mergeStartLabel,
+                mergeEndLabel:clickCell.mergeEndLabel,
+                isMerge:false,
+            }
             this.changeStepArr({
                 type:10,
                 label:clickCell.label,
@@ -921,16 +955,9 @@ export default class setting{
                     mergeEndLabel:clickCell.mergeEndLabel,
                     isMerge:true,
                 },
-                next:{
-                    row:clickCell.row,
-                    col:clickCell.col,
-                    mergeRow:clickCell.mergeRow,
-                    mergeCol:clickCell.mergeCol,
-                    mergeStartLabel:clickCell.mergeStartLabel,
-                    mergeEndLabel:clickCell.mergeEndLabel,
-                    isMerge:false,
-                }
+                next
             })
+            this.wsSendInfoByTypeAndData(10,next)
             this.core.plugins.ContextmenuPlugin.splitCell(clickCell)
             // this.convenientGroupChangeStepArr()
             cellMergerBtnDom.style.display = 'flex'

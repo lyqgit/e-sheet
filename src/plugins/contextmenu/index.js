@@ -173,7 +173,7 @@ export default class ContextmenuPlugin{
         this.core.plugins.ScrollPlugin.changeVerBarHeight()
     }
 
-    splitCell=(clickCell)=>{
+    splitCell=(clickCell,changeClickCell = true)=>{
         if(!clickCell.isMerge){
             return
         }
@@ -198,12 +198,12 @@ export default class ContextmenuPlugin{
 
         clickCell.mergeRow = 1
         clickCell.mergeCol = 1
-        this.contentComponent.showClickRect(clickCell)
+        changeClickCell && this.contentComponent.showClickRect(clickCell)
         this.core.fresh()
         this.hideContextMenu()
     }
 
-    mergeCell=(clickCell,mergeSelectedCell)=>{
+    mergeCell=(clickCell,mergeSelectedCell,changeClickCell = true)=>{
         if(mergeSelectedCell.some(item=>item.isMerge) || mergeSelectedCell.length === 0){
             return
         }
@@ -233,7 +233,7 @@ export default class ContextmenuPlugin{
         clickCell.mergeHeight = mergeHeight
         // console.log('合并完成',clickCell)
         this.contentComponent.setSecondClickCell(null)
-        this.contentComponent.showClickRect(clickCell)
+        changeClickCell && this.contentComponent.showClickRect(clickCell)
         this.core.freshContent()
         this.hideContextMenu()
     }
@@ -253,6 +253,11 @@ export default class ContextmenuPlugin{
                     num,
                     isLeft
                 }
+            })
+            this.core.ws.wsSend(13,{
+                col:clickCell.col,
+                num,
+                isLeft
             })
             this.insertCol(clickCell.col,num,isLeft)
         }
@@ -275,6 +280,11 @@ export default class ContextmenuPlugin{
                     num,
                     isTop
                 }
+            })
+            this.core.ws.wsSend(14,{
+                row:clickCell.row,
+                num,
+                isTop
             })
             this.insertRow(clickCell.row,num,isTop)
         }
@@ -491,12 +501,46 @@ export default class ContextmenuPlugin{
 
         mergeBtn.onclick = _=>{
             const { clickCell,mergeSelectedCell } = this.contentComponent
+            const stepObj = {
+                type:9,
+                label:clickCell.label
+            }
             const tempGroupCell = [clickCell,...mergeSelectedCell].sort((a,b)=>{return (a.row - b.row)+(a.col - b.col) })
+
+            stepObj.pre = tempGroupCell[0].label
+            stepObj.next = tempGroupCell.map(item=>item.label)
+            this.core.plugins.SettingPlugin.changeStepArr(stepObj)
+            this.core.plugins.SettingPlugin.wsSendInfoByTypeAndData(9,stepObj.next)
             this.mergeCell(tempGroupCell[0],tempGroupCell.slice(0))
+            // this.core.ws.wsSend(9,stepObj.next)
         }
 
         splitBtn.onclick = _=>{
             const { clickCell } = this.contentComponent
+            const next = {
+                row:clickCell.row,
+                col:clickCell.col,
+                mergeRow:clickCell.mergeRow,
+                mergeCol:clickCell.mergeCol,
+                mergeStartLabel:clickCell.mergeStartLabel,
+                mergeEndLabel:clickCell.mergeEndLabel,
+                isMerge:false,
+            }
+            this.core.plugins.SettingPlugin.changeStepArr({
+                type:10,
+                label:clickCell.label,
+                pre:{
+                    row:clickCell.row,
+                    col:clickCell.col,
+                    mergeRow:clickCell.mergeRow,
+                    mergeCol:clickCell.mergeCol,
+                    mergeStartLabel:clickCell.mergeStartLabel,
+                    mergeEndLabel:clickCell.mergeEndLabel,
+                    isMerge:true,
+                },
+                next
+            })
+            this.core.plugins.SettingPlugin.wsSendInfoByTypeAndData(10,next)
             this.splitCell(clickCell)
         }
 
