@@ -56,12 +56,24 @@ const excel = new eSheet('#elt',{
 
 ```
 
+## collaborative services
+
+```
+
+cd ./server/multi-person-collaboration
+
+cargo run
+
+```
+
 ## api
 
-|    ability    |    function    |                              example                               |
-|:-------------:|:--------------:|:------------------------------------------------------------------:|
-|    export     | exportXlsxData | [{label:"sheet1",sheet:{!ref:"D10",D10:{t:"s",v:"test content"}}}] |
+|    ability    |      function      |                              example                               |
+|:-------------:|:------------------:|:------------------------------------------------------------------:|
+|    export     |   exportXlsxData   | [{label:"sheet1",sheet:{!ref:"D10",D10:{t:"s",v:"test content"}}}] |
 | step callback | stepCallbackHandle |         excel.stepCallbackHandle((obj)=>{console.log(obj))         |
+|   fresh all   |       fresh        |                                void                                |
+| fresh content |    freshContent    |                                void                                |
 
 ## function
 

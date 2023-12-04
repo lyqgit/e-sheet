@@ -56,12 +56,24 @@ const excel = new eSheet('#elt',{
 
 ```
 
+## 协同服务
+
+```
+
+cd ./server/multi-person-collaboration
+
+cargo run
+
+```
+
 ## api
 
-|  功能  |函数名|                             样例                             |
-|:----:|:---:|:----------------------------------------------------------:|
-|  导出  |exportXlsxData| [{label:"sheet1",sheet:{!ref:"D10",D10:{t:"s",v:"测试内容"}}}] |
-| 操作回调 | stepCallbackHandle |         excel.stepCallbackHandle((obj)=>{console.log(obj))         |
+|        函数名         |   功能   |                             样例                             |
+|:------------------:|:------:|:----------------------------------------------------------:|
+|   exportXlsxData   |   导出   | [{label:"sheet1",sheet:{!ref:"D10",D10:{t:"s",v:"测试内容"}}}] |
+| stepCallbackHandle |  操作回调  |     excel.stepCallbackHandle((obj)=>{console.log(obj))     |
+|       fresh        |  全部刷新  |                            void                            |
+|    freshContent    | 刷新表格内容 |                            void                            |
 
 ## 功能
 
