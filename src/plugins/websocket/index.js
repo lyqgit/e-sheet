@@ -189,6 +189,23 @@ export default class WebsocketPlugin {
         this.contentComponent.setSecondClickCell(null)
     }
 
+    wsMsgCallbackType17(data){
+        // 单元格格式刷
+        const fObj = data.command
+        if(fObj.undo){
+            fObj.pre.forEach(item=>{
+                this.core.plugins.SelectPlugin.forcePasteCellToNewCell(JSON.parse(item))
+            })
+        }else{
+            fObj.next.forEach(item=>{
+                const cell = this.contentComponent.searchRectByLabel(item.label)
+                this.core.plugins.SelectPlugin.transformTableDomStrToCanvasCell(item.tableDomStr,cell,false)
+            })
+        }
+
+
+    }
+
     changeUserShow(data){
         const index = this.mulPersonSelected.findIndex(item=>item.userId === data.userId)
         data.command = this.contentComponent.searchRectByLabel(data.command.label)
@@ -298,6 +315,9 @@ export default class WebsocketPlugin {
                     break
                 case 16:
                     this.wsMsgCallbackType16(data)
+                    break
+                case 17:
+                    this.wsMsgCallbackType17(data)
                     break
             }
 

@@ -412,7 +412,7 @@ export default class ContentComponent{
                     searchCells.push(this.searchRectByColAndRow(j,i))
                 }
             }
-        }else if(moreSelectedCells.length === 1){
+        }else{
             return [targetCell]
         }
         return searchCells
@@ -804,7 +804,7 @@ export default class ContentComponent{
                         pre,
                         next
                     })
-
+                    this.core.ws.wsSend(17, {next})
                     this.setSecondClickCell(null)
                     this.canvasDom.onmousemove = null
                     this.canvasWrapperDom.onmouseup = null

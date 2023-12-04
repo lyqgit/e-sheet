@@ -319,6 +319,7 @@ export default class setting{
                     const cell = this.contentComponent.searchRectByLabel(item.label)
                     this.core.plugins.SelectPlugin.transformTableDomStrToCanvasCell(item.tableDomStr,cell)
                 })
+                this.core.ws.wsSend(17,{next:fObj.next})
                 break
         }
 
@@ -434,9 +435,11 @@ export default class setting{
                 this.contentComponent.setSecondClickCell(null)
                 break
             case 17: // 单元格格式刷
+                console.log('fObj.pre',fObj.pre)
                 fObj.pre.forEach(item=>{
                     this.core.plugins.SelectPlugin.forcePasteCellToNewCell(JSON.parse(item))
                 })
+                this.core.ws.wsSend(17,{undo:true,pre:fObj.pre})
                 break
         }
 
