@@ -419,6 +419,7 @@ export default class setting{
                 break
             case 15: // 复制粘贴
                 this.core.plugins.SelectPlugin.forcePasteCellToNewCell(JSON.parse(fObj.pre.pasteStr))
+                this.core.ws.wsSend(15,{undo:true,pasteStr:fObj.pre.pasteStr})
                 break
             case 16: // 单元格边框拖拽
                 // 还原拖拽源头

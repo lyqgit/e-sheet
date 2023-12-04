@@ -165,8 +165,14 @@ export default class WebsocketPlugin {
 
     wsMsgCallbackType15(data){
         // 复制粘贴
-        const clickCell = this.contentComponent.searchRectByLabel(data.command.label)
-        this.core.plugins.SelectPlugin.transformTableDomStrToCanvasCell(data.command.pasteStr,clickCell,false)
+        if(data.command.undo){
+            // 回退
+            this.core.plugins.SelectPlugin.forcePasteCellToNewCell(JSON.parse(data.command.pasteStr))
+        }else{
+            const clickCell = this.contentComponent.searchRectByLabel(data.command.label)
+            this.core.plugins.SelectPlugin.transformTableDomStrToCanvasCell(data.command.pasteStr,clickCell,false)
+        }
+
     }
 
     changeUserShow(data){
