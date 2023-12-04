@@ -412,6 +412,8 @@ export default class ContentComponent{
                     searchCells.push(this.searchRectByColAndRow(j,i))
                 }
             }
+        }else if(moreSelectedCells.length === 1){
+            return [targetCell]
         }
         return searchCells
     }
@@ -434,6 +436,7 @@ export default class ContentComponent{
             const tableDomStr = SelectPlugin.transformCanvasCellToTableDomStr()
             // 初始化原来的表格
             const {preCellStr:preDragBeforeStr,lastCellStr:lastDragBeforeStr} = this.initMoreSelectedCell()
+            console.log('preDragBeforeStr',JSON.parse(preDragBeforeStr))
             const targetMoreSelectedCells = this.searchAllCellsByMoreSelectedCellAndTargetCell(this.moveClickCell,JSON.parse(preDragBeforeStr))
             // console.log('targetMoreSelectedCells',targetMoreSelectedCells)
 
@@ -453,6 +456,7 @@ export default class ContentComponent{
                 }
             })
             // console.log('this.moveClickCell',this.moveClickCell)
+            this.core.ws.wsSend(16,{pre:lastDragBeforeStr,next:tableDomStr,label:this.moveClickCell.label})
             SelectPlugin.transformTableDomStrToCanvasCell(tableDomStr,this.moveClickCell)
             this.setSecondClickCell(null)
             this.moveClickCell = null

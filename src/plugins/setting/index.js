@@ -311,6 +311,8 @@ export default class setting{
                 // 还原拖拽目标
                 const targetCell = this.contentComponent.searchRectByLabel(fObj.next.label)
                 this.core.plugins.SelectPlugin.transformTableDomStrToCanvasCell(fObj.next.lastStr,targetCell)
+                this.contentComponent.setSecondClickCell(null)
+                this.core.ws.wsSend(16,{pre:fObj.pre.lastStr,next:fObj.next.lastStr,label:fObj.next.label})
                 break
             case 17: // 单元格格式刷
                 fObj.next.forEach(item=>{
@@ -423,12 +425,12 @@ export default class setting{
                 break
             case 16: // 单元格边框拖拽
                 // 还原拖拽源头
-                // console.log('JSON.parse(fObj.pre.beforeStr)',JSON.parse(fObj.pre.beforeStr))
-                // console.log('this.contentComponent.contentGroup',this.contentComponent.contentGroup)
                 this.core.plugins.SelectPlugin.forcePasteCellToNewCell(JSON.parse(fObj.pre.beforeStr))
                 // 还原拖拽目标
                 const targetCell = this.contentComponent.searchRectByLabel(fObj.next.label)
+                // console.log('JSON.parse(fObj.next.beforeStr)',JSON.parse(fObj.next.beforeStr))
                 this.core.plugins.SelectPlugin.forcePasteCellToNewCellByTargetCell(JSON.parse(fObj.next.beforeStr),targetCell)
+                this.core.ws.wsSend(16,{undo:true,pre:fObj.pre.beforeStr,next:fObj.next.beforeStr,label:fObj.next.label})
                 this.contentComponent.setSecondClickCell(null)
                 break
             case 17: // 单元格格式刷

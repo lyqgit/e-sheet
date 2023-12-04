@@ -172,7 +172,21 @@ export default class WebsocketPlugin {
             const clickCell = this.contentComponent.searchRectByLabel(data.command.label)
             this.core.plugins.SelectPlugin.transformTableDomStrToCanvasCell(data.command.pasteStr,clickCell,false)
         }
+    }
 
+    wsMsgCallbackType16(data){
+        // 单元格边框拖拽
+        const fObj = data.command
+        // 还原拖拽源头
+        this.core.plugins.SelectPlugin.forcePasteCellToNewCell(JSON.parse(fObj.pre))
+        // 还原拖拽目标
+        const targetCell = this.contentComponent.searchRectByLabel(fObj.label)
+        if(fObj.undo){
+            this.core.plugins.SelectPlugin.forcePasteCellToNewCellByTargetCell(JSON.parse(fObj.next),targetCell)
+        }else{
+            this.core.plugins.SelectPlugin.transformTableDomStrToCanvasCell(fObj.next,targetCell,false)
+        }
+        this.contentComponent.setSecondClickCell(null)
     }
 
     changeUserShow(data){
@@ -281,6 +295,9 @@ export default class WebsocketPlugin {
                     break
                 case 15:
                     this.wsMsgCallbackType15(data)
+                    break
+                case 16:
+                    this.wsMsgCallbackType16(data)
                     break
             }
 
