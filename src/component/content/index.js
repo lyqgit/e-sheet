@@ -436,7 +436,7 @@ export default class ContentComponent{
             const tableDomStr = SelectPlugin.transformCanvasCellToTableDomStr()
             // 初始化原来的表格
             const {preCellStr:preDragBeforeStr,lastCellStr:lastDragBeforeStr} = this.initMoreSelectedCell()
-            console.log('preDragBeforeStr',JSON.parse(preDragBeforeStr))
+            // console.log('preDragBeforeStr',JSON.parse(preDragBeforeStr))
             const targetMoreSelectedCells = this.searchAllCellsByMoreSelectedCellAndTargetCell(this.moveClickCell,JSON.parse(preDragBeforeStr))
             // console.log('targetMoreSelectedCells',targetMoreSelectedCells)
 
@@ -993,6 +993,14 @@ export default class ContentComponent{
         const startRow = lt.row
         const endRow = rb.row
 
+        /**根据位置显示范围内的cell**/
+        // const startX = lt.x
+        // const endX = rb.x
+        //
+        // const startY = lt.y
+        // const endY = r.y
+        /**根据位置显示范围内的cell**/
+
         const { contentGroup } = this
         // 选中绘制
         if(this.clickRectShow){
@@ -1054,6 +1062,7 @@ export default class ContentComponent{
             const tempRect = contentGroup[i]
             const {row,col,text,x,y,width,height} = tempRect
 
+            // 根据位置显示范围内的cell------(x>=startX && x<=endX) && (y>=startY && y<=endY)
             if((col>=startCol && col<=endCol) && (row>=startRow && row<=endRow)){
                 // 多个选中除了第一个之外的渲染
                 // 合并渲染从左上角开始

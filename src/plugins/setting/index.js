@@ -435,7 +435,6 @@ export default class setting{
                 this.contentComponent.setSecondClickCell(null)
                 break
             case 17: // 单元格格式刷
-                console.log('fObj.pre',fObj.pre)
                 fObj.pre.forEach(item=>{
                     this.core.plugins.SelectPlugin.forcePasteCellToNewCell(JSON.parse(item))
                 })
