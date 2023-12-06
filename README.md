@@ -68,12 +68,13 @@ cargo run
 
 ## api
 
-|    ability    |      function      |                              example                               |
-|:-------------:|:------------------:|:------------------------------------------------------------------:|
-|    export     |   exportXlsxData   | [{label:"sheet1",sheet:{!ref:"D10",D10:{t:"s",v:"test content"}}}] |
-| step callback | stepCallbackHandle |         excel.stepCallbackHandle((obj)=>{console.log(obj))         |
-|   fresh all   |       fresh        |                                void                                |
-| fresh content |    freshContent    |                                void                                |
+|   function name    |    ability     |  param   |                              example                               |
+|:------------------:|:------------------:|:--------:|:------------------------------------------------------------------:|
+|   exportXlsxData   |   export   |   none   | [{label:"sheet1",sheet:{!ref:"D10",D10:{t:"s",v:"test content"}}}] |
+| stepCallbackHandle | step callback | callback |         excel.stepCallbackHandle((obj)=>{console.log(obj))         |
+|    fresh           |       fresh all        |   none   |                                void                                |
+|    freshContent    |    fresh content    |   none   |                                void                                |
+|  connectWebSocket  |  connnect websocket  |   addr   |                                          ws://192.168.31.208:8091                      |
 
 ## function
 

@@ -68,12 +68,13 @@ cargo run
 
 ## api
 
-|        函数名         |   功能   |                             样例                             |
-|:------------------:|:------:|:----------------------------------------------------------:|
-|   exportXlsxData   |   导出   | [{label:"sheet1",sheet:{!ref:"D10",D10:{t:"s",v:"测试内容"}}}] |
-| stepCallbackHandle |  操作回调  |     excel.stepCallbackHandle((obj)=>{console.log(obj))     |
-|       fresh        |  全部刷新  |                            void                            |
-|    freshContent    | 刷新表格内容 |                            void                            |
+|        函数名         |   功能   |    参数    |                             样例               |
+|:------------------:|:------:|:--------:|:----------------------------------------------------------:|
+|   exportXlsxData   |   导出   |    无     | [{label:"sheet1",sheet:{!ref:"D10",D10:{t:"s",v:"测试内容"}}}] |
+| stepCallbackHandle |  操作回调  | callback |     excel.stepCallbackHandle((obj)=>{console.log(obj))     |
+|       fresh        |  全部刷新  |    无     |                           void                            |
+|    freshContent    | 刷新表格内容 |    无     |                           void                            |
+|    connectWebSocket     |   链接websocket     | 链接地址addr |                           ws://192.168.31.208:8091                            |
 
 ## 功能
 
