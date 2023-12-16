@@ -553,6 +553,15 @@ export default class SelectPlugin{
                     this.settingPlugin.showDialog('提示','合并的单元格无法粘贴内容')
                     return
                 }
+                const finalDashCell = this.core.copyCellDash[0];
+                // 粘贴板中是合并单元格，覆盖了选中的单元格附近的合并单元格则不能粘贴
+                if(finalDashCell.isMerge){
+                    const finalRect = this.contentComponent.searchRectByColAndRow(clickCell.col+finalDashCell.mergeCol-1,clickCell.row+finalDashCell.mergeRow - 1)
+                    if(this.searchRectIsMergeInTwoCell(clickCell,finalRect)){
+                        this.settingPlugin.showDialog('提示','合并的单元格无法粘贴内容')
+                        return
+                    }
+                }
             }else if(this.core.copyCellDash.length > 1){
                 const firstCell = this.core.copyCellDash[0]
                 const finalCell = this.core.copyCellDash[this.core.copyCellDash.length - 1]

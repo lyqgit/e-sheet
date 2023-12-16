@@ -100,6 +100,7 @@ $theme-color-blue:--eview-sheet-primary-color;
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 999;
   .e-sheet-warn-dialog-wrapper{
     position: relative;
     width: 30%;
