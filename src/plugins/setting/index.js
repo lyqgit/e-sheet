@@ -45,6 +45,10 @@ export default class setting{
      * @type {HTMLElement}
      */
     cellSplitBtnDom = null
+    /**
+     * @type {HTMLElement}
+     */
+    warnDialogDom = null
 
     constructor(selectorDom,layer,options={},components={},core) {
         this.contentComponent = components.ContentComponent
@@ -58,6 +62,27 @@ export default class setting{
         this.core = core
 
         this.registrySettingDom()
+        this.registryWarnDialogDom()
+    }
+
+    registryWarnDialogDom(){
+        const { h } = this.core
+        this.warnDialogDom = h('e-sheet-warn-dialog-tip',{
+            attribute:{
+                show:false,
+            }
+        })
+        this.selectorDom.appendChild(this.warnDialogDom)
+    }
+
+    /**
+     * @param {string} title
+     * @param {string} content
+     */
+    showDialog(title,content){
+        this.warnDialogDom.setAttribute('t',title)
+        this.warnDialogDom.setAttribute('content',content)
+        this.warnDialogDom.setAttribute('show',true)
     }
 
     setLabelCon(label){

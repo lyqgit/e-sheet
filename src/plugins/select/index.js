@@ -22,6 +22,7 @@ export default class SelectPlugin{
         this.sideComponent = components.SideComponent
         this.selectorDom = selectorDom
         this.canvasDom = core.canvasDom
+        this.settingPlugin = core.plugins.SettingPlugin
         this.options = options
         this.layer = layer
         this.core = core
@@ -549,6 +550,7 @@ export default class SelectPlugin{
             const { clickRectShow,clickCell } = this.contentComponent
             if(this.core.copyCellDash.length === 1){
                 if(this.searchRectIsMergeInTwoCell(clickCell,null)){
+                    this.settingPlugin.showDialog('提示','合并的单元格无法粘贴内容')
                     return
                 }
             }else if(this.core.copyCellDash.length > 1){
@@ -556,6 +558,7 @@ export default class SelectPlugin{
                 const finalCell = this.core.copyCellDash[this.core.copyCellDash.length - 1]
                 const finalRect = this.contentComponent.searchRectByColAndRow(clickCell.col+finalCell.col-firstCell.col,clickCell.row+finalCell.row-firstCell.row)
                 if(this.searchRectIsMergeInTwoCell(clickCell,finalRect)){
+                    this.settingPlugin.showDialog('提示','合并的单元格无法粘贴内容')
                     return
                 }
             }

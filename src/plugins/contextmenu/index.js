@@ -8,6 +8,7 @@ export default class ContextmenuPlugin{
         this.selectorDom = selectorDom
         this.canvasDom = core.canvasDom
         this.canvasWrapperDom = core.canvasWrapperDom
+        this.settingPlugin = core.plugins.SettingPlugin
         this.options = options
         this.layer = layer
         this.core = core
@@ -175,6 +176,7 @@ export default class ContextmenuPlugin{
 
     splitCell=(clickCell,changeClickCell = true)=>{
         if(!clickCell.isMerge){
+            this.settingPlugin.showDialog('提示','当前选中的单元格不是合并的单元格无法拆解')
             return
         }
 
@@ -205,6 +207,7 @@ export default class ContextmenuPlugin{
 
     mergeCell=(clickCell,mergeSelectedCell,changeClickCell = true)=>{
         if(mergeSelectedCell.some(item=>item.isMerge) || mergeSelectedCell.length === 0){
+            this.settingPlugin.showDialog('提示','当前选中的单元格中有合并的单元格，无法合并')
             return
         }
         let mergeWidth = clickCell.width

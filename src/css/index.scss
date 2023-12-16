@@ -90,6 +90,60 @@ $theme-color-blue:--eview-sheet-primary-color;
 
 
 // 全局样式
+.e-sheet-warn-dialog-tip{
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(0,0,0,.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .e-sheet-warn-dialog-wrapper{
+    position: relative;
+    width: 30%;
+    padding: 20px 10px;
+    background-color: #ffffff;
+    .e-sheet-warn-dialog-wrapper-title{
+      font-size: 20px;
+      font-weight: bold;
+      color: #000000;
+    }
+    .e-sheet-warn-dialog-wrapper-content{
+      font-size: 16px;
+      color: #000000;
+      margin-top: 10px;
+    }
+    .e-sheet-warn-dialog-tip-close-btn{
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      width: 6px;
+      height: 6px;
+      transform: rotate(45deg);
+      cursor: pointer;
+      &::before{
+        content: '|';
+        display: block;
+        width: 1px;
+        height: 6px;
+        position: absolute;
+        top:-7px
+      }
+      &::after{
+        content: '|';
+        display: block;
+        width: 1px;
+        height: 6px;
+        transform: rotate(90deg);
+        position: absolute;
+        left: 11px;
+      }
+    }
+  }
+
+}
 
 // canvas
 .e-sheet-canvas-wrapper{
