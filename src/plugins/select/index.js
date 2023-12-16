@@ -183,6 +183,58 @@ export default class SelectPlugin{
 
     /**
      * @param {string} tableDomStr
+     * @returns {Array<HTMLTableCellElement> | null}
+     */
+    transformTableDomStrToDom(tableDomStr){
+        const { h } = this.core
+
+        const domParser = new DOMParser();
+        const html = domParser.parseFromString(tableDomStr,'text/html')
+        const css = html.querySelector('style')?html.querySelector('style').sheet.cssRules:[]
+        // console.log('table',html.querySelector('style'))
+        // console.log('html-table',html.querySelector('table'))
+        const table = html.querySelector('table')
+        if(!table){
+            return null
+        }
+
+        const tableArr = this.tableDomToArr(table)
+
+        // console.log('tableArr',tableArr)
+
+        const tdDom = h('td')
+
+        for(let i=0;i<tableArr.length;i++){
+            const tds = tableArr[i]
+            // console.log('tds.length',tds.length)
+            for(let j=0;j<tds.length;j++){
+                const tempTdDom = tds[j]
+
+                if(!tempTdDom){
+                    tableArr[i].push(tdDom.cloneNode())
+                }
+
+                if(tempTdDom.rowSpan > 1){
+                    for(let k=1,kn=tempTdDom.rowSpan;k<kn;k++){
+                        tableArr[i+k].splice(j,0,tdDom.cloneNode())
+                    }
+                }
+
+                if(tempTdDom.colSpan > 1){
+                    (new Array(tempTdDom.colSpan-1)).fill(0).forEach(_=>{
+                        tableArr[i].splice(j+1,0,tdDom.cloneNode())
+                    })
+                }
+
+
+            }
+            // console.log('tableArr--td-arr',tableArr[i])
+        }
+        return tableArr;
+    }
+
+    /**
+     * @param {string} tableDomStr
      * @param {Object} clickCell
      * @param {Boolean} changeClickCell
      */
@@ -257,7 +309,7 @@ export default class SelectPlugin{
                     let fontColor = ''
                     let textAlign = ''
                     let font = ''
-                    let fontSize = ''
+                    let fontSize = null
                     let fontFamily = ''
 
                     for(let ci=0,cn=css.length;ci<cn;ci++){
@@ -265,7 +317,7 @@ export default class SelectPlugin{
                             bgColor = css[ci].style.backgroundColor!==''?css[ci].style.backgroundColor:null
                             fontColor = css[ci].style.color!==''?css[ci].style.color:null
                             textAlign = css[ci].style.textAlign!==''?css[ci].style.textAlign:'center'
-                            fontSize = css[ci].style.fontSize!==''?css[ci].style.fontSize.replace('pt','px'):'12px'
+                            fontSize = css[ci].style.fontSize!==''?css[ci].style.fontSize.replace('pt',''):12
                             fontFamily = css[ci].style.fontFamily!==''?css[ci].style.fontFamily:null
                         }
                     }
@@ -281,7 +333,7 @@ export default class SelectPlugin{
                         bgColor,
                         fontColor,
                         font,
-                        fontSize,
+                        fontSize:fontSize??12,
                         fontFamily
                     }
                 }
@@ -548,6 +600,38 @@ export default class SelectPlugin{
 
         document.addEventListener('paste',event=>{
             const { clickRectShow,clickCell } = this.contentComponent
+
+            // 判断是否是从其他的表格复制的数据
+            const pasteStr = event.clipboardData.getData('text/html')
+            const tableDom = this.transformTableDomStrToDom(pasteStr)
+            // console.log('tableDom',tableDom)
+            if(Array.isArray(tableDom) && !tableDom[0][0].getAttribute('data-json')){
+                // 不在本表格复制
+                let beforePasteStr = ''
+                const rowDiff = tableDom.length
+                const colDiff = tableDom[0].length
+                beforePasteStr = JSON.stringify(this.searchPastePositionCells(colDiff-1,rowDiff-1,clickCell))
+
+                // 一个框
+                this.core.plugins.SettingPlugin.changeStepArr({
+                    type:15,
+                    pre:{
+                        label:clickCell.label,
+                        pasteStr:beforePasteStr
+                    },
+                    next:{
+                        label:clickCell.label,
+                        pasteStr
+                    }
+                })
+                this.core.ws.wsSend(15,{pasteStr,label:clickCell.label})
+                this.transformTableDomStrToCanvasCell(pasteStr,clickCell)
+                this.contentComponent.setSecondClickCell(null)
+                return;
+            }
+
+
+
             if(this.core.copyCellDash.length === 1){
                 if(this.searchRectIsMergeInTwoCell(clickCell,null)){
                     this.settingPlugin.showDialog('提示','合并的单元格无法粘贴内容')
@@ -573,7 +657,6 @@ export default class SelectPlugin{
             }
 
             if(clickRectShow && this.core.copyCellDash.length>0){
-                const pasteStr = event.clipboardData.getData('text/html')
                 let beforePasteStr = ''
                 const firstCell = this.core.copyCellDash[0]
                 const finalCell = this.core.copyCellDash[this.core.copyCellDash.length - 1]
@@ -607,6 +690,8 @@ export default class SelectPlugin{
         document.addEventListener('copy',event=>{
             // console.log('copy')
             event.preventDefault()
+            // clear clipboardData
+            this.core.copyCellDash = []
             const str = this.transformCanvasCellToTableDomStr()
             event.clipboardData.setData('text/html', str);
             const { clickCell,moreSelectedCell } = this.contentComponent

@@ -91,7 +91,6 @@ export default class Canvas{
         ctx.globalCompositeOperation = globalCompositeOperation??'source-over'
         rectWidth = rectWidth??cellWidth
         rectHeight = rectHeight??cellHeight
-
         ctx.font = font?`${font.fontWeight+' '}${font.fontItalic+' '}${font.fontSize}px ${font.fontFamily}`:'12px Calibre'
         ctx.fillStyle= color?color:"black";
         const baseX = x+rectWidth/2
