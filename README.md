@@ -93,6 +93,7 @@ cargo run
 - [x] background-color
 - [x] horizontal-alignment
 - [x] vertical-alignment
+- [x] strikethrough
 - [x] export-data
 - [ ] import-data
 - [x] forward
