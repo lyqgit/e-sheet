@@ -103,7 +103,12 @@ export default class SideComponent{
 
         for(let i=0;i<sideRectGroup.length;i++){
             const tempSide = sideRectGroup[i]
-            this.layer.drawText(0,tempSide.y+cellHeight-offsetY,tempSide.row,cellHeight,tempSide.height,'destination-over')
+            this.layer.drawText(0,tempSide.y+cellHeight-offsetY,tempSide.row,cellHeight,tempSide.height,'destination-over',null,null, {
+                fontSize:tempSide.fontSize,
+                fontWeight:tempSide.fontWeight,
+                fontItalic:tempSide.fontItalic,
+                fontFamily:tempSide.fontFamily
+            })
             this.layer.drawLine([0,tempSide.y+cellHeight-offsetY,cellHeight,tempSide.y+cellHeight-offsetY],'destination-over',borderColor)
             // if(clickCell.row === tempSide.row && clickRectShow && !isColSelect){
             //     this.layer.drawFillRect(0,tempSide.y+cellHeight-offsetY,cellHeight,cellHeight,selectedBgColor,'destination-over')

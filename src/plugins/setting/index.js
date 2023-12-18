@@ -40,6 +40,10 @@ export default class setting{
     /**
      * @type {HTMLElement}
      */
+    fontStrikethroughBtnDom = null
+    /**
+     * @type {HTMLElement}
+     */
     cellMergerBtnDom = null
     /**
      * @type {HTMLElement}
@@ -160,6 +164,17 @@ export default class setting{
     }
 
     /**
+     * @param {string} strikethrough
+     */
+    cellStrikethroughChange(strikethrough){
+        if(!this.contentComponent.clickCell){
+            return
+        }
+        this.contentComponent.clickCell.strikethrough = strikethrough
+        this.core.freshContent()
+    }
+
+    /**
      * @param {string} fontItalic
      */
     cellFontItalicChange(fontItalic){
@@ -178,6 +193,7 @@ export default class setting{
         this.fontVerAddrGroup.setAttribute('value',attr.textBaseline)
         this.fontSizeSelectDom.setAttribute('value',attr.fontSize)
         this.fontWeightBtnDom.setAttribute('current',attr.fontWeight)
+        this.fontStrikethroughBtnDom.setAttribute('current',attr.strikethrough)
         this.fontItalicBtnDom.setAttribute('current',attr.fontItalic)
         if(attr.isMerge){
             this.cellMergerBtnDom.style.display = 'none'
@@ -346,10 +362,13 @@ export default class setting{
                 })
                 this.core.ws.wsSend(17,{next:fObj.next})
                 break
+            case 18: // 文字删除线
+                selectedCell.strikethrough = fObj.next
+                break
         }
 
         // redo
-        if([1,2,3,4,5,6,7,8].includes(fObj.type)){
+        if([1,2,3,4,5,6,7,8,18].includes(fObj.type)){
             this.wsSendCellAttrByTypeAndData(fObj.type)
         }
 
@@ -465,10 +484,13 @@ export default class setting{
                 })
                 this.core.ws.wsSend(17,{undo:true,pre:fObj.pre})
                 break
+            case 18: // 文字删除线
+                selectedCell.strikethrough = fObj.pre
+                break
         }
 
         // undo
-        if([1,2,3,4,5,6,7,8].includes(fObj.type)){
+        if([1,2,3,4,5,6,7,8,18].includes(fObj.type)){
             this.wsSendCellAttrByTypeAndData(fObj.type)
         }
 
@@ -803,13 +825,50 @@ export default class setting{
 
         })
 
+        const fontStrikethroughBtnDom =
+            h('e-sheet-radio-button',{
+                style:{
+                    marginLeft:'6px'
+                },
+                attribute:{
+                    label:'删除线',
+                    value:'true'
+                },
+            },[
+                h('e-sheet-icon-svg',{
+                    attribute:{
+                        category:'font',
+                        position:'strikethrough'
+                    }
+                })
+            ])
+
+        this.fontStrikethroughBtnDom = fontStrikethroughBtnDom
+        fontStrikethroughBtnDom.addEventListener('e-sheet-radio-group-change',evt=>{
+            // console.log('evt',evt)
+            if(fontStrikethroughBtnDom.getAttribute('current') === ''){
+                fontStrikethroughBtnDom.setAttribute('current',evt.detail)
+                this.convenientChangeStepArr(18,'strikethrough',evt.detail)
+                this.cellStrikethroughChange('true')
+            }else{
+                fontStrikethroughBtnDom.setAttribute('current','')
+                this.convenientChangeStepArr(18,'strikethrough','')
+                this.cellStrikethroughChange('')
+            }
+            this.wsSendCellAttrByTypeAndData(18)
+        })
+
+
+
+
         const fontStyleGroupDom = h('div',{
             attr:{
                 className:'e-sheet-font-style-layout'
             }
         },[
             fontWeightBtnDom,
-            fontItalicBtnDom
+            fontItalicBtnDom,
+            fontStrikethroughBtnDom
         ])
 
         fontSizeAndFamilyLayoutDom.appendChild(fontStyleGroupDom)

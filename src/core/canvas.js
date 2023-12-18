@@ -79,18 +79,21 @@ export default class Canvas{
      * @param {number} x
      * @param {number} y
      * @param {string} text
-     * @param {number} cellWidth
-     * @param {number} cellHeight
+     * @param {number} rectWidth
+     * @param {number} rectHeight
+     * @param {GlobalCompositeOperation | string} globalCompositeOperation
      * @param {Color} color
      * @param {string} textAlign
      * @param {object} font
      * @param {string} textBaseline
+     * @param {string} strikethrough
      */
-    drawText(x,y,text,rectWidth,rectHeight,globalCompositeOperation,color,textAlign='center',font,textBaseline){
+    drawText(x,y,text='',rectWidth,rectHeight,globalCompositeOperation,color,textAlign='center',font,textBaseline,strikethrough=false){
         const { ctx,cellWidth,cellHeight } = this
         ctx.globalCompositeOperation = globalCompositeOperation??'source-over'
         rectWidth = rectWidth??cellWidth
         rectHeight = rectHeight??cellHeight
+        font.fontSize = font.fontSize??12
         ctx.font = font?`${font.fontWeight+' '}${font.fontItalic+' '}${font.fontSize}px ${font.fontFamily}`:'12px Calibre'
         ctx.fillStyle= color?color:"black";
         const baseX = x+rectWidth/2
@@ -130,6 +133,45 @@ export default class Canvas{
         }
 
         ctx.fillText(tempText,alignX,alignY,rectWidth)
+
+        if(strikethrough === 'true'&&text){
+            const strikeObj = ctx.measureText(tempText)
+            if(textAlign === 'right' && textBaseline==='middle'){
+                this.drawStrikethrough(alignX-strikeObj.width,alignY,alignX,alignY)
+            }if(textAlign === 'left' && textBaseline==='middle'){
+                this.drawStrikethrough(alignX,alignY,alignX+strikeObj.width,alignY)
+            }if(textAlign === 'center' && textBaseline==='top'){
+                this.drawStrikethrough(alignX-(strikeObj.width/2),alignY+font.fontSize/2,alignX+(strikeObj.width/2),alignY+font.fontSize/2)
+            }if(textAlign === 'center' && textBaseline==='bottom'){
+                this.drawStrikethrough(alignX-(strikeObj.width/2),alignY-font.fontSize/2,alignX+(strikeObj.width/2),alignY-font.fontSize/2)
+            }if(textAlign === 'right' && textBaseline==='bottom'){
+                this.drawStrikethrough(alignX-strikeObj.width,alignY-font.fontSize/2,alignX,alignY-font.fontSize/2)
+            }if(textAlign === 'right' && textBaseline==='top'){
+                this.drawStrikethrough(alignX-strikeObj.width,alignY+font.fontSize/2,alignX,alignY+font.fontSize/2)
+            }if(textAlign === 'left' && textBaseline==='bottom'){
+                this.drawStrikethrough(alignX,alignY-font.fontSize/2,alignX+strikeObj.width,alignY-font.fontSize/2)
+            }if(textAlign === 'left' && textBaseline==='top'){
+                this.drawStrikethrough(alignX,alignY+font.fontSize/2,alignX+strikeObj.width,alignY+font.fontSize/2)
+            }else if(textAlign === 'center' && textBaseline==='middle'){
+                this.drawStrikethrough(alignX-(strikeObj.width/2),alignY,alignX+(strikeObj.width/2),alignY)
+            }
+        }
+    }
+
+    /**
+     * @param {number} startX
+     * @param {number} startY
+     * @param {number} endX
+     * @param {number} endY
+     */
+    drawStrikethrough(startX,startY,endX,endY){
+        this.ctx.strokeStyle = 'black'
+        this.ctx.lineWidth = 1
+        this.ctx.beginPath();
+        this.ctx.moveTo(startX,startY)
+        this.ctx.lineTo(endX,endY)
+        this.ctx.closePath();
+        this.ctx.stroke();
     }
 
     /**

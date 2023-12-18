@@ -202,8 +202,11 @@ export default class WebsocketPlugin {
                 this.core.plugins.SelectPlugin.transformTableDomStrToCanvasCell(item.tableDomStr,cell,false)
             })
         }
+    }
 
-
+    wsMsgCallbackType18(data){
+        // 背景颜色
+        this.contentComponent.changeRectAttrByLabel(data.command,'strikethrough')
     }
 
     changeUserShow(data){
@@ -318,6 +321,9 @@ export default class WebsocketPlugin {
                     break
                 case 17:
                     this.wsMsgCallbackType17(data)
+                    break
+                case 18:
+                    this.wsMsgCallbackType18(data)
                     break
             }
 

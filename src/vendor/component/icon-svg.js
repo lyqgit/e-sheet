@@ -70,6 +70,9 @@ export default class IconSvg extends HTMLElement{
                 case 'italic':
                     this.innerHTML = '<svg width="20" height="20" fill="none" viewBox="0 0 20 20" size="20" data-spm-anchor-id=""><defs><clipPath id="master_svg0_7600_9375"><rect width="20" height="20" rx="0"></rect></clipPath></defs><g clip-path="url(#master_svg0_7600_9375)"><path fill="currentColor" d="M12 4h3V3H8v1h2.769l-2.77 12H5v1h7v-1H9.231l2.77-12Z"></path></g></svg>'
                     return;
+                case 'strikethrough':
+                    this.innerHTML = '<svg width="20" height="20" fill="none" viewBox="0 0 20 20" size="20"><defs><clipPath id="dadee3_0"><rect width="20" height="20" rx="0"></rect></clipPath></defs><g clip-path="url(#dadee3_0)"><path fill="currentColor" d="M3 17v1h13v-1H3Zm3-6.5V3H5v7.5a4.5 4.5 0 1 0 9 0V3h-1v7.5a3.5 3.5 0 1 1-7 0Z"></path></g></svg>'
+                    return;
             }
         }
 

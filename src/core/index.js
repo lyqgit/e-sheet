@@ -361,6 +361,7 @@ export default class AppExcel{
                     fontFamily:'Calibre',
                     textAlign:'center',
                     textBaseline:'middle',
+                    strikethrough:'',
                     label
                 })
                 colWidth += cellWidth
