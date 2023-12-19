@@ -206,6 +206,10 @@ export default class ContextmenuPlugin{
     }
 
     mergeCell=(clickCell,mergeSelectedCell,changeClickCell = true)=>{
+        if(mergeSelectedCell.length === 1 && mergeSelectedCell[0].label === clickCell.label){
+            this.settingPlugin.showDialog('提示','单个单元格无法合并')
+            return
+        }
         if(mergeSelectedCell.some(item=>item.isMerge) || mergeSelectedCell.length === 0){
             this.settingPlugin.showDialog('提示','当前选中的单元格中有合并的单元格，无法合并')
             return
