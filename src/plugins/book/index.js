@@ -87,6 +87,21 @@ export default class BookPlugin{
         }))
     }
 
+    freshBookSheet(){
+        this.sheetArrLayoutDom.childNodes.forEach(childNode=>childNode.remove())
+        this.core.eSheetWorkBook.forEach((item,index)=>{
+            this.sheetArrLayoutDom.appendChild(this.core.h('span',{
+                attr:{
+                    innerText:item.label,
+                    className:'item-span'+(this.core.currentSheetIndex===index?' active-item-span':'')
+                },
+                attribute:{
+                    index:this.core.currentSheetIndex
+                }
+            }))
+        })
+    }
+
     switchSheet(index){
         this.core.switchSheet(index)
         const { currentSheetIndex } = this.core

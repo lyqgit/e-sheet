@@ -44,6 +44,10 @@ export default class setting{
     /**
      * @type {HTMLElement}
      */
+    fontUnderlineBtnDom = null
+    /**
+     * @type {HTMLElement}
+     */
     cellMergerBtnDom = null
     /**
      * @type {HTMLElement}
@@ -164,6 +168,17 @@ export default class setting{
     }
 
     /**
+     * @param {string} underline
+     */
+    cellUnderlineChange(underline){
+        if(!this.contentComponent.clickCell){
+            return
+        }
+        this.contentComponent.clickCell.underline = underline
+        this.core.freshContent()
+    }
+
+    /**
      * @param {string} strikethrough
      */
     cellStrikethroughChange(strikethrough){
@@ -194,6 +209,7 @@ export default class setting{
         this.fontSizeSelectDom.setAttribute('value',attr.fontSize)
         this.fontWeightBtnDom.setAttribute('current',attr.fontWeight)
         this.fontStrikethroughBtnDom.setAttribute('current',attr.strikethrough)
+        this.fontUnderlineBtnDom.setAttribute('current',attr.underline)
         this.fontItalicBtnDom.setAttribute('current',attr.fontItalic)
         if(attr.isMerge){
             this.cellMergerBtnDom.style.display = 'none'
@@ -365,10 +381,13 @@ export default class setting{
             case 18: // 文字删除线
                 selectedCell.strikethrough = fObj.next
                 break
+            case 19: // 文字下划线
+                selectedCell.underline = fObj.next
+                break
         }
 
         // redo
-        if([1,2,3,4,5,6,7,8,18].includes(fObj.type)){
+        if([1,2,3,4,5,6,7,8,18,19].includes(fObj.type)){
             this.wsSendCellAttrByTypeAndData(fObj.type)
         }
 
@@ -487,10 +506,13 @@ export default class setting{
             case 18: // 文字删除线
                 selectedCell.strikethrough = fObj.pre
                 break
+            case 19: // 文字下线
+                selectedCell.underline = fObj.pre
+                break
         }
 
         // undo
-        if([1,2,3,4,5,6,7,8,18].includes(fObj.type)){
+        if([1,2,3,4,5,6,7,8,18,19].includes(fObj.type)){
             this.wsSendCellAttrByTypeAndData(fObj.type)
         }
 
@@ -603,118 +625,10 @@ export default class setting{
 
 
         // 操作文字横向对齐
-        const fontHorAddrGroup = h('e-sheet-radio-group',{},[
-            h('e-sheet-radio-button',{
-                attribute:{
-                    label:'左对齐',
-                    value:'left'
-                },
-            },[
-                h('e-sheet-icon-svg',{
-                    attribute:{
-                        category:'hor',
-                        position:'left'
-                    }
-                })
-            ]),
-            h('e-sheet-radio-button',{
-                style:{
-                    marginLeft:'6px'
-                },
-                attribute:{
-                    label:'居中对齐',
-                    value:'center'
-                },
-            },[
-                h('e-sheet-icon-svg',{
-                    attribute:{
-                        category:'hor',
-                        position:'center'
-                    }
-                })
-            ]),
-            h('e-sheet-radio-button',{
-                style:{
-                    marginLeft:'6px'
-                },
-                attribute:{
-                    label:'右对齐',
-                    value:'right'
-                },
-            },[
-                h('e-sheet-icon-svg',{
-                    attribute:{
-                        category:'hor',
-                        position:'right'
-                    }
-                })
-            ])
-        ])
-        this.fontHorAddrGroup = fontHorAddrGroup
-        fontHorAddrGroup.addEventListener('e-sheet-radio-group-onchange',evt=>{
-            // console.log('evt',evt)
-            this.convenientChangeStepArr(4,'textAlign',evt.detail)
-
-            this.cellFontTextAlignChange(evt.detail)
-            this.wsSendCellAttrByTypeAndData(4)
-        })
+        this.createFontHorAddrGroup();
 
         // 操作文字纵向对齐
-        const fontVerAddrGroup = h('e-sheet-radio-group',{},[
-            h('e-sheet-radio-button',{
-                attribute:{
-                    label:'顶部对齐',
-                    value:'top'
-                },
-            },[
-                h('e-sheet-icon-svg',{
-                    attribute:{
-                        category:'ver',
-                        position:'top'
-                    }
-                })
-            ]),
-            h('e-sheet-radio-button',{
-                style:{
-                    marginLeft:'6px'
-                },
-                attribute:{
-                    label:'垂直居中',
-                    value:'middle'
-                },
-            },[
-                h('e-sheet-icon-svg',{
-                    attribute:{
-                        category:'ver',
-                        position:'middle'
-                    }
-                })
-            ]),
-            h('e-sheet-radio-button',{
-                style:{
-                    marginLeft:'6px'
-                },
-                attribute:{
-                    label:'底部对齐',
-                    value:'bottom'
-                },
-            },[
-                h('e-sheet-icon-svg',{
-                    attribute:{
-                        category:'ver',
-                        position:'bottom'
-                    }
-                })
-            ])
-        ])
-
-        this.fontVerAddrGroup = fontVerAddrGroup
-        fontVerAddrGroup.addEventListener('e-sheet-radio-group-onchange',evt=>{
-            // console.log('evt',evt)
-            this.convenientChangeStepArr(3,'textBaseLine',evt.detail)
-            this.cellFontTextBaseLineChange(evt.detail)
-            this.wsSendCellAttrByTypeAndData(3)
-        })
+        this.createFontVerAddrGroup();
 
         const settingTopDom = h('div',{
             attr:{
@@ -726,21 +640,12 @@ export default class setting{
                 className:'font-position-layout'
             }
         })
-        fontPositionDom.appendChild(fontVerAddrGroup)
-        fontPositionDom.appendChild(fontHorAddrGroup)
+        fontPositionDom.appendChild(this.fontVerAddrGroup)
+        fontPositionDom.appendChild(this.fontHorAddrGroup)
 
 
         // 字体大小设置
-
-        const fontSizeSelectDom = h('e-sheet-select',{})
-
-        fontSizeSelectDom.addEventListener('e-sheet-select-onchange',evt=>{
-
-            this.convenientChangeStepArr(2,'fontSize',parseInt(evt.detail))
-            this.cellFontSizeChange(evt.detail)
-            this.wsSendCellAttrByTypeAndData(2)
-        })
-        fontSizeSelectDom.setAttribute('label','字号')
+        this.createFontSizeSelectDom()
 
         const fontSizeAndFamilyLayoutDom = h('div',{
             attr:{
@@ -754,180 +659,40 @@ export default class setting{
             }
         })
 
-        this.fontSizeSelectDom = fontSizeSelectDom
-
-        fontSizeAndFamilyLayoutDom.appendChild(fontSizeSelectDom)
 
 
-        // 字体粗体和斜体设置
-
-        const fontWeightBtnDom =
-            h('e-sheet-radio-button',{
-                attribute:{
-                    label:'粗体',
-                    value:'bold'
-                },
-            },[
-                h('e-sheet-icon-svg',{
-                    attribute:{
-                        category:'font',
-                        position:'weight'
-                    }
-                })
-            ])
-
-        this.fontWeightBtnDom = fontWeightBtnDom
-        fontWeightBtnDom.addEventListener('e-sheet-radio-group-change',evt=>{
-            // console.log('evt',evt)
-            if(fontWeightBtnDom.getAttribute('current') === ''){
-                fontWeightBtnDom.setAttribute('current',evt.detail)
-                this.convenientChangeStepArr(5,'fontWeight',evt.detail)
-                this.cellFontWeightChange(evt.detail)
-            }else{
-                fontWeightBtnDom.setAttribute('current','')
-                this.convenientChangeStepArr(5,'fontWeight','')
-                this.cellFontWeightChange('')
-            }
-            this.wsSendCellAttrByTypeAndData(5)
-        })
-
-        const fontItalicBtnDom = h('e-sheet-radio-button',{
-            style:{
-                marginLeft:'6px'
-            },
-            attribute:{
-                label:'斜体',
-                value:'italic'
-            },
-        },[
-            h('e-sheet-icon-svg',{
-                attribute:{
-                    category:'font',
-                    position:'italic'
-                }
-            })
-        ])
-
-        this.fontItalicBtnDom = fontItalicBtnDom
-
-        fontItalicBtnDom.addEventListener('e-sheet-radio-group-change',evt=>{
-            // console.log('evt',evt)
-            if(fontItalicBtnDom.getAttribute('current') === ''){
-                fontItalicBtnDom.setAttribute('current',evt.detail)
-                this.convenientChangeStepArr(6,'fontItalic',evt.detail)
-                this.cellFontItalicChange(evt.detail)
-            }else{
-                fontItalicBtnDom.setAttribute('current','')
-                this.convenientChangeStepArr(6,'fontItalic','')
-                this.cellFontItalicChange('')
-            }
-            this.wsSendCellAttrByTypeAndData(6)
-
-        })
-
-        const fontStrikethroughBtnDom =
-            h('e-sheet-radio-button',{
-                style:{
-                    marginLeft:'6px'
-                },
-                attribute:{
-                    label:'删除线',
-                    value:'true'
-                },
-            },[
-                h('e-sheet-icon-svg',{
-                    attribute:{
-                        category:'font',
-                        position:'strikethrough'
-                    }
-                })
-            ])
-
-        this.fontStrikethroughBtnDom = fontStrikethroughBtnDom
-        fontStrikethroughBtnDom.addEventListener('e-sheet-radio-group-change',evt=>{
-            // console.log('evt',evt)
-            if(fontStrikethroughBtnDom.getAttribute('current') === ''){
-                fontStrikethroughBtnDom.setAttribute('current',evt.detail)
-                this.convenientChangeStepArr(18,'strikethrough',evt.detail)
-                this.cellStrikethroughChange('true')
-            }else{
-                fontStrikethroughBtnDom.setAttribute('current','')
-                this.convenientChangeStepArr(18,'strikethrough','')
-                this.cellStrikethroughChange('')
-            }
-            this.wsSendCellAttrByTypeAndData(18)
-        })
+        fontSizeAndFamilyLayoutDom.appendChild(this.fontSizeSelectDom)
 
 
-
+        // 字体粗体
+        this.createFontWeightBtnDom()
+        // 斜体字
+        this.createFontItalicBtnDom()
+        // 下划线
+        this.createFontUnderlineBtnDom()
+        // 删除线
+        this.createFontStrikethroughBtnDom()
 
         const fontStyleGroupDom = h('div',{
             attr:{
                 className:'e-sheet-font-style-layout'
             }
         },[
-            fontWeightBtnDom,
-            fontItalicBtnDom,
-            fontStrikethroughBtnDom
+            this.fontWeightBtnDom,
+            this.fontItalicBtnDom,
+            this.fontUnderlineBtnDom,
+            this.fontStrikethroughBtnDom
         ])
 
         fontSizeAndFamilyLayoutDom.appendChild(fontStyleGroupDom)
 
 
         // 字体颜色设置
-        const fontColorSelectDom = h('e-sheet-icon-color-svg',{
-            attribute:{
-                category:'font-color'
-            }
-        })
-
-        fontColorSelectDom.addEventListener('e-sheet-icon-color-svg-onchange',evt=>{
-            this.convenientChangeStepArr(7,'fontColor',evt.detail)
-            this.cellFontColorChange(evt.detail)
-            this.wsSendCellAttrByTypeAndData(7)
-        })
-
-        const fontColorSelectTipConDom = h('e-sheet-tip',{
-            attribute:{
-                'tip-label':'字体颜色',
-                'left':-10,
-                'top':22,
-            }
-        })
-
-        fontColorSelectTipConDom.appendChild(fontColorSelectDom)
-        this.fontColorSelectDom = fontColorSelectDom
-
-
-        fontColorAndBgColorDom.appendChild(fontColorSelectTipConDom)
+        fontColorAndBgColorDom.appendChild(this.createFontColorSelectDom())
 
 
         // 背景颜色设置
-        const bgColorSelectTipConDom = h('e-sheet-tip',{
-            attribute:{
-                'tip-label':'背景颜色',
-                'left':-10,
-                'top':22,
-            }
-        })
-
-        const bgColorSelectDom = h('e-sheet-icon-color-svg',{
-            attribute:{
-                category:'bg-color'
-            }
-        })
-
-        this.bgColorSelectDom = bgColorSelectDom
-
-        bgColorSelectTipConDom.appendChild(bgColorSelectDom)
-
-        bgColorSelectDom.addEventListener('e-sheet-icon-color-svg-onchange',evt=>{
-            this.convenientChangeStepArr(8,'bgColor',evt.detail)
-            this.cellBgColorChange(evt.detail)
-            this.wsSendCellAttrByTypeAndData(8)
-        })
-
-        fontColorAndBgColorDom.appendChild(bgColorSelectTipConDom)
+        fontColorAndBgColorDom.appendChild(this.createBgColorSelectDom())
 
         const divideLine = h('div',{
             attr:{
@@ -935,129 +700,18 @@ export default class setting{
             }
         })
 
-
-        const cellMergerBtnDom = h('e-sheet-tip',{
-            attribute:{
-                'tip-label':'合并单元格',
-                left:4,
-                top:24,
-            }
-        },[
-            h('div',{
-                attr:{
-                    className:'e-sheet-font-style-layout e-sheet-cell-hover'
-                },
-                style:{
-                    padding:'2px',
-                    userSelect:'none'
-                }
-            },[
-                h('e-sheet-icon-svg',{
-                    attribute:{
-                        category:'cell',
-                        position:'merge'
-                    }
-                }),
-                h('div',{
-                    attr:{
-                        innerText: '合并单元格',
-                        className:'e-sheet-cell-font'
-                    }
-                })
-            ])
-        ])
-
-        const cellSplitBtnDom = h('e-sheet-tip',{
-            style:{
-                display:'none'
-            }
-        },[
-            h('div',{
-                attr:{
-                    className:'e-sheet-font-style-layout e-sheet-cell-hover'
-                },
-                style:{
-                    cursor:'pointer',
-                    padding:'2px'
-                }
-            },[
-                h('e-sheet-icon-svg',{
-                    attribute:{
-                        category:'cell',
-                        position:'split'
-                    }
-                }),
-                h('div',{
-                    attr:{
-                        innerText: '拆分单元格',
-                        className:'e-sheet-cell-font'
-                    }
-                })
-            ])
-        ])
+        // 合并按钮
+        this.createCellMergerBtnDom()
+        // 拆分按钮
+        this.createCellSplitBtnDom()
 
         const cellMergeAndSplitLayoutDom = h('div',{
             attr:{
                 className:'font-position-layout'
             }
         })
-
-        cellMergerBtnDom.onclick=_=>{
-            const { clickCell,mergeSelectedCell } = this.contentComponent
-            const stepObj = {
-                type:9,
-                label:clickCell.label
-            }
-            const tempGroupCell = [clickCell,...mergeSelectedCell].sort((a,b)=>{return (a.row - b.row)+(a.col - b.col) })
-
-            stepObj.pre = tempGroupCell[0].label
-            stepObj.next = tempGroupCell.map(item=>item.label)
-            this.changeStepArr(stepObj)
-            this.wsSendInfoByTypeAndData(9,stepObj.next)
-            this.core.plugins.ContextmenuPlugin.mergeCell(tempGroupCell[0],tempGroupCell.slice(0))
-            // if(mergeSelectedCell.some(item=>item.isMerge) || mergeSelectedCell.length === 0){
-            //     return
-            // }
-            cellMergerBtnDom.style.display = 'none'
-            cellSplitBtnDom.style.display = 'flex'
-        }
-        cellSplitBtnDom.onclick=_=>{
-            const { clickCell } = this.contentComponent
-            const next = {
-                row:clickCell.row,
-                col:clickCell.col,
-                mergeRow:clickCell.mergeRow,
-                mergeCol:clickCell.mergeCol,
-                mergeStartLabel:clickCell.mergeStartLabel,
-                mergeEndLabel:clickCell.mergeEndLabel,
-                isMerge:false,
-            }
-            this.changeStepArr({
-                type:10,
-                label:clickCell.label,
-                pre:{
-                    row:clickCell.row,
-                    col:clickCell.col,
-                    mergeRow:clickCell.mergeRow,
-                    mergeCol:clickCell.mergeCol,
-                    mergeStartLabel:clickCell.mergeStartLabel,
-                    mergeEndLabel:clickCell.mergeEndLabel,
-                    isMerge:true,
-                },
-                next
-            })
-            this.wsSendInfoByTypeAndData(10,next)
-            this.core.plugins.ContextmenuPlugin.splitCell(clickCell)
-            // this.convenientGroupChangeStepArr()
-            cellMergerBtnDom.style.display = 'flex'
-            cellSplitBtnDom.style.display = 'none'
-        }
-
-        this.cellMergerBtnDom = cellMergerBtnDom
-        this.cellSplitBtnDom = cellSplitBtnDom
-
-        cellMergeAndSplitLayoutDom.appendChild(cellMergerBtnDom)
-        cellMergeAndSplitLayoutDom.appendChild(cellSplitBtnDom)
+        cellMergeAndSplitLayoutDom.appendChild(this.cellMergerBtnDom)
+        cellMergeAndSplitLayoutDom.appendChild(this.cellSplitBtnDom)
         cellMergeAndSplitLayoutDom.appendChild(h('div',{
             attr:{
                 innerText:'单元格',
@@ -1070,6 +724,25 @@ export default class setting{
 
         // 撤销和重做
 
+        settingTopDom.appendChild(this.createStepDom())
+        settingTopDom.appendChild(divideLine.cloneNode())
+
+        settingTopDom.appendChild(fontPositionDom)
+        settingTopDom.appendChild(divideLine.cloneNode())
+
+        settingTopDom.appendChild(fontSizeAndFamilyLayoutDom)
+        settingTopDom.appendChild(divideLine.cloneNode())
+        settingTopDom.appendChild(fontColorAndBgColorDom)
+        settingTopDom.appendChild(divideLine.cloneNode())
+        settingTopDom.appendChild(cellMergeAndSplitLayoutDom)
+
+        this.selectorDom.insertBefore(settingTopDom,settingDom)
+
+    }
+
+
+    createStepDom(){
+        const { h } = this.core
         const stepForwardDom =
             h('e-sheet-radio-button',{
                 attribute:{
@@ -1129,27 +802,465 @@ export default class setting{
                 className:'font-position-layout'
             }
         })
-
         stepLayout.appendChild(stepForwardDom)
         stepLayout.appendChild(stepFallbackDom)
+        return stepLayout
+    }
 
-        settingTopDom.appendChild(stepLayout)
-        settingTopDom.appendChild(divideLine.cloneNode())
+    createCellSplitBtnDom(){
+        const { h } = this.core
+        const cellSplitBtnDom = h('e-sheet-tip',{
+            style:{
+                display:'none'
+            }
+        },[
+            h('div',{
+                attr:{
+                    className:'e-sheet-font-style-layout e-sheet-cell-hover'
+                },
+                style:{
+                    cursor:'pointer',
+                    padding:'2px'
+                }
+            },[
+                h('e-sheet-icon-svg',{
+                    attribute:{
+                        category:'cell',
+                        position:'split'
+                    }
+                }),
+                h('div',{
+                    attr:{
+                        innerText: '拆分单元格',
+                        className:'e-sheet-cell-font'
+                    }
+                })
+            ])
+        ])
 
-        settingTopDom.appendChild(fontPositionDom)
-        settingTopDom.appendChild(divideLine.cloneNode())
-
-        settingTopDom.appendChild(fontSizeAndFamilyLayoutDom)
-        settingTopDom.appendChild(divideLine.cloneNode())
-        settingTopDom.appendChild(fontColorAndBgColorDom)
-        settingTopDom.appendChild(divideLine.cloneNode())
-        settingTopDom.appendChild(cellMergeAndSplitLayoutDom)
-
-        this.selectorDom.insertBefore(settingTopDom,settingDom)
 
 
 
+        cellSplitBtnDom.onclick=_=>{
+            const { clickCell } = this.contentComponent
+            const next = {
+                row:clickCell.row,
+                col:clickCell.col,
+                mergeRow:clickCell.mergeRow,
+                mergeCol:clickCell.mergeCol,
+                mergeStartLabel:clickCell.mergeStartLabel,
+                mergeEndLabel:clickCell.mergeEndLabel,
+                isMerge:false,
+            }
+            this.changeStepArr({
+                type:10,
+                label:clickCell.label,
+                pre:{
+                    row:clickCell.row,
+                    col:clickCell.col,
+                    mergeRow:clickCell.mergeRow,
+                    mergeCol:clickCell.mergeCol,
+                    mergeStartLabel:clickCell.mergeStartLabel,
+                    mergeEndLabel:clickCell.mergeEndLabel,
+                    isMerge:true,
+                },
+                next
+            })
+            this.wsSendInfoByTypeAndData(10,next)
+            this.core.plugins.ContextmenuPlugin.splitCell(clickCell)
+            // this.convenientGroupChangeStepArr()
+            this.cellMergerBtnDom.style.display = 'flex'
+            cellSplitBtnDom.style.display = 'none'
+        }
 
+        this.cellSplitBtnDom = cellSplitBtnDom
+    }
+
+    createCellMergerBtnDom(){
+        const { h } = this.core
+        const cellMergerBtnDom = h('e-sheet-tip',{
+            attribute:{
+                'tip-label':'合并单元格',
+                left:4,
+                top:24,
+            }
+        },[
+            h('div',{
+                attr:{
+                    className:'e-sheet-font-style-layout e-sheet-cell-hover'
+                },
+                style:{
+                    padding:'2px',
+                    userSelect:'none'
+                }
+            },[
+                h('e-sheet-icon-svg',{
+                    attribute:{
+                        category:'cell',
+                        position:'merge'
+                    }
+                }),
+                h('div',{
+                    attr:{
+                        innerText: '合并单元格',
+                        className:'e-sheet-cell-font'
+                    }
+                })
+            ])
+        ])
+
+        cellMergerBtnDom.onclick=_=>{
+            const { clickCell,mergeSelectedCell } = this.contentComponent
+            const stepObj = {
+                type:9,
+                label:clickCell.label
+            }
+            const tempGroupCell = [clickCell,...mergeSelectedCell].sort((a,b)=>{return (a.row - b.row)+(a.col - b.col) })
+
+            stepObj.pre = tempGroupCell[0].label
+            stepObj.next = tempGroupCell.map(item=>item.label)
+            this.changeStepArr(stepObj)
+            this.wsSendInfoByTypeAndData(9,stepObj.next)
+            this.core.plugins.ContextmenuPlugin.mergeCell(tempGroupCell[0],tempGroupCell.slice(0))
+            // if(mergeSelectedCell.some(item=>item.isMerge) || mergeSelectedCell.length === 0){
+            //     return
+            // }
+            cellMergerBtnDom.style.display = 'none'
+            this.cellSplitBtnDom.style.display = 'flex'
+        }
+
+        this.cellMergerBtnDom = cellMergerBtnDom
+
+    }
+
+    createBgColorSelectDom(){
+        const { h } = this.core
+        const bgColorSelectTipConDom = h('e-sheet-tip',{
+            attribute:{
+                'tip-label':'背景颜色',
+                'left':-10,
+                'top':22,
+            }
+        })
+
+        const bgColorSelectDom = h('e-sheet-icon-color-svg',{
+            attribute:{
+                category:'bg-color'
+            }
+        })
+
+        this.bgColorSelectDom = bgColorSelectDom
+
+        bgColorSelectTipConDom.appendChild(bgColorSelectDom)
+
+        bgColorSelectDom.addEventListener('e-sheet-icon-color-svg-onchange',evt=>{
+            this.convenientChangeStepArr(8,'bgColor',evt.detail)
+            this.cellBgColorChange(evt.detail)
+            this.wsSendCellAttrByTypeAndData(8)
+        })
+
+        return bgColorSelectTipConDom
+    }
+
+    createFontColorSelectDom(){
+        const { h } = this.core
+        const fontColorSelectDom = h('e-sheet-icon-color-svg',{
+            attribute:{
+                category:'font-color'
+            }
+        })
+
+        fontColorSelectDom.addEventListener('e-sheet-icon-color-svg-onchange',evt=>{
+            this.convenientChangeStepArr(7,'fontColor',evt.detail)
+            this.cellFontColorChange(evt.detail)
+            this.wsSendCellAttrByTypeAndData(7)
+        })
+
+        const fontColorSelectTipConDom = h('e-sheet-tip',{
+            attribute:{
+                'tip-label':'字体颜色',
+                'left':-10,
+                'top':22,
+            }
+        })
+
+        fontColorSelectTipConDom.appendChild(fontColorSelectDom)
+        this.fontColorSelectDom = fontColorSelectDom
+        return fontColorSelectTipConDom
+    }
+
+    createFontHorAddrGroup(){
+        const { h } = this.core
+        const fontHorAddrGroup = h('e-sheet-radio-group',{},[
+            h('e-sheet-radio-button',{
+                attribute:{
+                    label:'左对齐',
+                    value:'left'
+                },
+            },[
+                h('e-sheet-icon-svg',{
+                    attribute:{
+                        category:'hor',
+                        position:'left'
+                    }
+                })
+            ]),
+            h('e-sheet-radio-button',{
+                style:{
+                    marginLeft:'6px'
+                },
+                attribute:{
+                    label:'居中对齐',
+                    value:'center'
+                },
+            },[
+                h('e-sheet-icon-svg',{
+                    attribute:{
+                        category:'hor',
+                        position:'center'
+                    }
+                })
+            ]),
+            h('e-sheet-radio-button',{
+                style:{
+                    marginLeft:'6px'
+                },
+                attribute:{
+                    label:'右对齐',
+                    value:'right'
+                },
+            },[
+                h('e-sheet-icon-svg',{
+                    attribute:{
+                        category:'hor',
+                        position:'right'
+                    }
+                })
+            ])
+        ])
+        this.fontHorAddrGroup = fontHorAddrGroup
+        fontHorAddrGroup.addEventListener('e-sheet-radio-group-onchange',evt=>{
+            // console.log('evt',evt)
+            this.convenientChangeStepArr(4,'textAlign',evt.detail)
+
+            this.cellFontTextAlignChange(evt.detail)
+            this.wsSendCellAttrByTypeAndData(4)
+        })
+    }
+
+    createFontVerAddrGroup(){
+        const { h } = this.core
+        const fontVerAddrGroup = h('e-sheet-radio-group',{},[
+            h('e-sheet-radio-button',{
+                attribute:{
+                    label:'顶部对齐',
+                    value:'top'
+                },
+            },[
+                h('e-sheet-icon-svg',{
+                    attribute:{
+                        category:'ver',
+                        position:'top'
+                    }
+                })
+            ]),
+            h('e-sheet-radio-button',{
+                style:{
+                    marginLeft:'6px'
+                },
+                attribute:{
+                    label:'垂直居中',
+                    value:'middle'
+                },
+            },[
+                h('e-sheet-icon-svg',{
+                    attribute:{
+                        category:'ver',
+                        position:'middle'
+                    }
+                })
+            ]),
+            h('e-sheet-radio-button',{
+                style:{
+                    marginLeft:'6px'
+                },
+                attribute:{
+                    label:'底部对齐',
+                    value:'bottom'
+                },
+            },[
+                h('e-sheet-icon-svg',{
+                    attribute:{
+                        category:'ver',
+                        position:'bottom'
+                    }
+                })
+            ])
+        ])
+
+        this.fontVerAddrGroup = fontVerAddrGroup
+        fontVerAddrGroup.addEventListener('e-sheet-radio-group-onchange',evt=>{
+            // console.log('evt',evt)
+            this.convenientChangeStepArr(3,'textBaseLine',evt.detail)
+            this.cellFontTextBaseLineChange(evt.detail)
+            this.wsSendCellAttrByTypeAndData(3)
+        })
+    }
+
+    createFontSizeSelectDom(){
+        const { h } = this.core
+        const fontSizeSelectDom = h('e-sheet-select',{})
+
+        fontSizeSelectDom.addEventListener('e-sheet-select-onchange',evt=>{
+
+            this.convenientChangeStepArr(2,'fontSize',parseInt(evt.detail))
+            this.cellFontSizeChange(evt.detail)
+            this.wsSendCellAttrByTypeAndData(2)
+        })
+        fontSizeSelectDom.setAttribute('label','字号')
+        this.fontSizeSelectDom = fontSizeSelectDom
+    }
+
+    createFontWeightBtnDom(){
+        // 粗体
+        const { h } = this.core
+        const fontWeightBtnDom =
+            h('e-sheet-radio-button',{
+                attribute:{
+                    label:'粗体',
+                    value:'bold'
+                },
+            },[
+                h('e-sheet-icon-svg',{
+                    attribute:{
+                        category:'font',
+                        position:'weight'
+                    }
+                })
+            ])
+
+        this.fontWeightBtnDom = fontWeightBtnDom
+        fontWeightBtnDom.addEventListener('e-sheet-radio-group-change',evt=>{
+            // console.log('evt',evt)
+            if(fontWeightBtnDom.getAttribute('current') === ''){
+                fontWeightBtnDom.setAttribute('current',evt.detail)
+                this.convenientChangeStepArr(5,'fontWeight',evt.detail)
+                this.cellFontWeightChange(evt.detail)
+            }else{
+                fontWeightBtnDom.setAttribute('current','')
+                this.convenientChangeStepArr(5,'fontWeight','')
+                this.cellFontWeightChange('')
+            }
+            this.wsSendCellAttrByTypeAndData(5)
+        })
+    }
+
+    createFontItalicBtnDom(){
+        const { h } = this.core
+        const fontItalicBtnDom = h('e-sheet-radio-button',{
+            style:{
+                marginLeft:'6px'
+            },
+            attribute:{
+                label:'斜体',
+                value:'italic'
+            },
+        },[
+            h('e-sheet-icon-svg',{
+                attribute:{
+                    category:'font',
+                    position:'italic'
+                }
+            })
+        ])
+
+        this.fontItalicBtnDom = fontItalicBtnDom
+
+        fontItalicBtnDom.addEventListener('e-sheet-radio-group-change',evt=>{
+            // console.log('evt',evt)
+            if(fontItalicBtnDom.getAttribute('current') === ''){
+                fontItalicBtnDom.setAttribute('current',evt.detail)
+                this.convenientChangeStepArr(6,'fontItalic',evt.detail)
+                this.cellFontItalicChange(evt.detail)
+            }else{
+                fontItalicBtnDom.setAttribute('current','')
+                this.convenientChangeStepArr(6,'fontItalic','')
+                this.cellFontItalicChange('')
+            }
+            this.wsSendCellAttrByTypeAndData(6)
+
+        })
+    }
+
+    createFontStrikethroughBtnDom(){
+        const { h } = this.core
+        // 删除线
+        const fontStrikethroughBtnDom =
+            h('e-sheet-radio-button',{
+                style:{
+                    marginLeft:'6px'
+                },
+                attribute:{
+                    label:'删除线',
+                    value:'true'
+                },
+            },[
+                h('e-sheet-icon-svg',{
+                    attribute:{
+                        category:'font',
+                        position:'strikethrough'
+                    }
+                })
+            ])
+
+        this.fontStrikethroughBtnDom = fontStrikethroughBtnDom
+        fontStrikethroughBtnDom.addEventListener('e-sheet-radio-group-change',evt=>{
+            // console.log('evt',evt)
+            if(fontStrikethroughBtnDom.getAttribute('current') === ''){
+                fontStrikethroughBtnDom.setAttribute('current',evt.detail)
+                this.convenientChangeStepArr(18,'strikethrough',evt.detail)
+                this.cellStrikethroughChange('true')
+            }else{
+                fontStrikethroughBtnDom.setAttribute('current','')
+                this.convenientChangeStepArr(18,'strikethrough','')
+                this.cellStrikethroughChange('')
+            }
+            this.wsSendCellAttrByTypeAndData(18)
+        })
+    }
+
+    createFontUnderlineBtnDom(){
+        const { h } = this.core
+        const fontUnderlineBtnDom = h('e-sheet-radio-button', {
+            style: {
+                marginLeft: '6px'
+            },
+            attribute: {
+                label: '下划线',
+                value: 'true'
+            },
+        }, [
+            h('e-sheet-icon-svg', {
+                attribute: {
+                    category: 'font',
+                    position: 'underline'
+                }
+            })
+        ])
+        this.fontUnderlineBtnDom = fontUnderlineBtnDom
+        fontUnderlineBtnDom.addEventListener('e-sheet-radio-group-change',evt=>{
+            // console.log('evt',evt)
+            if(fontUnderlineBtnDom.getAttribute('current') === ''){
+                fontUnderlineBtnDom.setAttribute('current',evt.detail)
+                this.convenientChangeStepArr(19,'underline',evt.detail)
+                this.cellUnderlineChange('true')
+            }else{
+                fontUnderlineBtnDom.setAttribute('current','')
+                this.convenientChangeStepArr(19,'underline','')
+                this.cellUnderlineChange('')
+            }
+            this.wsSendCellAttrByTypeAndData(19)
+        })
     }
 
 }

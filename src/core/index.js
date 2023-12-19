@@ -144,17 +144,29 @@ export default class AppExcel{
         this.options = options
         // console.log('this.options',this.options)
 
-        this.createNewSheet()
 
         // 装载组件
         this.installComponents(components);
         this.installPlugins(plugins);
+
+        this.createNewSheet()
+        this.drawContent()
 
         // 默认选中A1
         this.plugins.SettingPlugin.changeFirstSelectedCell('A1');
 
         this.ws = this.plugins.WebsocketPlugin
         // requestAnimationFrame(this.draw);
+    }
+
+    drawContent(){
+        const sheetBook = this.eSheetWorkBook[this.currentSheetIndex]
+        this.components.ContentComponent.installContentDataByData(sheetBook.sheet)
+        if(sheetBook.clickCell){
+            this.showClickRect(sheetBook.clickCell)
+        }
+        this.components.ContentComponent.trendsDraw(0,0)
+        this.plugins.BookPlugin.freshBookSheet()
     }
 
     /**
@@ -362,6 +374,7 @@ export default class AppExcel{
                     textAlign:'center',
                     textBaseline:'middle',
                     strikethrough:'',
+                    underline:'',
                     label
                 })
                 colWidth += cellWidth
