@@ -94,6 +94,7 @@ cargo run
 - [x] horizontal-alignment
 - [x] vertical-alignment
 - [x] strikethrough
+- [x] underline
 - [x] export-data
 - [ ] import-data
 - [x] forward

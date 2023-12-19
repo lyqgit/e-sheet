@@ -151,6 +151,7 @@ export default class AppExcel{
 
         this.createNewSheet()
         this.drawContent()
+        this.freshScrollBar()
 
         // 默认选中A1
         this.plugins.SettingPlugin.changeFirstSelectedCell('A1');
