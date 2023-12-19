@@ -867,10 +867,13 @@ export default class setting{
                 next
             })
             this.wsSendInfoByTypeAndData(10,next)
-            this.core.plugins.ContextmenuPlugin.splitCell(clickCell)
+            if(this.core.plugins.ContextmenuPlugin.splitCell(clickCell)){
+                this.cellMergerBtnDom.style.display = 'flex'
+                cellSplitBtnDom.style.display = 'none'
+            }
+
             // this.convenientGroupChangeStepArr()
-            this.cellMergerBtnDom.style.display = 'flex'
-            cellSplitBtnDom.style.display = 'none'
+
         }
 
         this.cellSplitBtnDom = cellSplitBtnDom
@@ -921,12 +924,15 @@ export default class setting{
             stepObj.next = tempGroupCell.map(item=>item.label)
             this.changeStepArr(stepObj)
             this.wsSendInfoByTypeAndData(9,stepObj.next)
-            this.core.plugins.ContextmenuPlugin.mergeCell(tempGroupCell[0],tempGroupCell.slice(0))
+            if(this.core.plugins.ContextmenuPlugin.mergeCell(tempGroupCell[0],tempGroupCell.slice(0))){
+                cellMergerBtnDom.style.display = 'none'
+                this.cellSplitBtnDom.style.display = 'flex'
+            }
+
             // if(mergeSelectedCell.some(item=>item.isMerge) || mergeSelectedCell.length === 0){
             //     return
             // }
-            cellMergerBtnDom.style.display = 'none'
-            this.cellSplitBtnDom.style.display = 'flex'
+
         }
 
         this.cellMergerBtnDom = cellMergerBtnDom

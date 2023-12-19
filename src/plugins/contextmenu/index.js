@@ -174,10 +174,15 @@ export default class ContextmenuPlugin{
         this.core.plugins.ScrollPlugin.changeVerBarHeight()
     }
 
+    /**
+     * @param {Object} clickCell
+     * @param {boolean} changeClickCell
+     * @returns {boolean}
+     */
     splitCell=(clickCell,changeClickCell = true)=>{
         if(!clickCell.isMerge){
             this.settingPlugin.showDialog('提示','当前选中的单元格不是合并的单元格无法拆解')
-            return
+            return false
         }
 
         clickCell.mergeEndLabel = ''
@@ -203,16 +208,23 @@ export default class ContextmenuPlugin{
         changeClickCell && this.contentComponent.showClickRect(clickCell)
         this.core.fresh()
         this.hideContextMenu()
+        return true
     }
 
+    /**
+     * @param {Object} clickCell
+     * @param {Array} mergeSelectedCell
+     * @param {boolean} changeClickCell
+     * @returns {boolean}
+     */
     mergeCell=(clickCell,mergeSelectedCell,changeClickCell = true)=>{
         if(mergeSelectedCell.length === 1 && mergeSelectedCell[0].label === clickCell.label){
             this.settingPlugin.showDialog('提示','单个单元格无法合并')
-            return
+            return false
         }
         if(mergeSelectedCell.some(item=>item.isMerge) || mergeSelectedCell.length === 0){
             this.settingPlugin.showDialog('提示','当前选中的单元格中有合并的单元格，无法合并')
-            return
+            return false
         }
         let mergeWidth = clickCell.width
         let mergeHeight = clickCell.height
@@ -243,6 +255,7 @@ export default class ContextmenuPlugin{
         changeClickCell && this.contentComponent.showClickRect(clickCell)
         this.core.freshContent()
         this.hideContextMenu()
+        return true
     }
 
     eventInsertCol=(num,isLeft = true)=>{
