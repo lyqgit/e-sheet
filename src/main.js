@@ -39,13 +39,12 @@ export default class eSheet{
         this.excelDom.style.position = 'relative'
         // this.excelDom.style.overflow = 'hidden'
         // console.log('selector',selector)
-
+        options = {init:true,width:1200,height:800,...options}
         return this.init(options,plugins)
 
     }
 
     init(options={},plugins=[]){
-        options = {init:true,width:1200,height:800,...options}
         this.AppExcel = new AppExcel(
             this.excelDom,
             options,
