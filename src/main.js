@@ -26,7 +26,7 @@ export default class eSheet{
      */
     AppExcel = null
 
-    constructor(selector,options={},plugins=[]) {
+    constructor(selector,options={},plugins={}) {
         if(Object.prototype.toString.call(selector) === '[object HTMLDivElement]'){
             this.excelDom = selector;
         }else{
@@ -44,7 +44,7 @@ export default class eSheet{
 
     }
 
-    init(options={},plugins=[]){
+    init(options={},plugins={}){
         this.AppExcel = new AppExcel(
             this.excelDom,
             options,
