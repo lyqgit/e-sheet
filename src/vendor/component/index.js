@@ -1,3 +1,4 @@
+import LoadingCup from './loading-cup.js'
 import Tip from './tip.js'
 import Select from './select.js'
 import Option from './option.js'
@@ -9,6 +10,7 @@ import WarnDialogTip from './warn-dialog-tip.js'
 
 export {
     WarnDialogTip,
+    LoadingCup,
     Tip,
     Select,
     Option,

@@ -35,8 +35,13 @@
     // console.log('CreateExcel',CreateExcel)
     const excel = new eSheet('#elt',{
         width:1200,
-        height:800
+        height:800,
+        init:false
     })
+
+    setTimeout(()=>{
+        excel.drawExcel()
+    },6000)
 
     // excel.connectWebSocket('ws://192.168.31.208:8091')
 

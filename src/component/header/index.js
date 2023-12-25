@@ -14,7 +14,7 @@ export default class HeaderComponent{
         this.layer = layer;
         this.core = core;
         // this.initDraw()
-        this.trendsDraw(0)
+        // this.trendsDraw(0)
     }
 
 

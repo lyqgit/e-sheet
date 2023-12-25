@@ -45,6 +45,7 @@ export default class eSheet{
     }
 
     init(options={},plugins=[]){
+        options = {init:true,width:1200,height:800,...options}
         this.AppExcel = new AppExcel(
             this.excelDom,
             options,

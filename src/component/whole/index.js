@@ -13,7 +13,7 @@ export default class WholeComponent{
         this.layer = layer
         this.options = options;
         this.core = core;
-        this.draw();
+        // this.draw();
         // this.addEvent();
     }
 

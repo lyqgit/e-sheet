@@ -101,6 +101,9 @@ export default class AppExcel{
      */
     currentSheetIndex = 0
 
+    installComponentsObj = {}
+    installPluginsObj = {}
+
     constructor(selectorDom,options={},components={},plugins={}) {
 
         // 默认设置容器宽和高为600
@@ -114,6 +117,8 @@ export default class AppExcel{
         options.cellWidth = this.cellWidth;
         options.cellHeight = this.cellHeight;
 
+        this.installComponentsObj = components
+        this.installPluginsObj = plugins
 
         this.selectorDom = selectorDom;
 
@@ -144,28 +149,72 @@ export default class AppExcel{
         this.options = options
         // console.log('this.options',this.options)
 
+        // 是否默认初始化
+        if(options.init){
+            // 装载组件
+            this.installComponents(components);
+            this.installPlugins(plugins);
 
-        // 装载组件
-        this.installComponents(components);
-        this.installPlugins(plugins);
-
-        this.createNewSheet()
-        this.drawContent()
-        this.freshScrollBar()
-
-        // 默认选中A1
-        this.plugins.SettingPlugin.changeFirstSelectedCell('A1');
-
-        this.ws = this.plugins.WebsocketPlugin
+            this.createNewSheet()
+            this.drawCanvas()
+            this.freshScrollBar()
+            // 默认选中A1
+            this.plugins.SettingPlugin.changeFirstSelectedCell('A1');
+            this.ws = this.plugins.WebsocketPlugin
+        }else{
+            // 显示加载动画
+            const loadingCupDom = this.h('e-sheet-loading-cup')
+            this.selectorDom.appendChild(loadingCupDom)
+        }
         // requestAnimationFrame(this.draw);
     }
 
-    drawContent(){
+    /**
+     * @param {Array} books
+     */
+    loadData(books){
+        if(!books || (Array.isArray(books) && books.length === 0)){
+           this.createNewSheet();
+           return
+        }
+        books.forEach(item=>{
+            this.eSheetWorkBook.push({
+                id:item.id,
+                label: item.label,
+                sheet:item.data,
+                clickCell: null,
+                stepArr:[],
+                stepNum:-1
+            })
+        })
+    }
+
+    /**
+     * @param {Array} books
+     */
+    drawExcel(books){
+        // 装载组件
+        this.installComponents(this.installComponentsObj);
+        this.installPlugins(this.installPluginsObj);
+        this.loadData(books)
+        this.drawCanvas()
+        this.freshScrollBar()
+        // 默认选中A1
+        this.plugins.SettingPlugin.changeFirstSelectedCell('A1');
+        this.ws = this.plugins.WebsocketPlugin
+        this.selectorDom.querySelector('.e-sheet-loading-cup-layout').remove()
+    }
+
+    drawCanvas(){
+        this.currentSheetIndex = 0
         const sheetBook = this.eSheetWorkBook[this.currentSheetIndex]
         this.components.ContentComponent.installContentDataByData(sheetBook.sheet)
         if(sheetBook.clickCell){
-            this.showClickRect(sheetBook.clickCell)
+            this.components.ContentComponent.showClickRect(sheetBook.clickCell)
         }
+        this.components.WholeComponent.draw()
+        this.components.HeaderComponent.trendsDraw(0)
+        this.components.SideComponent.trendsDraw(0)
         this.components.ContentComponent.trendsDraw(0,0)
         this.plugins.BookPlugin.freshBookSheet()
     }

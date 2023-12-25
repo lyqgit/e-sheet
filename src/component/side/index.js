@@ -14,7 +14,7 @@ export default class SideComponent{
 
         this.core = core;
 
-        this.trendsDraw(0)
+        // this.trendsDraw(0)
     }
 
     initDraw(){

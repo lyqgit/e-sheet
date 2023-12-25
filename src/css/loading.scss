@@ -1,0 +1,47 @@
+.e-sheet-loading-cup-layout{
+  background-color: #efb54a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  .cup {
+    height: 140px;
+    width: 180px;
+    border: 6px solid #efb54a;
+    position: relative;
+    border-radius: 0px 0px 70px 70px;
+    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAI0AAADICAYAAADVy2J6AAAACXBIWXMAAAsSAAALEgHS3X78AAADGElEQVR42u3aP07bYADG4ZeKPdygSPVYifQE5Aal3ivlCEj11qEcIANHyNgpoiconKBG6piB3CC9QOnAF8EACilJIOR5JCsWg4Xtnz7/+3aur68Di9hd1YabutpPsp+kV/40++0m6SywqUmSq7J+fuf3ajAaXzmF67ezjJGmBNItYXSTHK5xHy6StCWkVkgvOJqmro5KJL0kBy9ony5LQOeD0fjMKX7maEoos6WzAfv3J8lZkjMBrTGapq66SY43KJR5AZ0ORuPWqV9BNE1d9UssB69wvy9LPEMJPDGapq72ksxiebsF+z9JcppkOBiNp3JYMJqmro6TnGz4Jegpl66TwWh8KolHRPPl07t+ieWtw5FJicdla040Xgnf74Mb5nvvdXtvHIYH/Wrq6sRhuL3fbepqmOSnkWa+30k+b+uoUx6OjsvSSRIjzXzvt3XUKa9d2iTf7j4gGWkWv1E+HIzGky0YWfoPPRyJZnF/k3xP8vU1fRwtH51nsXQ8Pa3ORZJhbr5tTTcwlL3cfB7qZ4GZCaJZnh+5/Tg63YBQjpJ8/J9tiGZ1I9B5Cah9AaF0SyS9LGGuk2jWG1GbmxmH7YoD2c/tpLilT4gTzfO5TDItIU3vrD9WN8leWWbra5mRsOvcPZvZCT7ctH/cyz1Eg2gQDaJBNCAaRINoEA2iAdEgGkSDaBANiAbRIBpEg2gQDYgG0SAaRINoQDSIBtEgGkQDokE0iAbRIBoQDaJBNIgG0SAaEA2iQTSIBtGAaBANokE0iAZEg2gQDaJBNCAaRINoEA2iQTQgGkSDaBANogHRIBpEg2gQDYgG0SAaRINoQDSIBtEgGkSDaEA0iAbRIBpEA6JBNIgG0SAaEA2iQTSIBtEgGhANokE0iAbRgGgQDaJBNIgGRINoEA2iQTQgGkSDaBANokE0IBpEg2gQDaIB0SAaRINoEA2IBtEgGkSDaEA0iAbRIBpEg2hANIgG0SAaRAOiQTSIBtEgGhANokE0iAbRgGgQDaJBNIgG0YBoEA2iQTSIBkSDaBANokE0IBpEg2gQDa/NP6BTrramW7VZAAAAAElFTkSuQmCC");
+    box-shadow: 0px 0px 0px 6px #fff;
+    background-repeat: repeat-x;
+    background-position: 0% 0%;
+    animation: fill 3s infinite;
+  }
+  @keyframes fill {
+    0% {
+      background-position: 0px 140px;
+    }
+    30% {
+      background-position: -450px 100px;
+    }
+    60% {
+      background-position: -900px 50px;
+    }
+    100% {
+      background-position: -1350px -40px;
+    }
+  }
+  .handle {
+    height: 70px;
+    width: 40px;
+    background-color: transparent;
+    border: 6px solid #fff;
+    position: absolute;
+    top: 2px;
+    right: -58px;
+    border-radius: 0px 25px 80px 0px;
+  }
+}
