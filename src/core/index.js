@@ -241,6 +241,15 @@ export default class AppExcel{
     }
 
     /**
+     * @description 表格操作完成后的其他操作
+     */
+    afterHandle(){
+        this.stepCallbackArr.forEach(itemFn=>{
+            this.getType(itemFn) === '[object Function]' && itemFn()
+        })
+    }
+
+    /**
      * @description 导出sheet数据
      * @returns {Array}
      */

@@ -262,9 +262,6 @@ export default class setting{
 
     changeStepArr(obj){
         const curSheet = this.core.getCurrentSheet()
-        this.core.stepCallbackArr.forEach(item=>{
-            item(JSON.parse(obj))
-        })
         if(curSheet.stepNum !== curSheet.stepArr.length-1){
             if(curSheet.stepNum === -1){
                 curSheet.stepArr.splice(curSheet.stepNum+1,curSheet.stepArr.length,obj)
@@ -276,6 +273,7 @@ export default class setting{
         }
 
         curSheet.stepNum += 1
+        this.core.afterHandle()
     }
 
 
@@ -394,6 +392,8 @@ export default class setting{
         core.fresh()
         // console.log('步骤减1')
         curSheet.stepNum += 1
+
+        this.core.afterHandle()
     }
 
 
@@ -519,6 +519,8 @@ export default class setting{
         core.fresh()
         // console.log('步骤减1')
         curSheet.stepNum -= 1
+
+        this.core.afterHandle()
     }
 
     wsSendCellAttrByTypeAndData(type){

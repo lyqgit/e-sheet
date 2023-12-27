@@ -39,9 +39,13 @@
         init:false
     })
 
+    excel.stepCallbackHandle(()=>{
+        console.log('测试after操作')
+    })
+
     setTimeout(()=>{
         excel.drawExcel()
-    },6000)
+    },3000)
 
     // excel.connectWebSocket('ws://192.168.31.208:8091')
 
