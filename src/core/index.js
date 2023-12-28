@@ -181,7 +181,7 @@ export default class AppExcel{
             this.eSheetWorkBook.push({
                 id:item.id,
                 label: item.label,
-                sheet:item.data,
+                sheet:item.sheet,
                 clickCell: null,
                 stepArr:[],
                 stepNum:-1
