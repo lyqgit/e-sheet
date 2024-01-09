@@ -72,6 +72,7 @@ export default class BookPlugin{
         this.core.createNewSheet()
         this.core.currentSheetIndex = this.core.eSheetWorkBook.length - 1
         const sheetWork = this.core.eSheetWorkBook[this.core.currentSheetIndex]
+        this.core.ws.wsSend(19,sheetWork)
         this.core.switchSheet(this.core.currentSheetIndex)
         this.sheetArrLayoutDom.childNodes.forEach(item=>{
             item.className = 'item-span'
@@ -100,6 +101,11 @@ export default class BookPlugin{
                 }
             }))
         })
+    }
+
+    addSheetThenFresh(data){
+        this.core.eSheetWorkBook.push(data)
+        this.freshBookSheet()
     }
 
     switchSheet(index){

@@ -205,8 +205,13 @@ export default class WebsocketPlugin {
     }
 
     wsMsgCallbackType18(data){
-        // 背景颜色
+        // 删除线
         this.contentComponent.changeRectAttrByLabel(data.command,'strikethrough')
+    }
+
+    wsMsgCallbackType19(data){
+        // 添加sheet
+        this.core.plugins.BookPlugin.addSheetThenFresh(data.command)
     }
 
     changeUserShow(data){
@@ -223,12 +228,12 @@ export default class WebsocketPlugin {
         this.ws.onmessage = evt=>{
             console.log('evt---onmessage-data',JSON.parse(evt.data))
 
-            const { DragPlugin } = this.core.plugins
+            // const { DragPlugin } = this.core.plugins
             const { ContentComponent } = this.core.components
 
-            const { clickCell } = ContentComponent
+            // const { clickCell } = ContentComponent
 
-            const curClickCell = JSON.stringify(clickCell)
+            // const curClickCell = JSON.stringify(clickCell)
 
             /**
              * delete
@@ -258,9 +263,23 @@ export default class WebsocketPlugin {
              * 15.复制粘贴
              * 16.单元格边框拖拽
              * 17.单元格格式刷
+             * 17.单元格删除线
              */
 
             const data = JSON.parse(evt.data)
+            // 获取当前sheet
+            const curSheet = this.core.getCurrentSheet();
+            const tempSheetIndex = this.core.eSheetWorkBook.findIndex(item=>item.id === data.sheetId)
+
+            // 查询sheetId和当前book中是否匹配，不匹配则不更新
+            if(tempSheetIndex !== -1){
+                const updateSheet = this.core.eSheetWorkBook[tempSheetIndex];
+                // 变更sheet
+                this.contentComponent.installContentDataByData(updateSheet.sheet)
+            }else{
+                return
+            }
+
             switch (data.type) {
                 case 999:
                     ContentComponent.contentGroup = data.command
@@ -325,23 +344,30 @@ export default class WebsocketPlugin {
                 case 18:
                     this.wsMsgCallbackType18(data)
                     break
+                case 19:
+                    this.wsMsgCallbackType19(data)
+                    break
             }
-
+            // 还原sheet主体
+            this.contentComponent.installContentDataByData(curSheet.sheet)
 
             // if(data.type === 3){
             //     const oriRect = ContentComponent.searchRectByLabel(data.command.label)
             //     DragPlugin.expandWidthNoDrag(data.command.col,data.command.width - oriRect.width)
             // }
-
-            this.core.fresh()
+            if(data.sheetId === curSheet.id && ![19].includes(data.type)){
+                this.core.fresh()
+            }
         }
     }
 
     wsSend(type,data){
         if(this.ws){
+            const curSheet = this.core.getCurrentSheet();
             this.ws.send(JSON.stringify({
                 type,
                 command:data,
+                sheetId:curSheet.id,
                 userId:this.core.userId,
                 userName:this.core.userName,
                 userColor:this.core.userColor

@@ -193,10 +193,10 @@ export default class AppExcel{
      * @param {Array} books
      */
     drawExcel(books){
+        this.loadData(books)
         // 装载组件
         this.installComponents(this.installComponentsObj);
         this.installPlugins(this.installPluginsObj);
-        this.loadData(books)
         this.drawCanvas()
         this.freshScrollBar()
         // 默认选中A1
@@ -212,6 +212,11 @@ export default class AppExcel{
         if(sheetBook.clickCell){
             this.components.ContentComponent.showClickRect(sheetBook.clickCell)
         }
+        const sheetAttr = this.getSheetAttr()
+        this.sheetWidth = sheetAttr.sheetWidth
+        this.sheetHeight = sheetAttr.sheetHeight
+        this.row = sheetAttr.row
+        this.col = sheetAttr.col
         this.components.WholeComponent.draw()
         this.components.HeaderComponent.trendsDraw(0)
         this.components.SideComponent.trendsDraw(0)
@@ -575,6 +580,34 @@ export default class AppExcel{
 
         const { ContentComponent } = this.components
         ContentComponent.trendsDraw(offsetX,offsetY)
+    }
+
+    /**
+     * @description 获取sheet属性
+     * @returns {Object}
+     */
+    getSheetAttr(){
+        const curSheet = this.getCurrentSheet();
+        const col = Math.max(...curSheet.sheet.map(item=>item.col))
+        const row = Math.max(...curSheet.sheet.map(item=>item.row))
+        let sheetWidth = 0
+        let sheetHeight = 0
+
+        curSheet.sheet.forEach(item=>{
+            if(item.col <= col && item.row === 1){
+                sheetWidth += item.width
+            }
+            if(item.col === 1){
+                sheetHeight += item.height
+            }
+        })
+
+        return {
+            col,
+            row,
+            sheetWidth,
+            sheetHeight
+        }
     }
 
     freshScrollBar(){
