@@ -170,9 +170,17 @@ export default class AppExcel{
     }
 
     /**
+     * @description 重置eSheetWorkBook
+     */
+    resetESheetWorkBook(){
+        this.eSheetWorkBook = []
+    }
+
+    /**
      * @param {Array} books
      */
     loadData(books){
+        this.resetESheetWorkBook()
         if(!books || (Array.isArray(books) && books.length === 0)){
            this.createNewSheet();
            return
@@ -195,8 +203,11 @@ export default class AppExcel{
     drawExcel(books){
         this.loadData(books)
         // 装载组件
-        this.installComponents(this.installComponentsObj);
-        this.installPlugins(this.installPluginsObj);
+        if(Object.keys(this.components).length === 0){
+            this.installComponents(this.installComponentsObj);
+            this.installPlugins(this.installPluginsObj);
+        }
+
         this.drawCanvas()
         this.freshScrollBar()
         // 默认选中A1
