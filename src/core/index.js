@@ -622,6 +622,9 @@ export default class AppExcel{
     }
 
     freshScrollBar(){
+        const curSheetAttr = this.getSheetAttr();
+        this.sheetWidth = curSheetAttr.sheetWidth
+        this.sheetHeight = curSheetAttr.sheetHeight
         this.plugins.ScrollPlugin.changeHorBarWidth()
         this.plugins.ScrollPlugin.changeVerBarHeight()
     }

@@ -116,6 +116,7 @@ export default class BookPlugin{
             // console.log('item.className',item.className,'---------',currentSheetIndex,index,currentSheetIndex===index?'item-span active-item-span':'item-span')
             item.className = currentSheetIndex===index?'item-span active-item-span':'item-span'
         })
+        this.core.freshScrollBar()
         // console.log('index',index,currentSheetIndex)
     }
 
