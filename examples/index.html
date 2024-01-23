@@ -28,6 +28,7 @@
     <input type="text" id="user-name">
     <button id="syncBtn">同步数据</button>
     <button id="exportBtn">导出数据</button>
+    <button id="importBtn">导入数据</button>
 </body>
 <script>
 
@@ -46,13 +47,18 @@
 
 
     setTimeout(()=>{
-        console.log('JSON.parse(loadData)',JSON.parse(loadData))
-        excel.drawExcel(JSON.parse(loadData))
+        // console.log('JSON.parse(loadData)',JSON.parse(loadData))
+        // excel.drawExcel(JSON.parse(loadData))
+        excel.drawExcel()
         // excel.connectWebSocket('ws://192.168.31.208:8091')
     },3000)
 
     document.querySelector('#syncBtn').onclick = e=>{
         excel.syncData()
+    }
+
+    document.querySelector('#importBtn').onclick = e=>{
+        excel.drawExcel(JSON.parse(loadData))
     }
 
     // console.log(excel)

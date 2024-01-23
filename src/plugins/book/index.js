@@ -88,8 +88,15 @@ export default class BookPlugin{
         }))
     }
 
+    clearBookSheet(){
+        const childNodesLen = this.sheetArrLayoutDom.childNodes.length;
+        for(let i=childNodesLen - 1;i>=0;i--){
+            this.sheetArrLayoutDom.childNodes[i].remove()
+        }
+    }
+
     freshBookSheet(){
-        this.sheetArrLayoutDom.childNodes.forEach(childNode=>childNode.remove())
+        this.clearBookSheet()
         this.core.eSheetWorkBook.forEach((item,index)=>{
             this.sheetArrLayoutDom.appendChild(this.core.h('span',{
                 attr:{

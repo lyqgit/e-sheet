@@ -212,8 +212,11 @@ export default class AppExcel{
         this.freshScrollBar()
         // 默认选中A1
         this.plugins.SettingPlugin.changeFirstSelectedCell('A1');
-        this.ws = this.plugins.WebsocketPlugin
-        this.selectorDom.querySelector('.e-sheet-loading-cup-layout').remove()
+        if(!this.ws){
+            this.ws = this.plugins.WebsocketPlugin
+        }
+        const eSheetLoadingLayout = this.selectorDom.querySelector('.e-sheet-loading-cup-layout')
+        eSheetLoadingLayout && eSheetLoadingLayout.remove()
     }
 
     drawCanvas(){
