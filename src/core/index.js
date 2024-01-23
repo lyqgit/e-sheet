@@ -365,7 +365,9 @@ export default class AppExcel{
         this.copyCellDash = []
         if(this.components.ContentComponent && this.components.ContentComponent.clickCell){
             const preSheetBook = this.eSheetWorkBook[this.currentSheetIndex]
-            preSheetBook.clickCell = this.components.ContentComponent.clickCell
+            if(preSheetBook){
+                preSheetBook.clickCell = this.components.ContentComponent.clickCell
+            }
             this.components.ContentComponent.hideClickRect()
         }
     }
