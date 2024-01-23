@@ -97,7 +97,7 @@ export default class BookPlugin{
                     className:'item-span'+(this.core.currentSheetIndex===index?' active-item-span':'')
                 },
                 attribute:{
-                    index:this.core.currentSheetIndex
+                    index
                 }
             }))
         })
@@ -246,17 +246,18 @@ export default class BookPlugin{
                     }
                 }
             },
-            eSheetWorkBook.map((item,index)=>{
-                return h('div',{
-                    attr:{
-                        innerText:item.label,
-                        className:currentSheetIndex===index?'item-span active-item-span':'item-span'
-                    },
-                    attribute:{
-                        index
-                    }
-                })
-            })
+            // 初始化dom后不直接装载数据
+            // eSheetWorkBook.map((item,index)=>{
+            //     return h('div',{
+            //         attr:{
+            //             innerText:item.label,
+            //             className:currentSheetIndex===index?'item-span active-item-span':'item-span'
+            //         },
+            //         attribute:{
+            //             index
+            //         }
+            //     })
+            // })
         )
 
         this.sheetArrLayoutDom = sheetArrLayoutDom

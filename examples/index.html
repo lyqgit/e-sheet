@@ -46,6 +46,7 @@
 
 
     setTimeout(()=>{
+        console.log('JSON.parse(loadData)',JSON.parse(loadData))
         excel.drawExcel(JSON.parse(loadData))
         // excel.connectWebSocket('ws://192.168.31.208:8091')
     },3000)
