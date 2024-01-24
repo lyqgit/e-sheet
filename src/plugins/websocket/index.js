@@ -266,6 +266,16 @@ export default class WebsocketPlugin {
                 return
             }
 
+            if(data.type === 0){
+                this.changeUserShow(data)
+            }
+
+            const sheetAttr = this.core.getCurrentSheet();
+
+            if(sheetAttr.id !== data.sheetId){
+                return;
+            }
+
             switch (data.type) {
                 case 999:
                     ContentComponent.contentGroup = data.command
@@ -273,9 +283,9 @@ export default class WebsocketPlugin {
                         item.command = ContentComponent.searchRectByLabel(item.command.label)
                     })
                     break
-                case 0:
-                    this.changeUserShow(data)
-                    break
+                // case 0:
+                //     this.changeUserShow(data)
+                //     break
                 case 1:
                     this.wsMsgCallbackType1(data)
                     break
