@@ -41,6 +41,8 @@
         init:false
     })
 
+    excel.setUserId(111)
+
     excel.stepCallbackHandle(()=>{
         console.log('测试after操作')
     })
@@ -59,9 +61,9 @@
 
     document.querySelector('#importBtn').onclick = e=>{
         excel.drawExcel(JSON.parse(loadData))
-        setTimeout(()=>{
-            excel.drawExcel()
-        },3000)
+        // setTimeout(()=>{
+        //     excel.drawExcel()
+        // },3000)
     }
 
     // console.log(excel)

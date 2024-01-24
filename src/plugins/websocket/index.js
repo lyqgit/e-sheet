@@ -255,24 +255,22 @@ export default class WebsocketPlugin {
             const data = JSON.parse(evt.data)
             // 获取当前sheet
             const curSheet = this.core.getCurrentSheet();
-            const tempSheetIndex = this.core.eSheetWorkBook.findIndex(item=>item.id === data.sheetId)
+            // const tempSheetIndex = this.core.eSheetWorkBook.findIndex(item=>item.id === data.sheetId)
 
             // 查询sheetId和当前book中是否匹配，不匹配则不更新
-            if(tempSheetIndex !== -1){
-                const updateSheet = this.core.eSheetWorkBook[tempSheetIndex];
-                // 变更sheet
-                this.contentComponent.installContentDataByData(updateSheet.sheet)
-            }else{
-                return
-            }
+            // if(tempSheetIndex !== -1){
+            //     const updateSheet = this.core.eSheetWorkBook[tempSheetIndex];
+            //     // 变更sheet
+            //     this.contentComponent.installContentDataByData(updateSheet.sheet)
+            // }else{
+            //     return
+            // }
 
             if(data.type === 0){
                 this.changeUserShow(data)
             }
 
-            const sheetAttr = this.core.getCurrentSheet();
-
-            if(sheetAttr.id !== data.sheetId){
+            if(curSheet.id !== data.sheetId){
                 return;
             }
 
@@ -351,7 +349,7 @@ export default class WebsocketPlugin {
             //     const oriRect = ContentComponent.searchRectByLabel(data.command.label)
             //     DragPlugin.expandWidthNoDrag(data.command.col,data.command.width - oriRect.width)
             // }
-            if(data.sheetId === curSheet.id && ![19].includes(data.type)){
+            if(![19].includes(data.type)){
                 this.core.fresh()
             }
         }

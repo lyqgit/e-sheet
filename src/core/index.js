@@ -201,6 +201,7 @@ export default class AppExcel{
      * @param {Array} books
      */
     drawExcel(books){
+        this.currentSheetIndex = 0
         this.loadData(books)
         // 装载组件
         if(Object.keys(this.components).length === 0){
@@ -305,7 +306,17 @@ export default class AppExcel{
                 }
             })
             if(hasDataCellGroup.length>1){
-                sheet['!ref'] = hasDataCellGroup[0].label+':'+hasDataCellGroup[hasDataCellGroup.length-1].label
+                const rowArr = hasDataCellGroup.map(item=>item.row)
+                const colArr = hasDataCellGroup.map(item=>item.col)
+                const minRow = Math.min(...rowArr)
+                const minCol = Math.min(...colArr)
+                const maxRow = Math.max(...rowArr)
+                const maxCol = Math.max(...colArr)
+
+                const firstLabel = transformNumToLabel(minCol)+minRow
+                const endLabel = transformNumToLabel(maxCol)+maxRow
+
+                sheet['!ref'] = firstLabel+':'+endLabel
             }else if(hasDataCellGroup.length === 1){
                 sheet['!ref'] = hasDataCellGroup[0].label
             }
@@ -334,8 +345,18 @@ export default class AppExcel{
         this.ws.connect(addr)
     }
 
+    /**
+     * @param {string} userName
+     */
     setUserName(userName){
         this.userName = userName
+    }
+
+    /**
+     * @param {number} userId
+     */
+    setUserId(userId){
+        this.userId = userId
     }
 
 
@@ -468,6 +489,7 @@ export default class AppExcel{
         //     label:'A1',
         //     sheet:JSON.stringify(sheet)
         // })
+        this.afterHandle()
     }
 
     initExcelData(sheetName = 'Sheet1'){
