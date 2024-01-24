@@ -216,7 +216,7 @@ export default class WebsocketPlugin {
 
     changeUserShow(data){
         const index = this.mulPersonSelected.findIndex(item=>item.userId === data.userId)
-        data.command = this.contentComponent.searchRectByLabel(data.command.label)
+        // data.command = this.contentComponent.searchRectByLabel(data.command.label)
         if(index === -1){
             this.mulPersonSelected.push(data)
         }else{

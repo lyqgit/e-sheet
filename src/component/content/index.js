@@ -118,7 +118,7 @@ export default class ContentComponent{
                 return
             }
 
-            const clickCell = item.command
+            const clickCell = this.searchRectByLabel(item.command.label)
 
             // console.log('item',item)
 
