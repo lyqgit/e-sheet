@@ -110,7 +110,13 @@ export default class ContentComponent{
 
         const { cellHeight } = this.options
 
+        const sheetAttr = this.core.getCurrentSheet()
+
         this.core.mulPersonSelected.forEach(item=>{
+
+            if(sheetAttr.id !== item.sheetId){
+                return
+            }
 
             const clickCell = item.command
 

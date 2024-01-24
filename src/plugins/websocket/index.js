@@ -227,25 +227,11 @@ export default class WebsocketPlugin {
     wsMsgCallback(){
         this.ws.onmessage = evt=>{
             console.log('evt---onmessage-data',JSON.parse(evt.data))
-
-            // const { DragPlugin } = this.core.plugins
             const { ContentComponent } = this.core.components
 
-            // const { clickCell } = ContentComponent
-
-            // const curClickCell = JSON.stringify(clickCell)
-
             /**
-             * delete
-             * 0.同步数据
-             * 1.选中改变
-             * 2.单元格内容改变
-             * 3.横向距离改变
-             * 4.纵向距离改变
-             */
-
-            /**
-             * 0.同步数据
+             * 999.同步整体数据
+             * 0.同步用户显示
              * 1.更改单元格内容
              * 2.文字大小
              * 3.文字垂直方向位置
