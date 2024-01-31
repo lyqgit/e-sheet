@@ -588,20 +588,29 @@ export default class AppExcel{
         this.fresh()
     }
 
-    // 装载固有组件
+    /**
+     * @description 装载固有组件
+     * @param {Object} components
+     */
     installComponents(components){
         for(let component in components){
             this.components[component] = new components[component](this.layer,this.options,this)
         }
     }
 
-    // 装载插件
+    /**
+     * @description 装载插件
+     * @param {Object} plugins
+     */
     installPlugins(plugins){
         for(let plugin in plugins){
             this.plugins[plugin] = new (plugins[plugin])(this.selectorDom,this.layer,this.options,this.components,this)
         }
     }
 
+    /**
+     * @description 单元格整体刷新（不包括滚动条）
+     */
     fresh(){
 
         const { offsetX,offsetY } = this.plugins.ScrollPlugin
@@ -613,6 +622,9 @@ export default class AppExcel{
         WholeComponent.draw()
     }
 
+    /**
+     * @description 内容刷新
+     */
     freshContent(){
         const { offsetX,offsetY } = this.plugins.ScrollPlugin
 
@@ -648,6 +660,9 @@ export default class AppExcel{
         }
     }
 
+    /**
+     * @description 更新滚动条
+     */
     freshScrollBar(){
         const curSheetAttr = this.getSheetAttr();
         this.sheetWidth = curSheetAttr.sheetWidth
@@ -657,6 +672,7 @@ export default class AppExcel{
     }
 
     /**
+     * @description 获取js具体类型
      * @param {*} obj
      * @returns {string}
      */

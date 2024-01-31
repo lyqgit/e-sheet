@@ -210,7 +210,29 @@ export default class WebsocketPlugin {
     }
 
     wsMsgCallbackType19(data){
-        // 添加sheet
+        // 下划线
+        this.contentComponent.changeRectAttrByLabel(data.command,'underline')
+    }
+
+    wsMsgCallbackType20(data){
+        // 删除内容
+        const fObj = data.command
+        if(fObj.undo){
+            // 还原
+            fObj.cells.forEach(item=>{
+                const cell = this.contentComponent.searchRectByLabel(item.label)
+                cell.text = item.text
+            })
+        }else{
+            fObj.cells.forEach(item=>{
+                const cell = this.contentComponent.searchRectByLabel(item.label)
+                cell.text = ''
+            })
+        }
+    }
+
+    wsMsgCallbackType998(data){
+        // 删除内容
         this.core.plugins.BookPlugin.addSheetThenFresh(data.command)
     }
 
@@ -231,6 +253,7 @@ export default class WebsocketPlugin {
 
             /**
              * 999.同步整体数据
+             * 998.添加sheet并刷新页面
              * 0.同步用户显示
              * 1.更改单元格内容
              * 2.文字大小
@@ -249,7 +272,9 @@ export default class WebsocketPlugin {
              * 15.复制粘贴
              * 16.单元格边框拖拽
              * 17.单元格格式刷
-             * 17.单元格删除线
+             * 18.单元格删除线
+             * 19.单元格下划线
+             * 20.删除内容
              */
 
             const data = JSON.parse(evt.data)
@@ -340,6 +365,12 @@ export default class WebsocketPlugin {
                     break
                 case 19:
                     this.wsMsgCallbackType19(data)
+                    break
+                case 20:
+                    this.wsMsgCallbackType20(data)
+                    break
+                case 998:
+                    this.wsMsgCallbackType998(data)
                     break
             }
             // 还原sheet主体

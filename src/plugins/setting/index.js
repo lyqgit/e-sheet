@@ -382,6 +382,13 @@ export default class setting{
             case 19: // 文字下划线
                 selectedCell.underline = fObj.next
                 break
+            case 20: // 删除内容
+                fObj.cells.forEach(item=>{
+                    const cell = contentComponent.searchRectByLabel(item.label)
+                    cell.text = ''
+                })
+                this.core.ws.wsSend(20,{cells:fObj.cells})
+                break
         }
 
         // redo
@@ -410,7 +417,7 @@ export default class setting{
         if(curSheet.stepNum === -1){
             return;
         }
-        const fObj = curSheet.stepArr[curSheet.stepNum === 0?0:curSheet.stepNum]
+        const fObj = curSheet.stepArr[curSheet.stepNum]
 
         const selectedCell = contentComponent.searchRectByLabel(fObj.label)
 
@@ -508,6 +515,13 @@ export default class setting{
                 break
             case 19: // 文字下线
                 selectedCell.underline = fObj.pre
+                break
+            case 20: // 还原删除内容
+                fObj.cells.forEach(item=>{
+                    const cell = contentComponent.searchRectByLabel(item.label)
+                    cell.text = item.text
+                })
+                this.core.ws.wsSend(20,{undo:true,cells:fObj.cells})
                 break
         }
 

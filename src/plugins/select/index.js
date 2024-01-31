@@ -720,17 +720,39 @@ export default class SelectPlugin{
                 this.clearCopyDash()
             }else if(event.code === 'Delete'){
                 // 删除选中的单元格中的内容
+                let cells = []
                 if(this.contentComponent.secondClickCell){
                     // 多个
+                    cells = this.contentComponent.moreSelectedCell.map(item=>{
+                        return {
+                            row:item.row,
+                            col:item.col,
+                            text:item.text,
+                            label:item.label,
+                        }
+                    })
                     this.contentComponent.moreSelectedCell.forEach(item=>{
                         item.text = ''
                     })
                     this.core.freshContent();
                 }else if(this.contentComponent.clickCell){
                     // 单个
+                    cells.push({
+                        row:this.contentComponent.clickCell.row,
+                        col:this.contentComponent.clickCell.col,
+                        text:this.contentComponent.clickCell.text,
+                        label:this.contentComponent.clickCell.label,
+                    })
                     this.contentComponent.clickCell.text = ''
                     this.core.freshContent();
                 }
+                this.core.plugins.SettingPlugin.changeStepArr({
+                    type:20,
+                    cells
+                })
+                this.core.ws.wsSend(20,{
+                    cells
+                })
             }
         })
         //
