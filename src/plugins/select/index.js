@@ -716,12 +716,21 @@ export default class SelectPlugin{
             this.core.shiftKey = event.shiftKey
             this.core.ctrlKey = event.ctrlKey
 
-            if(event.shiftKey && event.ctrlKey && event.code === 'KeyZ'){
-                // console.log('前进')
-            }else if(event.ctrlKey && event.code === 'z'){
-                // 后撤
-            }else if(event.code === 'Escape'){
+            if(event.code === 'Escape'){
                 this.clearCopyDash()
+            }else if(event.code === 'Delete'){
+                // 删除选中的单元格中的内容
+                if(this.contentComponent.secondClickCell){
+                    // 多个
+                    this.contentComponent.moreSelectedCell.forEach(item=>{
+                        item.text = ''
+                    })
+                    this.core.freshContent();
+                }else if(this.contentComponent.clickCell){
+                    // 单个
+                    this.contentComponent.clickCell.text = ''
+                    this.core.freshContent();
+                }
             }
         })
         //
