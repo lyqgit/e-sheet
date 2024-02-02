@@ -82,7 +82,7 @@ export default class InputPlugin{
 
     appendInput(){
 
-        const inputDom = document.createElement('input')
+        const inputDom = document.createElement('textarea')
         this.inputDom = inputDom
         inputDom.style.display = 'none' //'inline-block'
         inputDom.style.position = 'absolute'

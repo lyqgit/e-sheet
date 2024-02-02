@@ -4,6 +4,11 @@ export default class setting{
     /**
      * @type {HTMLElement}
      */
+    textWrapGroup = null
+
+    /**
+     * @type {HTMLElement}
+     */
     labelInputDom = null
     /**
      * @type {HTMLElement}
@@ -99,6 +104,14 @@ export default class setting{
 
     setCellCon(value){
         this.fxInputDom.value = value
+    }
+
+    /**
+     * @param {string} type
+     */
+    setTextWrapChange(type){
+        this.core.textWrapType = type
+        this.core.freshContent()
     }
 
     /**
@@ -720,6 +733,7 @@ export default class setting{
         this.createCellMergerBtnDom()
         // 拆分按钮
         this.createCellSplitBtnDom()
+        this.createTextWrapBtnDom()
 
         const cellMergeAndSplitLayoutDom = h('div',{
             attr:{
@@ -728,15 +742,7 @@ export default class setting{
         })
         cellMergeAndSplitLayoutDom.appendChild(this.cellMergerBtnDom)
         cellMergeAndSplitLayoutDom.appendChild(this.cellSplitBtnDom)
-        cellMergeAndSplitLayoutDom.appendChild(h('div',{
-            attr:{
-                innerText:'单元格',
-                className:'e-sheet-font-style-layout e-sheet-cell-font'
-            },
-            style:{
-                justifyContent:'center'
-            }
-        }))
+        cellMergeAndSplitLayoutDom.appendChild(this.textWrapGroup)
 
         // 撤销和重做
 
@@ -1282,6 +1288,46 @@ export default class setting{
                 this.cellUnderlineChange('')
             }
             this.wsSendCellAttrByTypeAndData(19)
+        })
+    }
+
+    createTextWrapBtnDom(){
+        const { h } = this.core
+        const textWrapGroup = h('e-sheet-radio-group',{},[
+            h('e-sheet-radio-button',{
+                attribute:{
+                    label:'截断',
+                    value:'cut'
+                },
+            },[
+                h('e-sheet-icon-svg',{
+                    attribute:{
+                        category:'text',
+                        position:'cut'
+                    }
+                })
+            ]),
+            h('e-sheet-radio-button',{
+                style:{
+                    marginLeft:'6px'
+                },
+                attribute:{
+                    label:'换行',
+                    value:'wrap'
+                },
+            },[
+                h('e-sheet-icon-svg',{
+                    attribute:{
+                        category:'text',
+                        position:'wrap'
+                    }
+                })
+            ])
+        ])
+        this.textWrapGroup = textWrapGroup
+        textWrapGroup.addEventListener('e-sheet-radio-group-onchange',evt=>{
+            // console.log('evt',evt)
+            this.setTextWrapChange(evt.detail)
         })
     }
 

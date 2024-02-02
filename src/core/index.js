@@ -7,6 +7,12 @@ import {transformNumToLabel} from '../util/cell.js'
 export default class AppExcel{
 
     /**
+     * @description cut-截断  wrap-换行
+     * @type {string}
+     */
+    textWrapType = 'cut'
+
+    /**
      * @type {Array}
      */
     mulPersonSelected = []
@@ -160,6 +166,7 @@ export default class AppExcel{
             this.freshScrollBar()
             // 默认选中A1
             this.plugins.SettingPlugin.changeFirstSelectedCell('A1');
+            this.plugins.SettingPlugin.textWrapGroup.setAttribute('value',this.textWrapType)
             this.ws = this.plugins.WebsocketPlugin
         }else{
             // 显示加载动画
@@ -213,6 +220,7 @@ export default class AppExcel{
         this.freshScrollBar()
         // 默认选中A1
         this.plugins.SettingPlugin.changeFirstSelectedCell('A1');
+        this.plugins.SettingPlugin.textWrapGroup.setAttribute('value',this.textWrapType)
         if(!this.ws){
             this.ws = this.plugins.WebsocketPlugin
         }
