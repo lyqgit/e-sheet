@@ -232,7 +232,8 @@ export default class WebsocketPlugin {
     }
 
     wsMsgCallbackType998(data){
-        // 删除内容
+        // 创建新的sheet
+        console.log('data创建新的sheet',data)
         this.core.plugins.BookPlugin.addSheetThenFresh(data.command)
     }
 
@@ -295,10 +296,19 @@ export default class WebsocketPlugin {
                 this.changeUserShow(data)
             }
 
+            // 不是当前sheet的操作
+            switch (data.type) {
+                case 998:
+                    this.wsMsgCallbackType998(data)
+                return;
+            }
+
+            // 只更新当前的sheet
             if(curSheet.id !== data.sheetId){
                 return;
             }
 
+            // 可撤回的操作
             switch (data.type) {
                 case 999:
                     ContentComponent.contentGroup = data.command
@@ -369,9 +379,7 @@ export default class WebsocketPlugin {
                 case 20:
                     this.wsMsgCallbackType20(data)
                     break
-                case 998:
-                    this.wsMsgCallbackType998(data)
-                    break
+
             }
             // 还原sheet主体
             this.contentComponent.installContentDataByData(curSheet.sheet)
