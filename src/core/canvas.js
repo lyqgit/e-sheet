@@ -6,6 +6,9 @@ import base64Img from '../image/base64Img.js'
  */
 export default class Canvas{
 
+    /**
+     * @type {HTMLElement}
+     */
     canvasDom= null
 
     /**
@@ -26,8 +29,9 @@ export default class Canvas{
     /**
      * @param {HTMLCanvasElement} canvasDom
      * @param {Object} options
+     * @param {Object} core
      */
-    constructor(canvasDom,options={}) {
+    constructor(canvasDom,options={},core) {
         this.ctx = canvasDom.getContext('2d')
         this.cellWidth = options.cellWidth
         this.cellHeight = options.cellHeight
@@ -88,15 +92,33 @@ export default class Canvas{
      * @param {string} textBaseline
      * @param {string} strikethrough
      * @param {string} underline
+     * @param {string} textWrapType
      */
-    drawText(x,y,text='',rectWidth,rectHeight,globalCompositeOperation,color,textAlign='center',font,textBaseline,strikethrough='',underline=''){
+    drawText(x,y,text='',rectWidth,rectHeight,globalCompositeOperation,color,textAlign='center',font,textBaseline,strikethrough='',underline='',textWrapType = 'cut'){
+
+        if(text.length === 0){
+            return;
+        }
+
         const { ctx,cellWidth,cellHeight } = this
         ctx.globalCompositeOperation = globalCompositeOperation??'source-over'
         rectWidth = rectWidth??cellWidth
         rectHeight = rectHeight??cellHeight
-        font.fontSize = font.fontSize??12
+        font.fontSize = font.fontSize?parseInt(font.fontSize):12
         ctx.font = font?`${font.fontWeight+' '}${font.fontItalic+' '}${font.fontSize}px ${font.fontFamily}`:'12px Calibre'
         ctx.fillStyle= color?color:"black";
+
+        if(textWrapType === 'wrap'){
+            ctx.textBaseline = "top";
+            ctx.textAlign = "start";
+            const txtArr = text.split('\n')
+            txtArr.forEach((item,index)=>{
+                ctx.fillText(item,x+2,y+2+index*font.fontSize)
+            })
+            return
+        }
+
+
         const baseX = x+rectWidth/2
         const baseY = y+rectHeight/2
 

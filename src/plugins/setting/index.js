@@ -312,7 +312,13 @@ export default class setting{
             case 1:// 更改单元格内容
                 selectedCell.text = fObj.next
                 contentComponent.showClickRect(selectedCell)
-                ws.wsSend(0,selectedCell)
+                if(fObj.widthDis !== undefined && fObj.widthDis !== 0){
+                    this.core.plugins.DragPlugin.expandWidthNoDrag(selectedCell.col,fObj.widthDis,false)
+                }
+                if(fObj.heightDis !== undefined && fObj.heightDis !== 0){
+                    this.core.plugins.DragPlugin.expandHeightNoDrag(selectedCell.row,fObj.heightDis,false)
+                }
+                ws.wsSend(1, {...selectedCell,widthDis:fObj.widthDis,heightDis:fObj.heightDis})
                 break;
             case 2: // 文字大小
                 selectedCell.fontSize = fObj.next
@@ -439,7 +445,13 @@ export default class setting{
                 // 1.更改单元格内容
                 selectedCell.text = fObj.pre
                 contentComponent.showClickRect(selectedCell)
-                ws.wsSend(0,selectedCell)
+                if(fObj.widthDis !== undefined && fObj.widthDis !== 0){
+                    this.core.plugins.DragPlugin.expandWidthNoDrag(selectedCell.col,-fObj.widthDis,false)
+                }
+                if(fObj.heightDis !== undefined && fObj.heightDis !== 0){
+                    this.core.plugins.DragPlugin.expandHeightNoDrag(selectedCell.row,-fObj.heightDis,false)
+                }
+                ws.wsSend(1, {undo:true,...selectedCell,widthDis:fObj.widthDis,heightDis:fObj.heightDis})
                 break;
             case 2: // 文字大小
                 selectedCell.fontSize = fObj.pre
@@ -539,7 +551,7 @@ export default class setting{
         }
 
         // undo
-        if([1,2,3,4,5,6,7,8,18,19].includes(fObj.type)){
+        if([2,3,4,5,6,7,8,18,19].includes(fObj.type)){
             this.wsSendCellAttrByTypeAndData(fObj.type)
         }
 

@@ -51,6 +51,14 @@ export default class WebsocketPlugin {
     wsMsgCallbackType1(data){
         // 更改单元格内容
         this.contentComponent.changeRectTextByLabel(data.command)
+        const fObj = data.command
+        const selectedCell = this.contentComponent.searchRectByLabel(data.command.label)
+        if(fObj.widthDis !== undefined && fObj.widthDis !== 0){
+            this.core.plugins.DragPlugin.expandWidthNoDrag(selectedCell.col,fObj.undo?-fObj.widthDis:fObj.widthDis,false)
+        }
+        if(fObj.heightDis !== undefined && fObj.heightDis !== 0){
+            this.core.plugins.DragPlugin.expandHeightNoDrag(selectedCell.row,fObj.undo?-fObj.heightDis:fObj.heightDis,false)
+        }
     }
 
     wsMsgCallbackType2(data){

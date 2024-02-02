@@ -140,18 +140,42 @@ export default class InputPlugin{
                     return
                 }
 
+                let widthDis = 0
+                let heightDis = 0
+
                 if(!(evt.relatedTarget && this.selectorDom.contains(evt.relatedTarget))){
+
+                    const txt = inputDom.value
+                    if(txt.includes('\n') && this.core.textWrapType === 'wrap'){
+                        const txtArr = txt.split('\n')
+                        const txtArrHeight = txtArr.length*clickCell.fontSize
+                        if(txtArrHeight>clickCell.height){
+                            // 拉伸高度
+                            heightDis = txtArrHeight - clickCell.height
+                            this.core.plugins.DragPlugin.expandHeightNoDrag(clickCell.row,heightDis,false)
+                        }
+                        const txtArrWidth = Math.max(...txtArr.map(item=>item.length))*clickCell.fontSize
+                        if(txtArrWidth>clickCell.width){
+                            // 拉伸宽度
+                            widthDis = txtArrWidth - clickCell.width
+                            this.core.plugins.DragPlugin.expandWidthNoDrag(clickCell.col,widthDis,false)
+                        }
+                    }
+
                     this.core.plugins.SettingPlugin.changeStepArr({
                         type:1,
                         label:clickCell.label,
                         pre:clickCell.text,
-                        next:inputDom.value
+                        next:inputDom.value,
+                        widthDis,
+                        heightDis
                     })
                 }
                 clickCell.text = inputDom.value
-                this.core.ws.wsSend(1,clickCell)
-                this.inputDom.value = ''
+
                 this.core.fresh()
+                this.core.ws.wsSend(1, {...clickCell,widthDis,heightDis})
+                this.inputDom.value = ''
                 this.hideInput()
                 // console.log('inputDom---onblur结束')
             }

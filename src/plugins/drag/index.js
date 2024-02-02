@@ -22,7 +22,7 @@ export default class DragPlugin{
     }
 
 
-    expandWidthNoDrag(col,dis){
+    expandWidthNoDrag(col,dis,fresh=true){
         const { contentGroup } = this.contentComponent
 
         for(let i=0;i<contentGroup.length;i++){
@@ -55,10 +55,10 @@ export default class DragPlugin{
             }
         }
         this.core.freshScrollBar()
-        this.core.fresh()
+        fresh && this.core.fresh()
     }
 
-    expandHeightNoDrag(row,dis){
+    expandHeightNoDrag(row,dis,fresh=true){
         const { contentGroup } = this.contentComponent
 
         for(let i=0;i<contentGroup.length;i++){
@@ -90,7 +90,7 @@ export default class DragPlugin{
             }
         }
         this.core.freshScrollBar()
-        this.core.fresh()
+        fresh && this.core.fresh()
     }
 
     expandWidth(col,dis){
