@@ -239,9 +239,15 @@ export default class WebsocketPlugin {
         }
     }
 
+    wsMsgCallbackType21(data){
+        // 文字溢出或换行
+        this.core.plugins.SettingPlugin.setTextWrapChange(data.command.textWrapType)
+        this.core.plugins.SettingPlugin.setTextWrapInHeader(data.command.textWrapType)
+    }
+
     wsMsgCallbackType998(data){
         // 创建新的sheet
-        console.log('data创建新的sheet',data)
+        // console.log('data创建新的sheet',data)
         this.core.plugins.BookPlugin.addSheetThenFresh(data.command)
     }
 
@@ -284,6 +290,7 @@ export default class WebsocketPlugin {
              * 18.单元格删除线
              * 19.单元格下划线
              * 20.删除内容
+             * 21.文字溢出或换行
              */
 
             const data = JSON.parse(evt.data)
@@ -313,6 +320,14 @@ export default class WebsocketPlugin {
 
             // 只更新当前的sheet
             if(curSheet.id !== data.sheetId){
+                // 如果不是当前sheet只更新数据
+                const changeSheet = this.core.getSheetById(data.sheetId)
+                if(changeSheet){
+                    changeSheet.sheet = data.wholeSheet.sheet
+                    if(data.wholeSheet.config){
+                        changeSheet.config = data.wholeSheet.config
+                    }
+                }
                 return;
             }
 
@@ -387,10 +402,13 @@ export default class WebsocketPlugin {
                 case 20:
                     this.wsMsgCallbackType20(data)
                     break
+                case 21:
+                    this.wsMsgCallbackType21(data)
+                    break
 
             }
             // 还原sheet主体
-            this.contentComponent.installContentDataByData(curSheet.sheet)
+            // this.contentComponent.installContentDataByData(curSheet.sheet)
 
             // if(data.type === 3){
             //     const oriRect = ContentComponent.searchRectByLabel(data.command.label)
@@ -411,7 +429,8 @@ export default class WebsocketPlugin {
                 sheetId:curSheet.id,
                 userId:this.core.userId,
                 userName:this.core.userName,
-                userColor:this.core.userColor
+                userColor:this.core.userColor,
+                wholeSheet:curSheet
             }))
         }
     }

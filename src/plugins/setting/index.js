@@ -409,6 +409,11 @@ export default class setting{
                 })
                 this.core.ws.wsSend(20,{cells:fObj.cells})
                 break
+            case 21: // 文字溢出或换行
+                this.setTextWrapChange(fObj.next)
+                this.setTextWrapInHeader(fObj.next)
+                this.core.ws.wsSend(21,{textWrapType:fObj.next})
+                break
         }
 
         // redo
@@ -548,6 +553,11 @@ export default class setting{
                     cell.text = item.text
                 })
                 this.core.ws.wsSend(20,{undo:true,cells:fObj.cells})
+                break
+            case 21: // 文字溢出或换行
+                this.setTextWrapChange(fObj.pre)
+                this.setTextWrapInHeader(fObj.pre)
+                this.core.ws.wsSend(21,{textWrapType:fObj.pre})
                 break
         }
 
@@ -1340,8 +1350,19 @@ export default class setting{
         this.textWrapGroup = textWrapGroup
         textWrapGroup.addEventListener('e-sheet-radio-group-onchange',evt=>{
             // console.log('evt',evt)
+            const currentSheet = this.core.getCurrentSheet();
+            this.changeStepArr({
+                type:21,
+                pre:currentSheet.config.textWrapType,
+                next:evt.detail
+            })
+            this.core.ws.wsSend(21,{textWrapType:evt.detail})
             this.setTextWrapChange(evt.detail)
         })
+    }
+
+    setTextWrapInHeader(type){
+        this.textWrapGroup.setAttribute('value',type??'cut')
     }
 
 }

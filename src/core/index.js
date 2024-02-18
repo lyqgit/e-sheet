@@ -166,7 +166,7 @@ export default class AppExcel{
             this.freshScrollBar()
             // 默认选中A1
             this.plugins.SettingPlugin.changeFirstSelectedCell('A1');
-            this.plugins.SettingPlugin.textWrapGroup.setAttribute('value','cut')
+            this.plugins.SettingPlugin.setTextWrapInHeader('cut')
             this.ws = this.plugins.WebsocketPlugin
         }else{
             // 显示加载动画
@@ -199,7 +199,10 @@ export default class AppExcel{
                 sheet:item.sheet,
                 clickCell: null,
                 stepArr:[],
-                stepNum:-1
+                stepNum:-1,
+                config:{
+                    textWrapType:item.config?.textWrapType??'cut'
+                }
             })
         })
     }
@@ -221,7 +224,7 @@ export default class AppExcel{
         // 默认选中A1
         this.plugins.SettingPlugin.changeFirstSelectedCell('A1');
         const currentSheet = this.getCurrentSheet();
-        this.plugins.SettingPlugin.textWrapGroup.setAttribute('value',currentSheet.config.textWrapType)
+        this.plugins.SettingPlugin.setTextWrapInHeader(currentSheet.config.textWrapType)
         if(!this.ws){
             this.ws = this.plugins.WebsocketPlugin
         }
@@ -387,7 +390,7 @@ export default class AppExcel{
             this.plugins.SettingPlugin.setLabelCon(clickCell.label)
             this.plugins.SettingPlugin.setCellCon(clickCell.text)
         }
-        this.plugins.SettingPlugin.textWrapGroup.setAttribute('value',currentSheetBook.config.textWrapType)
+        this.plugins.SettingPlugin.setTextWrapInHeader(currentSheetBook.config.textWrapType)
         this.fresh()
     }
 
@@ -405,6 +408,20 @@ export default class AppExcel{
 
     getCurrentSheet(){
         return this.eSheetWorkBook[this.currentSheetIndex]
+    }
+
+    /**
+     * @description 通过id查找sheet
+     * @param {number} id
+     * @returns {Object || null}
+     */
+    getSheetById(id){
+        const index = this.eSheetWorkBook.findIndex(item=>item.id === id)
+        if(index !== -1){
+            return this.eSheetWorkBook[index]
+        }else{
+            return null
+        }
     }
 
     createNewSheet(sheetName = 'Sheet'){
