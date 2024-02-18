@@ -883,7 +883,9 @@ export default class ContentComponent{
 
         const { width,height,cellHeight,cellWidth } = this.options
 
-        const { nonSelectBgColor,selectedBorderBgColor,borderColor,selectedBgColor,copyKey,textWrapType } = this.core
+        const { nonSelectBgColor,selectedBorderBgColor,borderColor,selectedBgColor,copyKey } = this.core
+
+        const { config:{ textWrapType } } = this.core.getCurrentSheet()
 
         const lt = this.searchScreenAddr(offsetX,offsetY)
         const rb = this.searchScreenAddr(offsetX+width-cellHeight,offsetY+height-cellHeight)

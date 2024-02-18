@@ -110,7 +110,8 @@ export default class setting{
      * @param {string} type
      */
     setTextWrapChange(type){
-        this.core.textWrapType = type
+        const currentSheet = this.core.getCurrentSheet();
+        currentSheet.config.textWrapType = type
         this.core.freshContent()
     }
 

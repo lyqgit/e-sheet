@@ -166,7 +166,7 @@ export default class AppExcel{
             this.freshScrollBar()
             // 默认选中A1
             this.plugins.SettingPlugin.changeFirstSelectedCell('A1');
-            this.plugins.SettingPlugin.textWrapGroup.setAttribute('value',this.textWrapType)
+            this.plugins.SettingPlugin.textWrapGroup.setAttribute('value','cut')
             this.ws = this.plugins.WebsocketPlugin
         }else{
             // 显示加载动画
@@ -220,7 +220,8 @@ export default class AppExcel{
         this.freshScrollBar()
         // 默认选中A1
         this.plugins.SettingPlugin.changeFirstSelectedCell('A1');
-        this.plugins.SettingPlugin.textWrapGroup.setAttribute('value',this.textWrapType)
+        const currentSheet = this.getCurrentSheet();
+        this.plugins.SettingPlugin.textWrapGroup.setAttribute('value',currentSheet.config.textWrapType)
         if(!this.ws){
             this.ws = this.plugins.WebsocketPlugin
         }
@@ -386,6 +387,7 @@ export default class AppExcel{
             this.plugins.SettingPlugin.setLabelCon(clickCell.label)
             this.plugins.SettingPlugin.setCellCon(clickCell.text)
         }
+        this.plugins.SettingPlugin.textWrapGroup.setAttribute('value',currentSheetBook.config.textWrapType)
         this.fresh()
     }
 
@@ -435,7 +437,14 @@ export default class AppExcel{
             sheet:[],
             clickCell: null,
             stepArr:[],
-            stepNum:-1
+            stepNum:-1,
+            config:{
+                /**
+                 * @description cut-截断  wrap-换行
+                 * @type {string}
+                 */
+                textWrapType:'cut'
+            }
         })
 
         this.currentSheetIndex = this.eSheetWorkBook.length - 1

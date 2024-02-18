@@ -144,9 +144,9 @@ export default class InputPlugin{
                 let heightDis = 0
 
                 if(!(evt.relatedTarget && this.selectorDom.contains(evt.relatedTarget))){
-
+                    const currentSheet = this.core.getCurrentSheet();
                     const txt = inputDom.value
-                    if(txt.includes('\n') && this.core.textWrapType === 'wrap'){
+                    if(txt.includes('\n') && currentSheet.config.textWrapType === 'wrap'){
                         const txtArr = txt.split('\n')
                         const txtArrHeight = txtArr.length*clickCell.fontSize
                         if(txtArrHeight>clickCell.height){
