@@ -68,13 +68,14 @@ cargo run
 
 ## api
 
-|   function name    |    ability     |  param   |                              example                               |
+|   function name    |      ability       |  param   |                              example                               |
 |:------------------:|:------------------:|:--------:|:------------------------------------------------------------------:|
-|   exportXlsxData   |   export   |   none   | [{label:"sheet1",sheet:{!ref:"D10",D10:{t:"s",v:"test content"}}}] |
-| stepCallbackHandle | step callback | callback |         excel.stepCallbackHandle((obj)=>{console.log(obj))         |
-|    fresh           |       fresh all        |   none   |                                void                                |
-|    freshContent    |    fresh content    |   none   |                                void                                |
-|  connectWebSocket  |  connnect websocket  |   addr   |                                          ws://192.168.31.208:8091                      |
+|   exportXlsxData   |       export       |   none   | [{label:"sheet1",sheet:{!ref:"D10",D10:{t:"s",v:"test content"}}}] |
+| stepCallbackHandle |   step callback    | callback |         excel.stepCallbackHandle((obj)=>{console.log(obj))         |
+|    fresh           |     fresh all      |   none   |                                void                                |
+|    freshContent    |   fresh content    |   none   |                                void                                |
+|  connectWebSocket  | connnect websocket |   addr   |                                          ws://192.168.31.208:8091                      |
+|    drawExcel     |    import data     |  books   | [{"id":1703748720496,"label":"Sheet1","sheet":[{"row":1,"col":1,"text":"","textAsNumber":null,"width":120,"height":40,"x":0,"y":0,"ltX":40,"ltY":40,"mergeWidth":0,"mergeHeight":0,"mergeRow":1,"mergeCol":1,"mergeStartLabel":"","mergeEndLabel":"","mergeLabelGroup":[],"isMerge":false,"bgColor":"#ffffff","fontColor":"#000000","font":null,"fontSize":12,"fontWeight":"","fontItalic":"","fontFamily":"Calibre","textAlign":"center","textBaseline":"middle","strikethrough":"","underline":"","label":"A1"}]}] |
 
 ## function
 
@@ -96,6 +97,6 @@ cargo run
 - [x] strikethrough
 - [x] underline
 - [x] export-data
-- [ ] import-data
+- [x] import-data
 - [x] forward
 - [x] fallback

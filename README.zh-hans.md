@@ -68,13 +68,14 @@ cargo run
 
 ## api
 
-|        函数名         |   功能   |    参数    |                             样例               |
-|:------------------:|:------:|:--------:|:----------------------------------------------------------:|
-|   exportXlsxData   |   导出   |    无     | [{label:"sheet1",sheet:{!ref:"D10",D10:{t:"s",v:"测试内容"}}}] |
-| stepCallbackHandle |  操作回调  | callback |     excel.stepCallbackHandle((obj)=>{console.log(obj))     |
-|       fresh        |  全部刷新  |    无     |                           void                            |
-|    freshContent    | 刷新表格内容 |    无     |                           void                            |
-|    connectWebSocket     |   链接websocket     | 链接地址addr |                           ws://192.168.31.208:8091                            |
+|        函数名         |     功能      |    参数    |                                                                                                                                                                                                                                                          样例                                                                                                                                                                                                                                                          |
+|:------------------:|:-----------:|:--------:|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+|   exportXlsxData   |     导出      |    无     |                                                                                                                                                                                                                              [{label:"sheet1",sheet:{!ref:"D10",D10:{t:"s",v:"测试内容"}}}]                                                                                                                                                                                                                              |
+| stepCallbackHandle |    操作回调     | callback |                                                                                                                                                                                                                                  excel.stepCallbackHandle((obj)=>{console.log(obj))                                                                                                                                                                                                                                  |
+|       fresh        |    全部刷新     |    无     |                                                                                                                                                                                                                                                         void                                                                                                                                                                                                                                                         |
+|    freshContent    |   刷新表格内容    |    无     |                                                                                                                                                                                                                                                         void                                                                                                                                                                                                                                                         |
+|    connectWebSocket     | 链接websocket | 链接地址addr |                                                                                                                                                                                                                                               ws://192.168.31.208:8091                                                                                                                                                                                                                                               |
+|    drawExcel     |  导入excel数据  |  books   | [{"id":1703748720496,"label":"Sheet1","sheet":[{"row":1,"col":1,"text":"","textAsNumber":null,"width":120,"height":40,"x":0,"y":0,"ltX":40,"ltY":40,"mergeWidth":0,"mergeHeight":0,"mergeRow":1,"mergeCol":1,"mergeStartLabel":"","mergeEndLabel":"","mergeLabelGroup":[],"isMerge":false,"bgColor":"#ffffff","fontColor":"#000000","font":null,"fontSize":12,"fontWeight":"","fontItalic":"","fontFamily":"Calibre","textAlign":"center","textBaseline":"middle","strikethrough":"","underline":"","label":"A1"}]}] |
 
 ## 功能
 
@@ -96,6 +97,6 @@ cargo run
 - [x] 删除线
 - [x] 下划线
 - [x] 导出
-- [ ] 导入
+- [x] 导入
 - [x] 前进
 - [x] 后退
