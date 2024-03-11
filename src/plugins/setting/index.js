@@ -4,6 +4,16 @@ export default class setting{
     /**
      * @type {HTMLElement}
      */
+    uploadCellImgInputDom = null
+
+    /**
+     * @type {HTMLElement}
+     */
+    uploadCellImgDom = null
+
+    /**
+     * @type {HTMLElement}
+     */
     textWrapGroup = null
 
     /**
@@ -757,6 +767,7 @@ export default class setting{
         // 拆分按钮
         this.createCellSplitBtnDom()
         this.createTextWrapBtnDom()
+        this.createExtraFuncDom()
 
         const cellMergeAndSplitLayoutDom = h('div',{
             attr:{
@@ -780,6 +791,8 @@ export default class setting{
         settingTopDom.appendChild(fontColorAndBgColorDom)
         settingTopDom.appendChild(divideLine.cloneNode())
         settingTopDom.appendChild(cellMergeAndSplitLayoutDom)
+        settingTopDom.appendChild(divideLine.cloneNode())
+        settingTopDom.appendChild(this.uploadCellImgDom)
 
         this.selectorDom.insertBefore(settingTopDom,settingDom)
 
@@ -1363,6 +1376,79 @@ export default class setting{
 
     setTextWrapInHeader(type){
         this.textWrapGroup.setAttribute('value',type??'cut')
+    }
+
+    createExtraFuncDom(){
+        const { h } = this.core
+
+        this.uploadCellImgInputDom = h('input',{
+            style:{
+                width:0,
+                height:0,
+                padding:0,
+                border:'none'
+            },
+            attr:{
+                type:'file'
+            }
+        })
+
+        const uploadCellImgDom = h('div',{
+            style:{
+                display:'flex',
+                alignItems:'center',
+                height:'52px'
+            }
+        },[
+
+            h('div',{
+                style:{
+                    display:'flex',
+                    flexDirection:'column',
+                    alignItems:'center'
+                }
+            },[
+                h('e-sheet-tip', {
+                    attribute: {
+                        'tip-label': '插入单元格图片',
+                        'left': -40,
+                        'top': 22,
+                    }
+                }, [
+                    h('e-sheet-icon-svg', {
+                        attribute: {
+                            category: 'extra',
+                            position: 'cell-img'
+                        }
+                    })
+                ]),
+                h('div',{
+                    attr:{
+                        innerText:'图片',
+                        className:'e-sheet-cell-font'
+                    },
+                    style:{
+                        marginTop:'6px'
+                    }
+                })
+            ]),
+            this.uploadCellImgInputDom
+        ])
+
+        this.uploadCellImgInputDom.addEventListener('input',evt=>{
+            console.log('上传图片',evt.target.files)
+            this.core.options.uploadImg && this.core.options.uploadImg(evt.target.files).then(res=>{
+
+            })
+        })
+
+        uploadCellImgDom.addEventListener('click',_=>{
+            // console.log('this.uploadCellImgInputDom',this.uploadCellImgInputDom)
+            this.uploadCellImgInputDom.click()
+        })
+
+        this.uploadCellImgDom = uploadCellImgDom
+
     }
 
 }
