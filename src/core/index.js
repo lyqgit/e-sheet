@@ -193,6 +193,15 @@ export default class AppExcel{
            return
         }
         books.forEach(item=>{
+            item.sheet.forEach(sheetItem=>{
+                sheetItem.img.forEach(itemImg=>{
+                    const imgEl = new Image()
+                    imgEl.src = itemImg.url;
+                    imgEl.onload = ()=>{
+                        itemImg.imgEl = imgEl
+                    }
+                })
+            })
             this.eSheetWorkBook.push({
                 id:item.id,
                 label: item.label,
@@ -510,6 +519,7 @@ export default class AppExcel{
                     textBaseline:'middle',
                     strikethrough:'',
                     underline:'',
+                    img:[],
                     label
                 })
                 colWidth += cellWidth

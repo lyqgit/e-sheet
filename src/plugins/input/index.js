@@ -135,7 +135,7 @@ export default class InputPlugin{
                 // console.log('测试onblur',clickCell,inputDom.value,evt.target.value)
                 // console.log('测试inputDom.value',inputDom.value)
                 // console.log('测试onblur-----evt.target',evt,clickCell)
-                if(!inputDom.value){
+                if(inputDom.value === undefined || inputDom.value === null){
                     this.hideInput()
                     return
                 }

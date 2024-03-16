@@ -1,4 +1,5 @@
 import base64Img from '../image/base64Img.js'
+import setting from "../plugins/setting/index.js";
 
 /**
  * @typedef {Object} Canvas
@@ -36,6 +37,7 @@ export default class Canvas{
         this.cellWidth = options.cellWidth
         this.cellHeight = options.cellHeight
         this.canvasDom = canvasDom
+        this.core = core
 
         canvasDom.addEventListener('mousemove',_=>{
             // console.log('evt',evt)
@@ -77,6 +79,23 @@ export default class Canvas{
         this.ctx.closePath();
         this.ctx.stroke();
 
+    }
+
+    /**
+     * @description 绘制图片
+     * @param {Number} x
+     * @param {Number} y
+     * @param {Array} img
+     * @param {Number} col
+     * @param {Number} row
+     * @param {Boolean} isMerge
+     * @param {Function} thenDraw
+     */
+    drawImage(x,y,img,row,col,isMerge,thenDraw){
+        img.forEach((item)=>{
+            this.ctx.globalCompositeOperation = 'destination-over'
+            this.ctx.drawImage(item.imgEl,x,y,item.imgEl.width,item.imgEl.height)
+        })
     }
 
     /**
