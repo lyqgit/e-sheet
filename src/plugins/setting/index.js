@@ -1451,22 +1451,29 @@ export default class setting{
         ])
 
         this.uploadCellImgInputDom.addEventListener('input',evt=>{
-            console.log('上传图片',evt.target.value)
+            // console.log('上传图片',evt.target.value)
             const { clickCell } = this.contentComponent
             if(this.core.options.uploadImg){
                 this.core.options.uploadImg(evt.target.files).then(res=>{
-                    console.log('上传图片res',res)
-
-                    this.cellImgChange(res)
+                    // console.log('上传图片res',res)
+                    const imgEl = new Image()
+                    imgEl.src = res
+                    imgEl.onload = ()=>{
+                        if(imgEl.width > clickCell.width){
+                            this.core.plugins.DragPlugin.expandWidthNoDrag(clickCell.col,imgEl.width,false)
+                        }
+                        if(imgEl.height > clickCell.height){
+                            this.core.plugins.DragPlugin.expandHeightNoDrag(clickCell.row,imgEl.height,false)
+                        }
+                        this.cellImgChange(res,imgEl)
+                    }
                 })
             }else{
                 const reader = new FileReader();
                 const file = evt.target.files[0]
                 reader.onload = (event)=>{
-                    // 当FileReader读取操作完成后会触发load事件
                     const blob = new Blob([event.target.result], { type: file.type });
                     const url = URL.createObjectURL(blob)
-                    // 此时blob对象包含了图片的二进制数据，可以进一步使用
                     const imgEl = new Image()
                     imgEl.src = url
                     imgEl.onload = ()=>{
