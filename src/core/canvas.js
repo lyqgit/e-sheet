@@ -92,9 +92,12 @@ export default class Canvas{
      * @param {Function} thenDraw
      */
     drawImage(x,y,img,row,col,isMerge,thenDraw){
+        let xExt = x
         img.forEach((item)=>{
             this.ctx.globalCompositeOperation = 'destination-over'
-            this.ctx.drawImage(item.imgEl,x,y,item.imgEl.width,item.imgEl.height)
+            const imgEl = this.core.imgCanvasElMap[item]
+            this.ctx.drawImage(imgEl,xExt,y,imgEl.width,imgEl.height)
+            xExt += imgEl.width;
         })
     }
 

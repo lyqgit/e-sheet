@@ -1,3 +1,4 @@
+import { loadMoreImagePromise,loadMoreNetImgPromise } from '../../util/canvas.js'
 
 export default class setting{
 
@@ -126,17 +127,13 @@ export default class setting{
     }
 
     /**
-     * @param {string} src
-     * @param {HTMLImageElement} imgEl
+     * @param {Array<string>} src
      */
-    cellImgChange(src,imgEl){
+    cellImgChange(src){
         if(!this.contentComponent.clickCell){
             return
         }
-        this.contentComponent.clickCell.img.push({
-            url:src,
-            imgEl
-        })
+        this.contentComponent.clickCell.img = this.contentComponent.clickCell.img.concat(src)
         this.core.fresh()
     }
 
@@ -439,6 +436,10 @@ export default class setting{
                 this.setTextWrapInHeader(fObj.next)
                 this.core.ws.wsSend(21,{textWrapType:fObj.next})
                 break
+            case 22: // 图片
+                selectedCell.img = JSON.parse(fObj.next)
+                this.core.ws.wsSend(22, fObj)
+                break
         }
 
         // redo
@@ -583,6 +584,10 @@ export default class setting{
                 this.setTextWrapChange(fObj.pre)
                 this.setTextWrapInHeader(fObj.pre)
                 this.core.ws.wsSend(21,{textWrapType:fObj.pre})
+                break
+            case 22: // 图片
+                selectedCell.img = JSON.parse(fObj.pre)
+                this.core.ws.wsSend(22, {undo:true,...fObj})
                 break
         }
 
@@ -1404,7 +1409,8 @@ export default class setting{
                 border:'none'
             },
             attr:{
-                type:'file'
+                type:'file',
+                multiple:true
             }
         })
 
@@ -1456,37 +1462,56 @@ export default class setting{
             if(this.core.options.uploadImg){
                 this.core.options.uploadImg(evt.target.files).then(res=>{
                     // console.log('上传图片res',res)
-                    const imgEl = new Image()
-                    imgEl.src = res
-                    imgEl.onload = ()=>{
-                        if(imgEl.width > clickCell.width){
-                            this.core.plugins.DragPlugin.expandWidthNoDrag(clickCell.col,imgEl.width,false)
+                    loadMoreNetImgPromise(res).then(resA=>{
+                        const imgIds = [];
+                        let imgWidth = 0
+                        let imgHeight = 0
+                        resA.forEach(item=>{
+                            imgIds.push(item.url)
+                            this.core.imgCanvasElMap[item.url] = item.imgEl
+                            imgWidth += item.imgEl.width
+                            imgHeight += item.imgEl.height
+                        })
+                        if(imgWidth > clickCell.width){
+                            this.core.plugins.DragPlugin.expandWidthNoDrag(clickCell.col,imgWidth,false)
                         }
-                        if(imgEl.height > clickCell.height){
-                            this.core.plugins.DragPlugin.expandHeightNoDrag(clickCell.row,imgEl.height,false)
+                        if(imgHeight > clickCell.height){
+                            this.core.plugins.DragPlugin.expandHeightNoDrag(clickCell.row,imgHeight,false)
                         }
-                        this.cellImgChange(res,imgEl)
-                    }
+                        this.changeStepArr({
+                            type:22,
+                            label:clickCell.label,
+                            pre:JSON.stringify(clickCell.img),
+                            next:JSON.stringify(clickCell.img.concat(imgIds))
+                        })
+                        this.cellImgChange(imgIds)
+                    })
                 })
             }else{
-                const reader = new FileReader();
-                const file = evt.target.files[0]
-                reader.onload = (event)=>{
-                    const blob = new Blob([event.target.result], { type: file.type });
-                    const url = URL.createObjectURL(blob)
-                    const imgEl = new Image()
-                    imgEl.src = url
-                    imgEl.onload = ()=>{
-                        if(imgEl.width > clickCell.width){
-                            this.core.plugins.DragPlugin.expandWidthNoDrag(clickCell.col,imgEl.width,false)
-                        }
-                        if(imgEl.height > clickCell.height){
-                            this.core.plugins.DragPlugin.expandHeightNoDrag(clickCell.row,imgEl.height,false)
-                        }
-                        this.cellImgChange(url,imgEl)
+                console.log('evt.target.files',evt.target.files)
+                loadMoreImagePromise(evt.target.files).then(res=>{
+                    const imgIds = [];
+                    let imgWidth = 0
+                    res.forEach(item=>{
+                        imgIds.push(item.url)
+                        this.core.imgCanvasElMap[item.url] = item.imgEl
+                        imgWidth += item.imgEl.width
+                    })
+                    if(imgWidth > clickCell.width){
+                        this.core.plugins.DragPlugin.expandWidthNoDrag(clickCell.col,imgWidth,false)
                     }
-                };
-                reader.readAsArrayBuffer(file);
+                    const imgHeight = Math.max(...res.map(item=>item.imgEl.height))
+                    if(imgHeight > clickCell.height){
+                        this.core.plugins.DragPlugin.expandHeightNoDrag(clickCell.row,imgHeight,false)
+                    }
+                    this.changeStepArr({
+                        type:22,
+                        label:clickCell.label,
+                        pre:JSON.stringify(clickCell.img),
+                        next:JSON.stringify(clickCell.img.concat(imgIds))
+                    })
+                    this.cellImgChange(imgIds)
+                })
             }
         })
 

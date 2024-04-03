@@ -1,10 +1,16 @@
 import Canvas from './canvas.js'
 import {transformNumToLabel} from '../util/cell.js'
+import {loadMoreNetImgPromise} from '../util/canvas.js'
 
 /**
  * @typedef {Object} AppExcel
  */
 export default class AppExcel{
+    /**
+     * @description 图片地址对应图片对象
+     * @type {Object<HTMLImageElement>}
+     */
+    imgCanvasElMap = {}
 
     /**
      * @description cut-截断  wrap-换行
@@ -185,35 +191,43 @@ export default class AppExcel{
 
     /**
      * @param {Array} books
+     * @returns {Promise}
      */
     loadData(books){
-        this.resetESheetWorkBook()
-        if(!books || (Array.isArray(books) && books.length === 0)){
-           this.createNewSheet();
-           return
-        }
-        books.forEach(item=>{
-            item.sheet.forEach(sheetItem=>{
-                sheetItem.img.forEach(itemImg=>{
-                    const imgEl = new Image()
-                    imgEl.src = itemImg.url;
-                    imgEl.onload = ()=>{
-                        itemImg.imgEl = imgEl
+        return new Promise((resolve)=>{
+            this.resetESheetWorkBook()
+            if(!books || (Array.isArray(books) && books.length === 0)){
+                this.createNewSheet();
+                resolve()
+            }
+            let allImg = []
+            books.forEach(item=>{
+                item.sheet.forEach(sheetItem=>{
+                    // 兼容之前的数据，判断有没有img字段
+                    if(Array.isArray(sheetItem.img) && sheetItem.img.length>0){
+                        allImg = allImg.concat(sheetItem.img)
+                    }
+                })
+                this.eSheetWorkBook.push({
+                    id:item.id,
+                    label: item.label,
+                    sheet:item.sheet,
+                    clickCell: null,
+                    stepArr:[],
+                    stepNum:-1,
+                    config:{
+                        textWrapType:item.config?.textWrapType??'cut'
                     }
                 })
             })
-            this.eSheetWorkBook.push({
-                id:item.id,
-                label: item.label,
-                sheet:item.sheet,
-                clickCell: null,
-                stepArr:[],
-                stepNum:-1,
-                config:{
-                    textWrapType:item.config?.textWrapType??'cut'
-                }
+            loadMoreNetImgPromise(allImg).then(res=>{
+                res.forEach(item=>{
+                    this.imgCanvasElMap[item.url] = item.imgEl
+                })
+                resolve()
             })
         })
+
     }
 
     /**
@@ -221,24 +235,25 @@ export default class AppExcel{
      */
     drawExcel(books){
         this.currentSheetIndex = 0
-        this.loadData(books)
-        // 装载组件
-        if(Object.keys(this.components).length === 0){
-            this.installComponents(this.installComponentsObj);
-            this.installPlugins(this.installPluginsObj);
-        }
+        this.loadData(books).then(()=>{
+            // 装载组件
+            if(Object.keys(this.components).length === 0){
+                this.installComponents(this.installComponentsObj);
+                this.installPlugins(this.installPluginsObj);
+            }
 
-        this.drawCanvas()
-        this.freshScrollBar()
-        // 默认选中A1
-        this.plugins.SettingPlugin.changeFirstSelectedCell('A1');
-        const currentSheet = this.getCurrentSheet();
-        this.plugins.SettingPlugin.setTextWrapInHeader(currentSheet.config.textWrapType)
-        if(!this.ws){
-            this.ws = this.plugins.WebsocketPlugin
-        }
-        const eSheetLoadingLayout = this.selectorDom.querySelector('.e-sheet-loading-cup-layout')
-        eSheetLoadingLayout && eSheetLoadingLayout.remove()
+            this.drawCanvas()
+            this.freshScrollBar()
+            // 默认选中A1
+            this.plugins.SettingPlugin.changeFirstSelectedCell('A1');
+            const currentSheet = this.getCurrentSheet();
+            this.plugins.SettingPlugin.setTextWrapInHeader(currentSheet.config.textWrapType)
+            if(!this.ws){
+                this.ws = this.plugins.WebsocketPlugin
+            }
+            const eSheetLoadingLayout = this.selectorDom.querySelector('.e-sheet-loading-cup-layout')
+            eSheetLoadingLayout && eSheetLoadingLayout.remove()
+        })
     }
 
     drawCanvas(){
