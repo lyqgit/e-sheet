@@ -1488,7 +1488,6 @@ export default class setting{
                     })
                 })
             }else{
-                console.log('evt.target.files',evt.target.files)
                 loadMoreImagePromise(evt.target.files).then(res=>{
                     const imgIds = [];
                     let imgWidth = 0
@@ -1504,12 +1503,6 @@ export default class setting{
                     if(imgHeight > clickCell.height){
                         this.core.plugins.DragPlugin.expandHeightNoDrag(clickCell.row,imgHeight,false)
                     }
-                    this.changeStepArr({
-                        type:22,
-                        label:clickCell.label,
-                        pre:JSON.stringify(clickCell.img),
-                        next:JSON.stringify(clickCell.img.concat(imgIds))
-                    })
                     this.cellImgChange(imgIds)
                 })
             }
