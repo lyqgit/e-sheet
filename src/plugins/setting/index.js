@@ -1501,7 +1501,7 @@ export default class setting{
                     }
                     const imgHeight = Math.max(...res.map(item=>item.imgEl.height))
                     if(imgHeight > clickCell.height){
-                        this.core.plugins.DragPlugin.expandHeightNoDrag(clickCell.row,imgHeight,false)
+                        this.core.plugins.DragPlugin.expandHeightNoDrag(clickCell.row,imgHeight-clickCell.height,false)
                     }
                     this.cellImgChange(imgIds)
                 })
