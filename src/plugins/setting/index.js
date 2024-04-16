@@ -1497,7 +1497,7 @@ export default class setting{
                         imgWidth += item.imgEl.width
                     })
                     if(imgWidth > clickCell.width){
-                        this.core.plugins.DragPlugin.expandWidthNoDrag(clickCell.col,imgWidth,false)
+                        this.core.plugins.DragPlugin.expandWidthNoDrag(clickCell.col,imgWidth-clickCell.width,false)
                     }
                     const imgHeight = Math.max(...res.map(item=>item.imgEl.height))
                     if(imgHeight > clickCell.height){
