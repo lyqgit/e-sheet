@@ -312,6 +312,22 @@ export default class ContextmenuPlugin{
         this.hideContextMenu()
     }
 
+    /**
+     * @description 清空当前选中的单元格中的图片
+     */
+    clearImg=()=>{
+        const { clickCell } = this.contentComponent
+        this.core.plugins.SettingPlugin.changeStepArr({
+            type:22,
+            label:clickCell.label,
+            pre:JSON.stringify(clickCell.img),
+            next:JSON.stringify([])
+        })
+        clickCell.img = []
+        this.hideContextMenu()
+        this.core.fresh()
+    }
+
     registryContextMenu(){
 
         const { h } = this.core
@@ -341,6 +357,16 @@ export default class ContextmenuPlugin{
             },
             attr:{
                 innerText:'拆分单元格',
+                className: 'item-btn'
+            }
+        })
+
+        const clearImgBtn = h('div',{
+            style:{
+                cursor:'pointer'
+            },
+            attr:{
+                innerText:'清空图片',
                 className: 'item-btn'
             }
         })
@@ -564,8 +590,13 @@ export default class ContextmenuPlugin{
             this.splitCell(clickCell)
         }
 
+        clearImgBtn.onclick = _=>{
+            this.clearImg()
+        }
+
         containerDom.appendChild(mergeBtn)
         containerDom.appendChild(splitBtn)
+        containerDom.appendChild(clearImgBtn)
         containerDom.appendChild(insertLeftColBtn)
         containerDom.appendChild(insertRightColBtn)
         containerDom.appendChild(insertTopRowBtn)
