@@ -1,3 +1,4 @@
+import {loadMoreImagePromise, loadMoreNetImgPromise} from "../../util/canvas.js";
 
 export default class ContextmenuPlugin{
 
@@ -371,6 +372,16 @@ export default class ContextmenuPlugin{
             }
         })
 
+        const addImgBtn = h('div',{
+            style:{
+                cursor:'pointer'
+            },
+            attr:{
+                innerText:'插入图片',
+                className: 'item-btn'
+            }
+        })
+
         const insertLeftColBtn = h('div',{
             attr:{
                 className: 'item-input-btn item-top-border'
@@ -590,12 +601,19 @@ export default class ContextmenuPlugin{
             this.splitCell(clickCell)
         }
 
+        addImgBtn.onclick = _=>{
+            this.core.plugins.SettingPlugin.uploadCellImgInputDom.click()
+            this.hideContextMenu()
+        }
+
         clearImgBtn.onclick = _=>{
             this.clearImg()
+            this.hideContextMenu()
         }
 
         containerDom.appendChild(mergeBtn)
         containerDom.appendChild(splitBtn)
+        containerDom.appendChild(addImgBtn)
         containerDom.appendChild(clearImgBtn)
         containerDom.appendChild(insertLeftColBtn)
         containerDom.appendChild(insertRightColBtn)
