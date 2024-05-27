@@ -60,6 +60,12 @@ export default class ContentComponent{
 
     contentGroup = []
 
+    /**
+     * @description 用于筛选的内容，使用单元格的引用修改其内容
+     * @type {[]}
+     */
+    filterContentGroup = []
+
     constructor(layer,options={},core) {
 
         this.options = options;

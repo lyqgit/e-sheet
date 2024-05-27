@@ -6,6 +6,13 @@ import {loadMoreNetImgPromise} from '../util/canvas.js'
  * @typedef {Object} AppExcel
  */
 export default class AppExcel{
+
+    /**
+     * @description 是否开启筛选，暂定  0、未开启   1、开启普通筛选  后续数字可扩展
+     * @type {number}
+     */
+    filterType = 0
+
     /**
      * @description 图片地址对应图片对象
      * @type {Object<HTMLImageElement>}
