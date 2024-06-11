@@ -58,13 +58,23 @@ export default class ContentComponent{
      */
     layer = null;
 
+    /**
+     * @description 单元格数组
+     * @type {Array}
+     */
     contentGroup = []
 
     /**
      * @description 用于筛选的内容，使用单元格的引用修改其内容
-     * @type {[]}
+     * @type {Array}
      */
     filterContentGroup = []
+
+    /**
+     * @description 筛选头部位置
+     * @type {Array}
+     */
+    filterCellHeader = []
 
     constructor(layer,options={},core) {
 

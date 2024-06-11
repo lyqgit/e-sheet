@@ -155,6 +155,16 @@ export default class IconSvg extends HTMLElement{
             }
         }
 
+        if(this.category === 'freeze'){
+            this.className = 'e-sheet-cell-svg-layout e-sheet-svg-24-24'
+            switch (this.position) {
+                case '1':
+                    this.innerHTML = '<svg width="24" height="24" fill="none" viewBox="0 0 24 24" class="_frozen24"><defs><clipPath id="c08f86_0"><rect width="24" height="24" rx="0"></rect></clipPath></defs><g clip-path="url(#c08f86_0)"><path fill="#C7C8C9" d="M4 4h7v7H4V4Z"></path><path fill="currentColor" d="M4.5 3A1.5 1.5 0 0 0 3 4.5v14A1.5 1.5 0 0 0 4.5 20h14a1.5 1.5 0 0 0 1.5-1.5v-14A1.5 1.5 0 0 0 18.5 3h-14ZM4 18.293V12h6.293L4 18.293Zm.707.707L11 12.707V19H4.707Zm0-8L11 4.707V11H4.707ZM4 10.293V4.5a.5.5 0 0 1 .5-.5h5.793L4 10.293ZM12 19v-7h7v6.5a.5.5 0 0 1-.5.5H12Zm.707-8L19 4.707V11h-6.293ZM12 10.293V4h6.293L12 10.293Z"></path></g></svg>'
+                    return;
+
+            }
+        }
+
     }
 
 }

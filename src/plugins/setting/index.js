@@ -1579,7 +1579,13 @@ export default class setting{
         filterFuncRadioDom.addEventListener('e-sheet-radio-group-change',evt=>{
             // console.log('evt',evt)
             if(!filterFuncRadioDom.getAttribute('current')){
-                filterFuncRadioDom.setAttribute('current',evt.detail)
+                // 判断当前的选择是否能筛选
+                if(this.judgeCanFilter()){
+                    filterFuncRadioDom.setAttribute('current',evt.detail)
+                }else{
+                    this.showDialog('提示','指定区域无法筛选')
+                }
+
             }else{
                 filterFuncRadioDom.setAttribute('current','')
             }
@@ -1587,4 +1593,79 @@ export default class setting{
         })
     }
 
+    /**
+     * @description 冻结行
+     */
+    createFreezeFuncDom(){
+        const { h } = this.core
+        const funcRadioDom = h('e-sheet-radio-button', {
+            attribute: {
+                label: '冻结',
+                value: 'true'
+            },
+        }, [
+            h('e-sheet-icon-svg', {
+                attribute: {
+                    category: 'freeze',
+                    position: '1'
+                }
+            })
+        ])
+
+        const filterFuncDom = h('div',{
+            style:{
+                display:'flex',
+                alignItems:'center',
+                height:'52px'
+            }
+        },[
+            h('div',{
+                style:{
+                    display:'flex',
+                    flexDirection:'column',
+                    alignItems:'center'
+                }
+            },[
+                funcRadioDom,
+                h('div',{
+                    attr:{
+                        innerText:'冻结',
+                        className:'e-sheet-cell-font'
+                    },
+                    style:{
+                        marginTop:'6px'
+                    }
+                })
+            ])
+        ])
+
+        this.filterFuncDom = filterFuncDom
+        funcRadioDom.addEventListener('e-sheet-radio-group-change',evt=>{
+            // console.log('evt',evt)
+            if(!funcRadioDom.getAttribute('current')){
+                funcRadioDom.setAttribute('current',evt.detail)
+            }else{
+                funcRadioDom.setAttribute('current','')
+            }
+            // this.wsSendCellAttrByTypeAndData(19)
+        })
+    }
+
+    /**
+     * @description 判断是否可以筛选
+     * @returns {boolean}
+     */
+    judgeCanFilter(){
+        const { moreSelectedCell,clickCell,contentGroup } = this.contentComponent
+        if(moreSelectedCell.length > 0){
+            // 选中多个
+            this.contentComponent.filterCellHeader = moreSelectedCell.filter(item=>item.row === clickCell.row)
+            const firstRowCells = this.contentComponent.filterCellHeader.map(item=>item.col)
+            contentGroup.some(item=> {
+                return !!item.text && firstRowCells.includes(item.col)
+            })
+        }else{
+            return !!clickCell.text
+        }
+    }
 }
