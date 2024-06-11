@@ -5,6 +5,11 @@ export default class setting{
     /**
      * @type {HTMLElement}
      */
+    filterFuncDom = null
+
+    /**
+     * @type {HTMLElement}
+     */
     uploadCellImgInputDom = null
 
     /**
@@ -788,6 +793,7 @@ export default class setting{
         this.createCellSplitBtnDom()
         this.createTextWrapBtnDom()
         this.createExtraFuncDom()
+        this.createFilterFuncDom()
 
         const cellMergeAndSplitLayoutDom = h('div',{
             attr:{
@@ -813,6 +819,8 @@ export default class setting{
         settingTopDom.appendChild(cellMergeAndSplitLayoutDom)
         settingTopDom.appendChild(divideLine.cloneNode())
         settingTopDom.appendChild(this.uploadCellImgDom)
+        settingTopDom.appendChild(divideLine.cloneNode())
+        settingTopDom.appendChild(this.filterFuncDom)
 
         this.selectorDom.insertBefore(settingTopDom,settingDom)
 
@@ -1398,6 +1406,9 @@ export default class setting{
         this.textWrapGroup.setAttribute('value',type??'cut')
     }
 
+    /**
+     * @description 插入图片
+     */
     createExtraFuncDom(){
         const { h } = this.core
 
@@ -1515,6 +1526,65 @@ export default class setting{
 
         this.uploadCellImgDom = uploadCellImgDom
 
+    }
+
+
+    /**
+     * @description 筛选
+     */
+    createFilterFuncDom(){
+        const { h } = this.core
+        const filterFuncRadioDom = h('e-sheet-radio-button', {
+            attribute: {
+                label: '筛选',
+                value: 'true'
+            },
+        }, [
+            h('e-sheet-icon-svg', {
+                attribute: {
+                    category: 'filter',
+                    position: '1'
+                }
+            })
+        ])
+
+        const filterFuncDom = h('div',{
+            style:{
+                display:'flex',
+                alignItems:'center',
+                height:'52px'
+            }
+        },[
+            h('div',{
+                style:{
+                    display:'flex',
+                    flexDirection:'column',
+                    alignItems:'center'
+                }
+            },[
+                filterFuncRadioDom,
+                h('div',{
+                    attr:{
+                        innerText:'筛选',
+                        className:'e-sheet-cell-font'
+                    },
+                    style:{
+                        marginTop:'6px'
+                    }
+                })
+            ])
+        ])
+
+        this.filterFuncDom = filterFuncDom
+        filterFuncRadioDom.addEventListener('e-sheet-radio-group-change',evt=>{
+            // console.log('evt',evt)
+            if(!filterFuncRadioDom.getAttribute('current')){
+                filterFuncRadioDom.setAttribute('current',evt.detail)
+            }else{
+                filterFuncRadioDom.setAttribute('current','')
+            }
+            // this.wsSendCellAttrByTypeAndData(19)
+        })
     }
 
 }

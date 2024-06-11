@@ -15,7 +15,7 @@ export default class AppExcel{
 
     /**
      * @description 图片地址对应图片对象
-     * @type {Object<HTMLImageElement>}
+     * @type {Object<String,HTMLImageElement>}
      */
     imgCanvasElMap = {}
 
