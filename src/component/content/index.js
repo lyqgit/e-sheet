@@ -899,9 +899,15 @@ export default class ContentComponent{
 
         const { width,height,cellHeight,cellWidth } = this.options
 
-        const { nonSelectBgColor,selectedBorderBgColor,borderColor,selectedBgColor,copyKey } = this.core
+        const {
+            nonSelectBgColor,
+            selectedBorderBgColor,
+            borderColor,
+            selectedBgColor,
+            copyKey
+        } = this.core
 
-        const { config:{ textWrapType } } = this.core.getCurrentSheet()
+        const { config:{ textWrapType,freezeType,freezeRow } } = this.core.getCurrentSheet()
 
         const lt = this.searchScreenAddr(offsetX,offsetY)
         const rb = this.searchScreenAddr(offsetX+width-cellHeight,offsetY+height-cellHeight)
@@ -1140,6 +1146,41 @@ export default class ContentComponent{
             // }
             if(this.isRowSelect && this.isColSelect){
                 this.layer.drawFillRect(x-offsetX+cellHeight,y-offsetY+cellHeight,width,height,selectedBgColor,'destination-over')
+            }
+            if(freezeType === 1 && row <= freezeRow){
+                if(col>=startCol && col<=endCol){
+                    if(tempRect.isMerge){
+                        if(tempRect.label === tempRect.mergeStartLabel){
+                            const {mergeWidth,mergeHeight} = tempRect
+                            // console.log('背景色',tempRect)
+                            this.layer.drawStrokeRect(x-offsetX+cellHeight,y+cellHeight,mergeWidth,mergeHeight,borderColor,'destination-over',1)
+                            this.layer.drawText(x-offsetX+cellHeight,y+cellHeight,text,mergeWidth,mergeHeight,'destination-over',tempRect.fontColor,tempRect.textAlign,{fontSize:tempRect.fontsize,fontFamily:tempRect.fontFamily,fontWeight:tempRect.fontWeight,fontItalic:tempRect.fontItalic},tempRect.textBaseline,tempRect.strikethrough,tempRect.underline,textWrapType)
+                            if(img.length>0 && text.length === 0){
+                                this.layer.drawImage(x-offsetX+cellHeight,y+cellHeight,img,row,col,tempRect.isMerge)
+                            }
+                            this.layer.drawFillRect(x-offsetX+cellHeight,y+cellHeight,mergeWidth,mergeHeight,tempRect.bgColor?tempRect.bgColor:nonSelectBgColor,'destination-over',1)
+                        }else{
+                            // 如果左上角不在屏幕内，渲染左上角
+                            const tempMergeStartRect = this.searchRectByLabel(tempRect.mergeStartLabel)
+                            if(!((tempMergeStartRect.col>=startCol && tempMergeStartRect.col<=endCol) && (tempMergeStartRect.row>=startRow && tempMergeStartRect.row<=endRow))){
+                                this.layer.drawStrokeRect(tempMergeStartRect.x-offsetX+cellHeight,tempMergeStartRect.y+cellHeight,tempMergeStartRect.mergeWidth,tempMergeStartRect.mergeHeight,borderColor,'destination-over',1)
+                                this.layer.drawText(tempMergeStartRect.x-offsetX+cellHeight,tempMergeStartRect.y+cellHeight,tempMergeStartRect.text,tempMergeStartRect.mergeWidth,tempMergeStartRect.mergeHeight,'destination-over',tempMergeStartRect.fontColor,tempMergeStartRect.textAlign,{fontsize:tempMergeStartRect.fontSize,fontFamily:tempMergeStartRect.fontFamily,fontWeight:tempMergeStartRect.fontWeight,fontItalic:tempMergeStartRect.fontItalic},tempMergeStartRect.textBaseline,tempRect.strikethrough,tempRect.underline,textWrapType)
+                                if(img.length>0 && text.length === 0){
+                                    this.layer.drawImage(tempMergeStartRect.x-offsetX+cellHeight,tempMergeStartRect.y+cellHeight,img,row,col,tempRect.isMerge)
+                                }
+                                this.layer.drawFillRect(tempMergeStartRect.x-offsetX+cellHeight,tempMergeStartRect.y+cellHeight,tempMergeStartRect.mergeWidth,tempMergeStartRect.mergeHeight,tempMergeStartRect.bgColor?tempMergeStartRect.bgColor:nonSelectBgColor,'destination-over',1)
+                            }
+                        }
+
+                    }else if(!tempRect.isMerge){
+                        this.layer.drawStrokeRect(x-offsetX+cellHeight,y+cellHeight,width,height,borderColor,'destination-over',1)
+                        this.layer.drawText(x-offsetX+cellHeight,y+cellHeight,text,width,height,'destination-over',tempRect.fontColor,tempRect.textAlign,{fontSize:tempRect.fontSize,fontFamily:tempRect.fontFamily,fontWeight:tempRect.fontWeight,fontItalic:tempRect.fontItalic},tempRect.textBaseline,tempRect.strikethrough,tempRect.underline,textWrapType)
+                        if(img.length>0 && text.length === 0){
+                            this.layer.drawImage(x-offsetX+cellHeight,y+cellHeight,img,row,col,tempRect.isMerge)
+                        }
+                        this.layer.drawFillRect(x-offsetX+cellHeight,y+cellHeight,width,height,tempRect.bgColor?tempRect.bgColor:nonSelectBgColor,'destination-over',1)
+                    }
+                }
             }
         }
 

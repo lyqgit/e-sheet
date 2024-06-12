@@ -85,12 +85,18 @@ export default class SideComponent{
         const { contentGroup,clickCell,clickRectShow,isColSelect,secondClickCell,attrSecond,attrFirst,startAndEndRect } = this.core.components.ContentComponent
         const { borderCellBgColor,selectedBorderBgColor,borderColor,selectedBgColor,nonSelectBgColor } = this.core
 
+        const { config:{ freezeType,freezeRow } } = this.core.getCurrentSheet()
+
         const lt = this.searchScreenAddr(0,offsetY)
         const rb = this.searchScreenAddr(cellHeight,height-cellHeight+offsetY)
 
         // console.log(lt,rb);
 
         const sideRectGroup = contentGroup.filter(item=>item.row>=lt.row && item.col === 1 && item.row <= rb.row)
+        let freezeRectGroup = [];
+        if(freezeType === 1 && freezeRow>0){
+            freezeRectGroup = contentGroup.filter(item=>item.col === 1 && item.row <= freezeRow)
+        }
         this.sideRectGroup = sideRectGroup
 
         // const startRow = parseInt((offsetY/cellHeight).toFixed(1))
@@ -100,6 +106,44 @@ export default class SideComponent{
 
         this.layer.drawLine([0,cellHeight,0,height],null,borderColor)
         this.layer.drawLine([cellHeight,cellHeight,cellHeight,height],null,borderColor)
+
+        for(let i=0;i<freezeRectGroup.length;i++){
+            const tempSide = freezeRectGroup[i]
+            this.layer.drawText(0,tempSide.y+cellHeight,tempSide.row,cellHeight,tempSide.height,'destination-over',null,null, {
+                fontSize:tempSide.fontSize,
+                fontWeight:tempSide.fontWeight,
+                fontItalic:tempSide.fontItalic,
+                fontFamily:tempSide.fontFamily
+            })
+            this.layer.drawLine([0,tempSide.y+cellHeight,cellHeight,tempSide.y+cellHeight],'destination-over',borderColor)
+            // if(clickCell.row === tempSide.row && clickRectShow && !isColSelect){
+            //     this.layer.drawFillRect(0,tempSide.y+cellHeight-offsetY,cellHeight,cellHeight,selectedBgColor,'destination-over')
+            // }else{
+            //     this.layer.drawFillRect(0,tempSide.y+cellHeight-offsetY,cellHeight,cellHeight,borderCellBgColor,'destination-over')
+            // }
+
+            if(clickRectShow && !isColSelect){
+                const topRow = startAndEndRect?attrFirst.row:(secondClickCell?.row>clickCell.row?clickCell.row:secondClickCell?.row);
+                const bottomRow = startAndEndRect?attrSecond.row:(secondClickCell?.row>clickCell.row?secondClickCell?.row:clickCell.row)
+                if(secondClickCell && tempSide.row>=topRow && tempSide.row <= bottomRow){
+                    this.layer.drawFillRect(0,tempSide.y+cellHeight,cellHeight,tempSide.height,selectedBgColor,'destination-over')
+                }else if(clickCell.row === tempSide.row && !clickCell.isMerge){
+                    this.layer.drawFillRect(0,tempSide.y+cellHeight,cellHeight,tempSide.height,selectedBgColor,'destination-over')
+                }else if(clickCell.isMerge){
+                    const isMergeinArr = this.findClickCellRowArr(clickCell)
+                    if(isMergeinArr.findIndex(item=>item === tempSide.row) !== -1){
+                        this.layer.drawFillRect(0,tempSide.y+cellHeight,cellHeight,tempSide.height,selectedBgColor,'destination-over')
+                    }
+                }else{
+                    this.layer.drawFillRect(0,tempSide.y+cellHeight,cellHeight,tempSide.height,borderCellBgColor,'destination-over')
+                }
+
+            }else{
+                this.layer.drawFillRect(0,tempSide.y+cellHeight,cellHeight,tempSide.height,borderCellBgColor,'destination-over')
+            }
+            this.layer.drawFillRect(0,tempSide.y+cellHeight,cellHeight,tempSide.height,nonSelectBgColor,'destination-over')
+
+        }
 
         for(let i=0;i<sideRectGroup.length;i++){
             const tempSide = sideRectGroup[i]
@@ -138,6 +182,8 @@ export default class SideComponent{
             this.layer.drawFillRect(0,tempSide.y+cellHeight-offsetY,cellHeight,tempSide.height,nonSelectBgColor,'destination-over')
 
         }
+
+
 
     }
 

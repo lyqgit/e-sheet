@@ -8,12 +8,6 @@ import {loadMoreNetImgPromise} from '../util/canvas.js'
 export default class AppExcel{
 
     /**
-     * @description 是否开启筛选，暂定  0、未开启   1、开启普通筛选  后续数字可扩展
-     * @type {number}
-     */
-    filterType = 0
-
-    /**
      * @description 图片地址对应图片对象
      * @type {Object<String,HTMLImageElement>}
      */
@@ -422,6 +416,7 @@ export default class AppExcel{
             this.plugins.SettingPlugin.setCellCon(clickCell.text)
         }
         this.plugins.SettingPlugin.setTextWrapInHeader(currentSheetBook.config.textWrapType)
+        this.plugins.SettingPlugin.setFreezeInHeader(currentSheetBook.config.freezeType)
         this.fresh()
     }
 
@@ -491,7 +486,24 @@ export default class AppExcel{
                  * @description cut-截断  wrap-换行
                  * @type {string}
                  */
-                textWrapType:'cut'
+                textWrapType:'cut',
+                /**
+                 * @description 是否开启筛选，暂定  0、未开启   1、开启普通筛选  后续数字可扩展
+                 * @type {number}
+                 */
+                filterType:0,
+
+                /**
+                 * @description 是否开启冻结，暂定  0、未开启   1、开启普通冻结  后续数字可扩展
+                 * @type {number}
+                 */
+                freezeType:0,
+
+                /**
+                 * @description 冻结行数
+                 * @type {number}
+                 */
+                freezeRow:0
             }
         })
 

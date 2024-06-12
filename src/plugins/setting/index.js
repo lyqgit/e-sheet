@@ -10,6 +10,11 @@ export default class setting{
     /**
      * @type {HTMLElement}
      */
+    freezeFuncDom = null
+
+    /**
+     * @type {HTMLElement}
+     */
     uploadCellImgInputDom = null
 
     /**
@@ -793,7 +798,8 @@ export default class setting{
         this.createCellSplitBtnDom()
         this.createTextWrapBtnDom()
         this.createExtraFuncDom()
-        this.createFilterFuncDom()
+        // this.createFilterFuncDom()
+        this.createFreezeFuncDom()
 
         const cellMergeAndSplitLayoutDom = h('div',{
             attr:{
@@ -819,8 +825,10 @@ export default class setting{
         settingTopDom.appendChild(cellMergeAndSplitLayoutDom)
         settingTopDom.appendChild(divideLine.cloneNode())
         settingTopDom.appendChild(this.uploadCellImgDom)
+        // settingTopDom.appendChild(divideLine.cloneNode())
+        // settingTopDom.appendChild(this.filterFuncDom)
         settingTopDom.appendChild(divideLine.cloneNode())
-        settingTopDom.appendChild(this.filterFuncDom)
+        settingTopDom.appendChild(this.freezeFuncDom)
 
         this.selectorDom.insertBefore(settingTopDom,settingDom)
 
@@ -1407,6 +1415,20 @@ export default class setting{
     }
 
     /**
+     * @description 冻结状态dom
+     * @type {HTMLElement}
+     */
+    freezeStatusDom = null
+
+    /**
+     * @description 设置顶部冻结状态
+     * @param type {number}
+     */
+    setFreezeInHeader(type){
+        this.freezeStatusDom.setAttribute('current',type===1)
+    }
+
+    /**
      * @description 插入图片
      */
     createExtraFuncDom(){
@@ -1577,17 +1599,25 @@ export default class setting{
 
         this.filterFuncDom = filterFuncDom
         filterFuncRadioDom.addEventListener('e-sheet-radio-group-change',evt=>{
+            const { config } = this.core.getCurrentSheet()
             // console.log('evt',evt)
             if(!filterFuncRadioDom.getAttribute('current')){
                 // 判断当前的选择是否能筛选
                 if(this.judgeCanFilter()){
                     filterFuncRadioDom.setAttribute('current',evt.detail)
+                    const { moreSelectedCell,clickCell,contentGroup } = this.contentComponent
+                    // 获取可以筛选的头部单元格
+                    this.contentComponent.filterCellHeader = moreSelectedCell.filter(item=>item.row === clickCell.row && contentGroup.some(itemA=>item.col === itemA.col && !!itemA.text))
+                    config.filterType = 1
                 }else{
                     this.showDialog('提示','指定区域无法筛选')
                 }
 
             }else{
+                // 关闭筛选后，重置filterCellHeader
+                this.contentComponent.filterCellHeader = []
                 filterFuncRadioDom.setAttribute('current','')
+                config.filterType = 0
             }
             // this.wsSendCellAttrByTypeAndData(19)
         })
@@ -1612,7 +1642,7 @@ export default class setting{
             })
         ])
 
-        const filterFuncDom = h('div',{
+        const freezeFuncDom = h('div',{
             style:{
                 display:'flex',
                 alignItems:'center',
@@ -1639,16 +1669,30 @@ export default class setting{
             ])
         ])
 
-        this.filterFuncDom = filterFuncDom
+        this.freezeFuncDom = freezeFuncDom
         funcRadioDom.addEventListener('e-sheet-radio-group-change',evt=>{
+            const { config } = this.core.getCurrentSheet()
             // console.log('evt',evt)
             if(!funcRadioDom.getAttribute('current')){
-                funcRadioDom.setAttribute('current',evt.detail)
+                const { clickCell,secondClickCell } = this.contentComponent
+                if(secondClickCell){
+                    // 选中多个，以最后一个的行数为基准
+                    config.freezeRow = secondClickCell.row
+                    config.freezeType = 1
+                    funcRadioDom.setAttribute('current',evt.detail)
+                }else if(clickCell){
+                    config.freezeRow = clickCell.row
+                    config.freezeType = 1
+                    funcRadioDom.setAttribute('current',evt.detail)
+                }
             }else{
                 funcRadioDom.setAttribute('current','')
+                config.freezeType = 0
+                config.freezeRow = 0
             }
             // this.wsSendCellAttrByTypeAndData(19)
         })
+        this.freezeStatusDom = funcRadioDom
     }
 
     /**
@@ -1659,8 +1703,7 @@ export default class setting{
         const { moreSelectedCell,clickCell,contentGroup } = this.contentComponent
         if(moreSelectedCell.length > 0){
             // 选中多个
-            this.contentComponent.filterCellHeader = moreSelectedCell.filter(item=>item.row === clickCell.row)
-            const firstRowCells = this.contentComponent.filterCellHeader.map(item=>item.col)
+            const firstRowCells = moreSelectedCell.filter(item=>item.row === clickCell.row).map(item=>item.col)
             contentGroup.some(item=> {
                 return !!item.text && firstRowCells.includes(item.col)
             })
