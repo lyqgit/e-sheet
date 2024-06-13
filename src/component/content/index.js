@@ -897,6 +897,8 @@ export default class ContentComponent{
      */
     trendsDraw(offsetX = 0,offsetY = 0){
 
+        const tempOffsetY = offsetY
+
         const { width,height,cellHeight,cellWidth } = this.options
 
         const {
@@ -917,6 +919,12 @@ export default class ContentComponent{
         this.layer.clearRect(cellHeight,cellHeight,width,height)
 
         const { copyCellDash } = this.core
+
+        if(freezeType === 1){
+            if(freezeRow >= this.clickCell.row){
+                offsetY = 0
+            }
+        }
 
         if(copyKey){
             // 绘制复制选中的范围
@@ -1069,6 +1077,8 @@ export default class ContentComponent{
             }
         }
 
+        offsetY = tempOffsetY
+
         // 多人协作绘制选中
         this.drawMulPersonSelected(offsetX,offsetY)
 
@@ -1081,6 +1091,12 @@ export default class ContentComponent{
         for(let i=0;i<contentGroup.length;i++){
             const tempRect = contentGroup[i]
             const {row,col,text,x,y,width,height,img} = tempRect
+
+            if(freezeRow >= row){
+                offsetY = 0
+            }else{
+                offsetY = tempOffsetY
+            }
 
             // 根据位置显示范围内的cell------(x>=startX && x<=endX) && (y>=startY && y<=endY)
             if((col>=startCol && col<=endCol) && (row>=startRow && row<=endRow)){
@@ -1131,12 +1147,20 @@ export default class ContentComponent{
                 if((col>=ltCol && col<=rbCol) && (row>=ltRow && row<=rbRow)){
                     // console.log('x+cellHeight-offsetX',x+cellHeight-offsetX)
                     // this.layer.drawFillRect(x+cellHeight-offsetX,y-offsetY+cellHeight,width,height,selectedBgColor,'destination-over')
-                    this.layer.drawFillRect(x+cellHeight-offsetX,y-offsetY+cellHeight,width,height,selectedBgColor,'destination-over')
+                    if(freezeType === 1 && row <= freezeRow){
+                        // this.layer.drawFillRect(x+cellHeight-offsetX,y-offsetY+cellHeight,width,height,selectedBgColor,'destination-over')
+                        this.layer.drawFillRect(x+cellHeight-offsetX,y+cellHeight,width,height,nonSelectBgColor,'destination-over')
+                    }else{
+                        this.layer.drawFillRect(x+cellHeight-offsetX,y-offsetY+cellHeight,width,height,selectedBgColor,'destination-over')
+
+                    }
                     if(!(tempRect.col === this.clickCell.col && tempRect.row === this.clickCell.row)){
                         this.mergeSelectedCell.push(tempRect)
                     }
                     this.moreSelectedCell.push(tempRect)
                 }
+
+
 
             }
             // else if(this.secondClickCell && this.secondClickCell.isMerge){

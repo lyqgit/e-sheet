@@ -1685,6 +1685,8 @@ export default class setting{
                     config.freezeType = 1
                     funcRadioDom.setAttribute('current',evt.detail)
                 }
+                // 当滚动条滚动后才冻结，需要刷新一下
+                this.core.fresh();
             }else{
                 funcRadioDom.setAttribute('current','')
                 config.freezeType = 0

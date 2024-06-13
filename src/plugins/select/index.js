@@ -873,6 +873,8 @@ export default class SelectPlugin{
             //     moveTimeId = null
             // }
 
+            const { config:{ freezeType,freezeRow } } = this.core.getCurrentSheet()
+
             if(event.offsetY<=cellHeight && event.offsetX<=cellHeight){
                 // 左上角
                 this.contentComponent.setSecondClickCell(null)
@@ -896,6 +898,61 @@ export default class SelectPlugin{
                 }
                 this.contentComponent.hideSelectedCellDom()
             }else{
+
+
+                if(freezeType === 1){
+                    const relativeRect = this.searchRectByColAndRow(1,freezeRow)
+                    if(relativeRect.ltY+relativeRect.height > event.offsetY){
+                        // 在冻结行
+                        // console.log('在冻结行',relativeRect,event.offsetY)
+                        let attrFirst = this.searchRectAddr(event.offsetX - cellHeight,event.offsetY - cellHeight)
+                        // console.log('x,y',attrFirst,event.offsetX - cellHeight,event.offsetY - cellHeight)
+                        if(attrFirst){
+
+                            this.contentComponent.showClickRect(attrFirst)
+
+                            this.core.plugins.SettingPlugin.setCellAttrInHeader(attrFirst)
+
+                            this.contentComponent.setSecondClickCell(null)
+
+                            this.canvasDom.onmousemove = event=>{
+                                let attrSecond = this.searchRectAddr(event.offsetX - cellHeight,event.offsetY - cellHeight)
+                                // console.log('attr',attrSecond)
+                                if(attrSecond && attrFirst.label === attrSecond.label){
+                                    this.contentComponent.setSecondClickCell(null)
+                                } else if(attrSecond && attrSecond.label !== this.contentComponent.secondClickCell?.label ){
+
+                                    let isRight = attrSecond.x>attrFirst.x
+                                    let isBottom = attrSecond.y>attrFirst.y
+
+                                    // attrSecond是合并单元格
+
+                                    if(attrSecond.isMerge){
+                                        if(isRight && !isBottom){
+                                            // 第二个在右上角
+                                            attrSecond = this.searchRectByColAndRow(attrSecond.col+attrSecond.mergeCol - 1,attrSecond.row)
+                                        }else if(isRight && isBottom){
+                                            // 第二个在右下角
+                                            attrSecond = this.searchRectByColAndRow(attrSecond.col+attrSecond.mergeCol - 1,attrSecond.row+attrSecond.mergeRow - 1)
+                                        }else if(!isRight && isBottom){
+                                            // 第二个在左下角
+                                            attrSecond = this.searchRectByColAndRow(attrSecond.col,attrSecond.row+attrSecond.mergeRow - 1)
+                                        }
+                                    }
+
+                                    this.contentComponent.setSecondClickCell(attrSecond)
+                                    // console.log('attrSecond',attrSecond)
+
+                                    this.core.fresh()
+                                }
+                            }
+                        }
+                        this.core.fresh()
+                        return;
+                    }
+
+                }
+                console.log('不是冻结行')
                 let attrFirst = this.searchRectAddr(event.offsetX+offsetX - cellHeight,event.offsetY+offsetY - cellHeight)
                 // console.log('x,y',attrFirst)
                 // console.log('offsetY',offsetY)
