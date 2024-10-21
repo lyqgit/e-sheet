@@ -251,7 +251,11 @@ export default class ContentComponent{
         this.selectedCellWidth = width
         this.selectedCellHeight = height
 
+        const { config:{ freezeType,freezeRow } } = this.core.getCurrentSheet()
+        const oneCell = this.searchRectArrByRow(freezeRow)?.[0];
         if(y<this.core.cellHeight || x<this.core.cellHeight){
+            this.hideSelectedCellDom()
+        }else if(freezeType === 1 && y<oneCell.y+this.core.cellHeight){
             this.hideSelectedCellDom()
         }else{
             // top
@@ -277,12 +281,11 @@ export default class ContentComponent{
             this.selectedCellRightBorderDom.style.left = x+width-4+'px'
             this.selectedCellRightBorderDom.style.top = y+'px'
             this.selectedCellRightBorderDom.style.height = height+'px'
+            
+            // dot
+            this.showSelectedCellPainterDom(x+width,y+height)
         }
-
-
-
-        // dot
-        this.showSelectedCellPainterDom(x+width,y+height)
+        
     }
 
     setSelectedCellBorderDomBgColor(color){
