@@ -1151,7 +1151,7 @@ export default class ContentComponent{
                         const {mergeWidth,mergeHeight} = tempRect
                         // console.log('背景色',tempRect)
                         this.layer.drawStrokeRect(x-offsetX+cellHeight,y-offsetY+cellHeight,mergeWidth,mergeHeight,borderColor,'destination-over',1)
-                        this.layer.drawText(x-offsetX+cellHeight,y-offsetY+cellHeight,text,mergeWidth,mergeHeight,'destination-over',tempRect.fontColor,tempRect.textAlign,{fontSize:tempRect.fontsize,fontFamily:tempRect.fontFamily,fontWeight:tempRect.fontWeight,fontItalic:tempRect.fontItalic},tempRect.textBaseline,tempRect.strikethrough,tempRect.underline,textWrapType)
+                        this.layer.drawText(x-offsetX+cellHeight,y-offsetY+cellHeight,text,mergeWidth,mergeHeight,'destination-over',tempRect.fontColor,tempRect.textAlign,{fontSize:tempRect.fontSize,fontFamily:tempRect.fontFamily,fontWeight:tempRect.fontWeight,fontItalic:tempRect.fontItalic},tempRect.textBaseline,tempRect.strikethrough,tempRect.underline,textWrapType)
                         if(img.length>0 && text.length === 0){
                             this.layer.drawImage(x-offsetX+cellHeight,y-offsetY+cellHeight,img,row,col,tempRect.isMerge)
                         }

@@ -61,7 +61,7 @@ export default class InputPlugin{
         const textWidth = text.length*this.core.fontSize
 
         const inputWidth = isMerge?mergeWidth:width
-
+        
         inputDom.style.opacity = 1
         inputDom.style.top = y+cellHeight-offsetY+'px'
         inputDom.style.left = x+cellHeight-offsetX+'px'
@@ -117,9 +117,9 @@ export default class InputPlugin{
             let inputWidth = isMerge?mergeWidth:width
 
             const textWidth = text.length*this.core.fontSize
-
+            const { config:{ freezeType } } = this.core.getCurrentSheet()
             inputDom.style.opacity = 1
-            inputDom.style.top = y+cellHeight-offsetY+'px'
+            inputDom.style.top = y+cellHeight-(freezeType===1?0:offsetY)+'px'
             inputDom.style.left = x+cellHeight-offsetX+'px'
             inputDom.style.display = 'inline-block'
             inputDom.style.textAlign = 'center'
