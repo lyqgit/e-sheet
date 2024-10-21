@@ -1691,6 +1691,8 @@ export default class setting{
                 funcRadioDom.setAttribute('current','')
                 config.freezeType = 0
                 config.freezeRow = 0
+                // 取消冻结，需要刷新一下
+                this.core.fresh();
             }
             // this.wsSendCellAttrByTypeAndData(19)
         })

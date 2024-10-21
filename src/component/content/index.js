@@ -920,30 +920,7 @@ export default class ContentComponent{
 
         const { copyCellDash } = this.core
 
-        if(freezeType === 1){
-            if(freezeRow >= this.clickCell.row){
-                offsetY = 0
-            }
-        }
-
-        if(copyKey){
-            // 绘制复制选中的范围
-            if(copyCellDash.length>1){
-                // 多选
-                const dashFirst = copyCellDash[0]
-                const dashLast = copyCellDash[copyCellDash.length-1]
-                this.layer.drawDashStrokeRect(dashFirst.ltX-offsetX+2,dashFirst.ltY-offsetY+2,dashLast.ltX-dashFirst.ltX+dashLast.width-4,dashLast.ltY-dashFirst.ltY+dashLast.height-4,selectedBorderBgColor,'destination-over')
-            }else if(copyCellDash.length === 1){
-                // 单选
-                const dashCell = copyCellDash[0]
-                if(dashCell.isMerge){
-                    this.layer.drawDashStrokeRect(dashCell.ltX-offsetX+2,dashCell.ltY-offsetY+2,dashCell.mergeWidth-4,dashCell.mergeHeight-4,selectedBorderBgColor,'destination-over')
-                }else{
-                    this.layer.drawDashStrokeRect(dashCell.ltX-offsetX+2,dashCell.ltY-offsetY+2,dashCell.width-4,dashCell.height-4,selectedBorderBgColor,'destination-over')
-                }
-            }
-
-        }
+        
 
 
         let attrFirst = null
@@ -1030,6 +1007,73 @@ export default class ContentComponent{
         /**根据位置显示范围内的cell**/
 
         const { contentGroup } = this
+
+        // 解决未冻结行选中时，显示在冻结行之上的问题
+        if(freezeType === 1){
+            if(freezeRow >= this.clickCell.row){
+                offsetY = 0
+            }else{
+              for(let i=0;i<contentGroup.length;i++){
+                const tempRect = contentGroup[i]
+                const {row,col,text,x,y,width,height,img} = tempRect
+                if(freezeType === 1 && row <= freezeRow){
+                  if(col>=startCol && col<=endCol){
+                      if(tempRect.isMerge){
+                          if(tempRect.label === tempRect.mergeStartLabel){
+                              const {mergeWidth,mergeHeight} = tempRect
+                              // console.log('背景色',tempRect)
+                              this.layer.drawStrokeRect(x-offsetX+cellHeight,y+cellHeight,mergeWidth,mergeHeight,borderColor,'destination-over',1)
+                              this.layer.drawText(x-offsetX+cellHeight,y+cellHeight,text,mergeWidth,mergeHeight,'destination-over',tempRect.fontColor,tempRect.textAlign,{fontSize:tempRect.fontsize,fontFamily:tempRect.fontFamily,fontWeight:tempRect.fontWeight,fontItalic:tempRect.fontItalic},tempRect.textBaseline,tempRect.strikethrough,tempRect.underline,textWrapType)
+                              if(img.length>0 && text.length === 0){
+                                  this.layer.drawImage(x-offsetX+cellHeight,y+cellHeight,img,row,col,tempRect.isMerge)
+                              }
+                              this.layer.drawFillRect(x-offsetX+cellHeight,y+cellHeight,mergeWidth,mergeHeight,tempRect.bgColor?tempRect.bgColor:nonSelectBgColor,'destination-over',1)
+                          }else{
+                              // 如果左上角不在屏幕内，渲染左上角
+                              const tempMergeStartRect = this.searchRectByLabel(tempRect.mergeStartLabel)
+                              if(!((tempMergeStartRect.col>=startCol && tempMergeStartRect.col<=endCol) && (tempMergeStartRect.row>=startRow && tempMergeStartRect.row<=endRow))){
+                                  this.layer.drawStrokeRect(tempMergeStartRect.x-offsetX+cellHeight,tempMergeStartRect.y+cellHeight,tempMergeStartRect.mergeWidth,tempMergeStartRect.mergeHeight,borderColor,'destination-over',1)
+                                  this.layer.drawText(tempMergeStartRect.x-offsetX+cellHeight,tempMergeStartRect.y+cellHeight,tempMergeStartRect.text,tempMergeStartRect.mergeWidth,tempMergeStartRect.mergeHeight,'destination-over',tempMergeStartRect.fontColor,tempMergeStartRect.textAlign,{fontsize:tempMergeStartRect.fontSize,fontFamily:tempMergeStartRect.fontFamily,fontWeight:tempMergeStartRect.fontWeight,fontItalic:tempMergeStartRect.fontItalic},tempMergeStartRect.textBaseline,tempRect.strikethrough,tempRect.underline,textWrapType)
+                                  if(img.length>0 && text.length === 0){
+                                      this.layer.drawImage(tempMergeStartRect.x-offsetX+cellHeight,tempMergeStartRect.y+cellHeight,img,row,col,tempRect.isMerge)
+                                  }
+                                  this.layer.drawFillRect(tempMergeStartRect.x-offsetX+cellHeight,tempMergeStartRect.y+cellHeight,tempMergeStartRect.mergeWidth,tempMergeStartRect.mergeHeight,tempMergeStartRect.bgColor?tempMergeStartRect.bgColor:nonSelectBgColor,'destination-over',1)
+                              }
+                          }
+  
+                      }else if(!tempRect.isMerge){
+                          this.layer.drawStrokeRect(x-offsetX+cellHeight,y+cellHeight,width,height,borderColor,'destination-over',1)
+                          this.layer.drawText(x-offsetX+cellHeight,y+cellHeight,text,width,height,'destination-over',tempRect.fontColor,tempRect.textAlign,{fontSize:tempRect.fontSize,fontFamily:tempRect.fontFamily,fontWeight:tempRect.fontWeight,fontItalic:tempRect.fontItalic},tempRect.textBaseline,tempRect.strikethrough,tempRect.underline,textWrapType)
+                          if(img.length>0 && text.length === 0){
+                              this.layer.drawImage(x-offsetX+cellHeight,y+cellHeight,img,row,col,tempRect.isMerge)
+                          }
+                          this.layer.drawFillRect(x-offsetX+cellHeight,y+cellHeight,width,height,tempRect.bgColor?tempRect.bgColor:nonSelectBgColor,'destination-over',1)
+                      }
+                  }
+                }
+              }
+            }
+        }
+
+        if(copyKey){
+            // 绘制复制选中的范围
+            if(copyCellDash.length>1){
+                // 多选
+                const dashFirst = copyCellDash[0]
+                const dashLast = copyCellDash[copyCellDash.length-1]
+                this.layer.drawDashStrokeRect(dashFirst.ltX-offsetX+2,dashFirst.ltY-offsetY+2,dashLast.ltX-dashFirst.ltX+dashLast.width-4,dashLast.ltY-dashFirst.ltY+dashLast.height-4,selectedBorderBgColor,'destination-over')
+            }else if(copyCellDash.length === 1){
+                // 单选
+                const dashCell = copyCellDash[0]
+                if(dashCell.isMerge){
+                    this.layer.drawDashStrokeRect(dashCell.ltX-offsetX+2,dashCell.ltY-offsetY+2,dashCell.mergeWidth-4,dashCell.mergeHeight-4,selectedBorderBgColor,'destination-over')
+                }else{
+                    this.layer.drawDashStrokeRect(dashCell.ltX-offsetX+2,dashCell.ltY-offsetY+2,dashCell.width-4,dashCell.height-4,selectedBorderBgColor,'destination-over')
+                }
+            }
+
+        }
+
         // 选中绘制
         if(this.clickRectShow){
             if(this.isColSelect && !this.isRowSelect){
