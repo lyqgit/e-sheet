@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "importHelpers": true,
+    "esModuleInterop": true,
+    "module": "ESNext",
+    "moduleResolution":"node",
+    "sourceMap":true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*":["src/*"]
+    }
+  }
+}
