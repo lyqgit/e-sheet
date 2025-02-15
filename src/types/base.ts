@@ -1,7 +1,7 @@
 export interface IBaseExcel{
-  col:Number,
-  row:Number,
-  cellWidth:Number,
-  cellHeight:Number,
+  col:number,
+  row:number,
+  cellWidth:number,
+  cellHeight:number,
   lock:Boolean
 }

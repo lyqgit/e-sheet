@@ -1,23 +1,31 @@
-interface IImg {
-  imgId:String,
+export interface Img {
+  imgId:string,
   url:HTMLImageElement
 }
 
-export interface ICell{
-  row:Number,
-  col:Number,
-  x:Number,
-  y:Number,
-  width:Number,
-  height:Number,
-  fontSize:Number | String
-  fontWeight:String
-  fontItalic:String
-  fontFamily:String
-  textAlign:String
-  textBaseline:String
+export interface IBaseCell{
+  row:number,
+  col:number,
+  x:number,
+  y:number,
+  width:number,
+  height:number,
+  fontSize:string
+  fontWeight:string
+  fontItalic:string
+  fontFamily:string
+  textAlign:string
+  textBaseline:string
   strikethrough:Boolean
   underline:Boolean,
-  label:String,
-  img:Array<IImg>
+  label:string,
+  img:Array<Img>
+}
+
+export interface ICell extends IBaseCell{
+
+}
+
+export interface ICellOption extends IBaseCell{
+
 }

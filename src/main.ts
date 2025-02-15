@@ -3,32 +3,31 @@ import { judgeType } from '@/utils'
 import type { Cash } from 'cash-dom'
 import u from 'cash-dom';
 import { Sheet,Canvas } from '@/core'
+import store from '@/store'
 
 export default class eSheet implements IExcel {
 
   col:number = 60; // 默认的列数
   row:number = 40; // 默认的行数
   width:number = 600;
-  height:number = 500;
-  cellWidth:number = 40;
-  cellHeight:number = 20;
+  height:number = 600;
+  cellWidth:number;
+  cellHeight:number;
   sheetArr:Array<Sheet> = [];
   scale: number = 1;
   curSheet: number = 0;
   lock:Boolean = false; // 优先级最高
 
   excelDom:Cash
-  canvasDom:Cash;
-  engine:Canvas
 
   constructor(selector:string | HTMLElement,options?:IExcelOptions){
-    this.col = options?.col
-    this.row = options?.row
-    this.width = options?.width
-    this.height = options?.height
-    this.cellWidth = options?.cellWidth
-    this.cellHeight = options?.cellHeight
-    this.lock = options?.lock
+    this.col = options?.col??60
+    this.row = options?.row??40
+    this.width = options?.width??600
+    this.height = options?.height??500
+    this.cellWidth = options?.cellWidth??40
+    this.cellHeight = options?.cellHeight??20
+    this.lock = options?.lock??false
 
     // 获取要装载的dom
     if(judgeType(selector,['String',"HTMLElement"])){
@@ -55,19 +54,26 @@ export default class eSheet implements IExcel {
         cellHeight:this.cellHeight,
         lock:this.lock,
         data:[]
-      },this)
+      })
       this.sheetArr.push(oneSheet)
+      oneSheet.draw(0,0)
     }
 
   }
 
+  // 装载canvas
   private initCanvas(){
     const canvasWrapper = u('<div>')
     canvasWrapper.css('width',this.width + 'px')
     canvasWrapper.css('height',this.height-96+'px')
-    this.canvasDom = u('<canvas>')
-    this.engine = new Canvas(this.canvasDom)
-    canvasWrapper.append(this.canvasDom)
+    const canvasDom = u('<canvas>')
+    canvasDom.css('width',this.width + 'px')
+    canvasDom.css('height',this.height-96+'px')
+    const engine = new Canvas(canvasDom)
+    store.canvas.dom = canvasDom
+    store.canvas.ctx = engine
+    canvasWrapper.append(canvasDom)
+    this.excelDom.append(canvasWrapper)
   }
 
   private init(){

@@ -3,9 +3,11 @@
     "importHelpers": true,
     "esModuleInterop": true,
     "module": "ESNext",
+    "target": "ESNext",
     "moduleResolution":"node",
     "sourceMap":true,
     "baseUrl": ".",
+    "experimentalDecorators":true,
     "paths": {
       "@/*":["src/*"]
     }
