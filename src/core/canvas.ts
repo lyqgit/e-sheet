@@ -21,16 +21,12 @@ export class Canvas implements ICanvas{
   clearRect(): void {
     throw new Error('Method not implemented.');
   }
-  drawStrokeRect(option:IStrokeRectOption = {
-    x: 0,
-    y: 0,
-    width: 0,
-    height: 0,
-    color: 'black',
-    globalCompositeOperation: 'source-over',
-    lineWidth: 1
-  }): void {
-    throw new Error('Method not implemented.');
+  drawStrokeRect(option:IStrokeRectOption): void {
+    console.log('option',option)
+    this.ctx.lineWidth = option.lineWidth??1
+    this.ctx.globalCompositeOperation = option.globalCompositeOperation??'source-over'
+    this.ctx.strokeStyle = option.color??'blue'
+    this.ctx.strokeRect(option.x,option.y,option.width,option.height)
   }
   drawFillRect(): void {
     throw new Error('Method not implemented.');

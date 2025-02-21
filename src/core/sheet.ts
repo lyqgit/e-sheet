@@ -32,12 +32,12 @@ export class Sheet implements ISheet{
     for(let i=0;i<this.row;i++){
       let abX = 0;
       for(let j=0;j<this.col;j++){
-        const label = getExcelHeaderName(i)+j
+        const label = getExcelHeaderName(j+1)+(i+1)
         this.contMap.set(
           label,
           new Cell({
-            row:i,
-            col:j,
+            row:i+1,
+            col:j+1,
             x:abX,
             y:abY,
             width:this.cellWidth,
@@ -62,58 +62,101 @@ export class Sheet implements ISheet{
 
   draw(left:number,top:number): void {
     // 绘制之前需要判断data的范围是否超过默认的col和row
-    this.getBoundMap(left,top);
-    return
+    const [
+      leftCol,
+      rightCol,
+      topRow,
+      bottomRow
+    ] = this.getBoundMap(left,top);
 
-
-    for(let [_,itemCell] of this.contMap){
-      store.canvas.ctx.drawStrokeRect({
-        x:itemCell.x,
-        y:itemCell.y,
-        width:itemCell.width,
-        height:itemCell.height,
-        globalCompositeOperation:'source-over'
-      })
+    for(let i=topRow;i<=bottomRow;i++){
+      for(let j=leftCol;j<=rightCol;j++){
+        const cell = this.contMap.get(getExcelHeaderName(j)+i)
+        store.canvas.ctx.drawStrokeRect({
+          x:cell.x,
+          y:cell.y,
+          width:cell.width,
+          height:cell.height,
+          lineWidth:1,
+          globalCompositeOperation:'destination-over',
+          color:'#ECEDEE'
+        })
+      }
     }
 
     this.scrollLeft = left
     this.scrollTop = top
   }
 
+  searchCol(dis:number,grat:boolean):number{
+    // console.log('dis',dis)
+    const floor = grat?Math.ceil:Math.floor;
+    let tempCol = floor(dis/this.cellWidth)
+    // console.log('tempLN',tempCol,floor(dis/this.cellWidth))
+    const tempLabel = getExcelHeaderName(tempCol)
+    // console.log('tempL',tempLabel)
+    if(tempLabel === ''){
+      // 在最左侧
+      return 1
+    }else{
+      let cell:Cell = this.contMap.get(tempLabel+1)
+      console.log('cell.x',cell,(tempLabel+1),grat,tempCol)
+      if(grat){
+        while(cell.x < dis) {
+          tempCol++
+          cell = this.contMap.get(getExcelHeaderName(tempCol)+1)
+        }
+      }else{
+        while(cell.x > dis) {
+          tempCol--
+          cell = this.contMap.get(getExcelHeaderName(tempCol)+1)
+        }
+      }
+     
+      return cell.col
+    }
+  }
+
+  searchRow(dis:number,grat:boolean):number{
+    const floor = grat?Math.ceil:Math.floor;
+    let tempRow = floor(dis/this.cellWidth)
+    if(tempRow<1){
+      return 1
+    }else{
+      let cell:Cell = this.contMap.get('A'+tempRow)
+      if(grat){
+        while(cell.y < dis) {
+          tempRow++
+          cell = this.contMap.get('A'+tempRow)
+        }
+      }else{
+        while(cell.y > dis) {
+          tempRow--
+          cell = this.contMap.get('A'+tempRow)
+        }
+      }
+      return cell.row
+    }
+  }
+
   // 获取展示内容的四个角
-  getBoundMap(left:number,top:number){
-    console.log('left','top',left,top)
+  getBoundMap(left:number,top:number):Array<number>{
     const ld = left;
     const rd = left + parseInt(store.canvas.dom.css('width'))
 
     const td = top
-    const bd = top + store.canvas.dom.css('height')
+    const bd = top + parseInt(store.canvas.dom.css('height'))
+    const leftCol = this.searchCol(ld,false)
+    const rightCol = this.searchCol(rd,true)
 
-    let leftLabel = ''
-    let tempLN = ld%this.cellWidth
-    console.log('tempLN',tempLN)
-    console.log('this.cellWidth',this.cellWidth)
-    const tempL = getExcelHeaderName(tempLN)
-    console.log('tempL',tempL)
-    if(tempL === ''){
-      // 在最左侧
-      leftLabel = 'A'
-    }else{
-      let cell:Cell = this.contMap.get(tempL)
-      // while(cell.x < ld) {
-      //   cell = this.contMap.get(getExcelHeaderName(tempLN-1))
-      // }
-      leftLabel = cell.label
-    }
-    console.log('leftLabel',leftLabel)
-
-
-    // const tempR = getExcelHeaderName(rd%this.cellWidth)
-    // const cell:Cell = this.contMap.get(tempR)
-    // if(cell.x < ld){
-    //   leftLabel = cell.label
-    // }
-
+    const topRow = this.searchRow(td,false)
+    const bottomRow = this.searchRow(bd,true)
+    return [
+      leftCol,
+      rightCol,
+      topRow,
+      bottomRow
+    ]
   }
 
   name: String;

@@ -23,6 +23,6 @@ export interface IStrokeRectOption{
   width:number,
   height:number,
   color?:string,
-  globalCompositeOperation:GlobalCompositeOperation,
+  globalCompositeOperation?:GlobalCompositeOperation,
   lineWidth?:number
 }

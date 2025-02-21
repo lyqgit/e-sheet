@@ -25,8 +25,8 @@ export default class eSheet implements IExcel {
     this.row = options?.row??40
     this.width = options?.width??600
     this.height = options?.height??500
-    this.cellWidth = options?.cellWidth??40
-    this.cellHeight = options?.cellHeight??20
+    this.cellWidth = options?.cellWidth??120
+    this.cellHeight = options?.cellHeight??40
     this.lock = options?.lock??false
 
     // 获取要装载的dom
@@ -67,8 +67,8 @@ export default class eSheet implements IExcel {
     canvasWrapper.css('width',this.width + 'px')
     canvasWrapper.css('height',this.height-96+'px')
     const canvasDom = u('<canvas>')
-    canvasDom.css('width',this.width + 'px')
-    canvasDom.css('height',this.height-96+'px')
+    canvasDom.attr('width',this.width.toString())
+    canvasDom.attr('height',(this.height-96).toString())
     const engine = new Canvas(canvasDom)
     store.canvas.dom = canvasDom
     store.canvas.ctx = engine
