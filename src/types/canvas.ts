@@ -1,15 +1,21 @@
 import type { Cash } from 'cash-dom'
 
+export interface IDot{
+  x:number
+  y:number
+}
+
 export interface ICanvas{
   ctx:CanvasRenderingContext2D
   drawLine():void
   drawImage():void
   drawText():void
   drawThroughLine():void
-  clearRect():void
+  clearRect(startX:number,startY:number,endX:number,endY:number):void
   drawStrokeRect(option:IStrokeRectOption):void
   drawFillRect():void
   drawDashStrokeRect():void
+  drawTriangleRect(first:IDot,second:IDot,thrid:IDot,color:string):void
 }
 
 export interface IGlobalCanvas{

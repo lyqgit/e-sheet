@@ -23,7 +23,10 @@ export interface IBaseCell{
 }
 
 export interface ICell extends IBaseCell{
-
+  drawStrokeRect(reX:number,reY:number):void
+  drawHeaderColStrokeRect(reX:number):void
+  drawHeaderRowStrokeRect(reY:number):void
+  drawDom(reX:number,reY:number):void
 }
 
 export interface ICellOption extends IBaseCell{

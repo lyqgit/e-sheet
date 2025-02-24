@@ -29,6 +29,11 @@ export default class eSheet implements IExcel {
     this.cellHeight = options?.cellHeight??40
     this.lock = options?.lock??false
 
+    store.config.cellWidth = this.cellWidth
+    store.config.cellHeight = this.cellHeight
+    store.config.excelWidth = this.width
+    store.config.excelHeight = this.height
+
     // 获取要装载的dom
     if(judgeType(selector,['String',"HTMLElement"])){
       this.excelDom = u(selector)
@@ -56,7 +61,7 @@ export default class eSheet implements IExcel {
         data:[]
       })
       this.sheetArr.push(oneSheet)
-      oneSheet.draw(0,0)
+      oneSheet.draw(0,0,true,true)
     }
 
   }
@@ -66,13 +71,28 @@ export default class eSheet implements IExcel {
     const canvasWrapper = u('<div>')
     canvasWrapper.css('width',this.width + 'px')
     canvasWrapper.css('height',this.height-96+'px')
+    canvasWrapper.css('position','relative')
+
+    // 事件处理层
+    const canvasEventWrapper = u('<div>')
+    canvasEventWrapper.css('width',this.width + 'px')
+    canvasEventWrapper.css('height',this.height-96+'px')
+    canvasEventWrapper.css('position','absolute')
+    canvasEventWrapper.css('top','0')
+    canvasEventWrapper.css('left','0')
+
+    // canvas
     const canvasDom = u('<canvas>')
     canvasDom.attr('width',this.width.toString())
     canvasDom.attr('height',(this.height-96).toString())
     const engine = new Canvas(canvasDom)
     store.canvas.dom = canvasDom
     store.canvas.ctx = engine
+    store.canvas.eventDom = canvasEventWrapper
+
+    // 组装dom
     canvasWrapper.append(canvasDom)
+    canvasWrapper.append(canvasEventWrapper)
     this.excelDom.append(canvasWrapper)
   }
 

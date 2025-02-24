@@ -19,6 +19,9 @@ export class Sheet implements ISheet{
   scrollLeft: number = 0;
   contMap:Map<string,ICell>;
 
+  colMap:Map<string,ICell>;
+  rowMap:Map<string,ICell>;
+
   spWidth:Map<string,number>; // 记录更改了长度的单元格列数
   spHeight:Map<string,number>; // 记录更改了高度的单元格行数
 
@@ -28,11 +31,66 @@ export class Sheet implements ISheet{
   initEmptyData():void{
     // console.log('layer',store.canvas.dom)
     this.contMap = new Map<string,ICell>();
+    this.colMap = new Map<string,ICell>();
+    this.rowMap = new Map<string,ICell>();
     let abY = 0;
     for(let i=0;i<this.row;i++){
       let abX = 0;
+
+      this.rowMap.set(
+        'row'+(i+1),
+        new Cell({
+          row:i+1,
+          col:0,
+          x:abX,
+          y:abY,
+          width:this.cellWidth,
+          height:this.cellHeight,
+          fontSize:'12px',
+          fontWeight:'500',
+          fontItalic:'',
+          fontFamily:'',
+          textAlign:'left',
+          textBaseline:'top',
+          strikethrough:false,
+          underline:false,
+          label:(i+1).toString(),
+          img:[]
+        })
+      ) 
+
       for(let j=0;j<this.col;j++){
-        const label = getExcelHeaderName(j+1)+(i+1)
+        const headerName = getExcelHeaderName(j+1)
+        const rowNum = i+1
+        const label = headerName+rowNum
+
+        if(i===0){
+          // 顶部行
+          this.colMap.set(
+            headerName,
+            new Cell({
+              row:0,
+              col:j+1,
+              x:abX,
+              y:0,
+              width:this.cellWidth,
+              height:this.cellHeight,
+              fontSize:'12px',
+              fontWeight:'500',
+              fontItalic:'',
+              fontFamily:'',
+              textAlign:'left',
+              textBaseline:'top',
+              strikethrough:false,
+              underline:false,
+              label:headerName,
+              img:[]
+            })
+          )
+        }
+        
+
+        // 内容区域
         this.contMap.set(
           label,
           new Cell({
@@ -60,8 +118,26 @@ export class Sheet implements ISheet{
     }
   };
 
-  draw(left:number,top:number): void {
-    // 绘制之前需要判断data的范围是否超过默认的col和row
+  drawTotalRect(){
+
+    const { cellHeight } = store.config
+
+    store.canvas.ctx.drawStrokeRect({
+      x:0,
+      y:0,
+      width:cellHeight,
+      height:cellHeight,
+      lineWidth:1,
+      globalCompositeOperation:'destination-over',
+      color:store.config.borderColor
+    })
+
+    store.canvas.ctx.drawTriangleRect({x:cellHeight-6,y:6},{x:cellHeight-6,y:cellHeight-6},{x:6,y:cellHeight-6}
+      ,'#DCDCDC')
+  }
+
+  draw(left:number,top:number,forceLeft?:boolean,forceTop?:boolean): void {
+
     const [
       leftCol,
       rightCol,
@@ -69,23 +145,47 @@ export class Sheet implements ISheet{
       bottomRow
     ] = this.getBoundMap(left,top);
 
-    for(let i=topRow;i<=bottomRow;i++){
-      for(let j=leftCol;j<=rightCol;j++){
-        const cell = this.contMap.get(getExcelHeaderName(j)+i)
-        store.canvas.ctx.drawStrokeRect({
-          x:cell.x,
-          y:cell.y,
-          width:cell.width,
-          height:cell.height,
-          lineWidth:1,
-          globalCompositeOperation:'destination-over',
-          color:'#ECEDEE'
-        })
-      }
+    const { cellHeight,excelWidth,excelHeight } = store.config
+
+    const isLeft = left === this.scrollLeft || forceLeft
+    const isTop = top === this.scrollTop || forceTop
+    
+    if(forceLeft && forceTop){
+      // 绘制左上角的cell
+      this.drawTotalRect()
     }
 
+    if(isLeft){
+      this.clearCanvas(cellHeight,0,excelWidth,excelHeight)
+    }else if(isTop){
+      this.clearCanvas(0,cellHeight,excelWidth,excelHeight)
+    }
+
+    for(let i=topRow;i<=bottomRow;i++){
+      if(left === this.scrollLeft || forceLeft){
+        const rowCell = this.rowMap.get('row'+i)
+        rowCell.drawHeaderRowStrokeRect(cellHeight)
+      }
+      for(let j=leftCol;j<=rightCol;j++){
+        const headerName = getExcelHeaderName(j)
+        if(top === this.scrollTop || forceTop){
+          if(i===topRow){
+            const headerCell = this.colMap.get(headerName)
+            headerCell.drawHeaderColStrokeRect(cellHeight)
+          }
+        }
+        const contCell = this.contMap.get(headerName+i)
+        contCell.drawStrokeRect(cellHeight,cellHeight)
+      }
+      
+    }
     this.scrollLeft = left
     this.scrollTop = top
+  }
+
+
+  clearCanvas(startX:number,startY:number,endX:number,endY:number){
+    store.canvas.ctx.clearRect(startX,startY,endX,endY)
   }
 
   searchCol(dis:number,grat:boolean):number{
@@ -141,10 +241,13 @@ export class Sheet implements ISheet{
 
   // 获取展示内容的四个角
   getBoundMap(left:number,top:number):Array<number>{
-    const ld = left;
+
+    const { cellHeight } = store.config
+
+    const ld = left + cellHeight;
     const rd = left + parseInt(store.canvas.dom.css('width'))
 
-    const td = top
+    const td = top + cellHeight
     const bd = top + parseInt(store.canvas.dom.css('height'))
     const leftCol = this.searchCol(ld,false)
     const rightCol = this.searchCol(rd,true)

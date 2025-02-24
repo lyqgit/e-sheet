@@ -4,7 +4,7 @@ import { IBaseExcel } from './base'
 export interface ISheet extends IBaseExcel{
   name:String,
   data:Array<ICell>
-  draw(left:number,top:number):void
+  draw(left:number,top:number,forceLeft?:boolean,forceTop?:boolean):void
   scrollTop:number
   scrollLeft:number
 }

@@ -1,4 +1,5 @@
 import { ICell, ICellOption, Img } from "@/types";
+import store from '@/store'
 
 export class Cell implements ICell{
   constructor(option:ICellOption){
@@ -18,6 +19,42 @@ export class Cell implements ICell{
     this.underline = option.underline
     this.label = option.label
     this.img = option.img
+  }
+  drawDom(reX: number, reY: number): void {
+    throw new Error("Method not implemented.");
+  }
+  drawHeaderColStrokeRect(reX:number): void {
+    store.canvas.ctx.drawStrokeRect({
+      x:this.x+reX,
+      y:0,
+      width:this.width,
+      height:this.height,
+      lineWidth:1,
+      globalCompositeOperation:'destination-over',
+      color:store.config.borderColor
+    })
+  }
+  drawHeaderRowStrokeRect(reY:number): void {
+    store.canvas.ctx.drawStrokeRect({
+      x:0,
+      y:this.y+reY,
+      width:this.height,
+      height:this.height,
+      lineWidth:1,
+      globalCompositeOperation:'destination-over',
+      color:store.config.borderColor
+    })
+  }
+  drawStrokeRect(reX:number,reY:number): void {
+    store.canvas.ctx.drawStrokeRect({
+      x:this.x+reX,
+      y:this.y+reY,
+      width:this.width,
+      height:this.height,
+      lineWidth:1,
+      globalCompositeOperation:'destination-over',
+      color:store.config.borderColor
+    })
   }
   row: number;
   col: number;
