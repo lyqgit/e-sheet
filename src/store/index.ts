@@ -1,4 +1,4 @@
-import { ICanvas } from '@/types'
+import { ICanvas, IPlugin } from '@/types'
 import { Cash } from "cash-dom";
 
 interface IExcelConfig{
@@ -7,6 +7,13 @@ interface IExcelConfig{
   cellHeight:number
   excelWidth:number
   excelHeight:number
+  defaultCol:number
+  defaultRow:number
+  col:number
+  row:number
+  scale:number
+  lock:boolean,
+  plugins:Record<string,IPlugin>
 }
 
 interface IStoreCanvas{
@@ -27,6 +34,8 @@ export default {
     eventDom:null
   },
   config:{
-    borderColor:'#ECEDEE'
+    borderColor:'#ECEDEE',
+    defaultCol:60,
+    defaultRow:40
   }
 } as IStore

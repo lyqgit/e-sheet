@@ -1,7 +1,6 @@
 import { ICell } from './cell'
-import { IBaseExcel } from './base'
 
-export interface ISheet extends IBaseExcel{
+export interface ISheet{
   name:String,
   data:Array<ICell>
   draw(left:number,top:number,forceLeft?:boolean,forceTop?:boolean):void
@@ -9,7 +8,8 @@ export interface ISheet extends IBaseExcel{
   scrollLeft:number
 }
 
-export interface ISheetOption extends IBaseExcel{
+export interface ISheetOption{
   name:String,
   data:Array<ICell>
+  lock:boolean
 }

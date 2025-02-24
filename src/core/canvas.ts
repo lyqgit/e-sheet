@@ -1,5 +1,6 @@
 import type { Cash } from 'cash-dom'
 import { ICanvas,IDot,IStrokeRectOption } from '@/types'
+import store from '@/store';
 
 export class Canvas implements ICanvas{
   ctx:CanvasRenderingContext2D;
@@ -41,5 +42,6 @@ export class Canvas implements ICanvas{
     this.ctx.closePath();
     this.ctx.fillStyle = color??'black';
     this.ctx.fill()
-}
+  }
+
 }

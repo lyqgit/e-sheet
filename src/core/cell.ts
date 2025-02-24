@@ -1,5 +1,6 @@
 import { ICell, ICellOption, Img } from "@/types";
 import store from '@/store'
+import u from 'cash-dom'
 
 export class Cell implements ICell{
   constructor(option:ICellOption){
@@ -20,9 +21,41 @@ export class Cell implements ICell{
     this.label = option.label
     this.img = option.img
   }
-  drawDom(reX: number, reY: number): void {
-    throw new Error("Method not implemented.");
+
+  drawTotalRect(){
+
+    const { cellHeight } = store.config
+
+    store.canvas.ctx.drawStrokeRect({
+      x:0,
+      y:0,
+      width:cellHeight,
+      height:cellHeight,
+      lineWidth:1,
+      globalCompositeOperation:'destination-over',
+      color:store.config.borderColor
+    })
+
+    store.canvas.ctx.drawTriangleRect({x:cellHeight-6,y:6},{x:cellHeight-6,y:cellHeight-6},{x:6,y:cellHeight-6},'#DCDCDC')
+    this.ctDom(0,0,cellHeight,cellHeight,100)
   }
+
+  ctDom(reX:number,reY:number,width:number,height:number,zIndex?:number){
+
+    const { eventDom } = store.canvas
+
+    const tempRect = u('<div>')
+    tempRect.css('position','absolute');
+    tempRect.css('left',this.x+reX);
+    tempRect.css('top',this.y+reY);
+    zIndex && tempRect.css('z-index',zIndex);
+    tempRect.data('label',this.label)
+    tempRect.css('width',width)
+    tempRect.css('height',height)
+
+    eventDom.append(tempRect)
+  }
+
   drawHeaderColStrokeRect(reX:number): void {
     store.canvas.ctx.drawStrokeRect({
       x:this.x+reX,
@@ -33,7 +66,9 @@ export class Cell implements ICell{
       globalCompositeOperation:'destination-over',
       color:store.config.borderColor
     })
+    this.ctDom(reX,0,this.width,this.height,100)
   }
+
   drawHeaderRowStrokeRect(reY:number): void {
     store.canvas.ctx.drawStrokeRect({
       x:0,
@@ -44,7 +79,9 @@ export class Cell implements ICell{
       globalCompositeOperation:'destination-over',
       color:store.config.borderColor
     })
+    this.ctDom(0,reY,this.height,this.height,100)
   }
+
   drawStrokeRect(reX:number,reY:number): void {
     store.canvas.ctx.drawStrokeRect({
       x:this.x+reX,
@@ -55,7 +92,9 @@ export class Cell implements ICell{
       globalCompositeOperation:'destination-over',
       color:store.config.borderColor
     })
+    this.ctDom(reX,reY,this.width,this.height)
   }
+  
   row: number;
   col: number;
   x: number;

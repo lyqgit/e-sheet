@@ -1,6 +1,8 @@
 import { Sheet } from '@/core'
 import { IBaseExcel } from './base'
 import { ISheet } from './sheet'
+import { Cash } from 'cash-dom'
+import { IPlugin } from './plugin'
 
 export interface IExcelOptions{
   width?:number,
@@ -10,13 +12,14 @@ export interface IExcelOptions{
   cellWidth?:number,
   cellHeight?:number,
   data?:Array<ISheet>,
-  lock?:Boolean
+  lock?:boolean,
+  plugins?:Record<string,IPlugin>
 }
 
-export interface IExcel extends IBaseExcel{
-  width:number,
-  height:number,
+export interface IExcel{
   sheetArr:Array<Sheet>,
-  scale:number,
   curSheet:number
+  excelDom:Cash
+  canvasWrapperDom:Cash
+  getCurSheet():Sheet
 }

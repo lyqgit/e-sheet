@@ -2,25 +2,30 @@ import { ISheet,ISheetOption,ICell } from '@/types'
 import { Cell } from './cell'
 import { getExcelHeaderName } from '@/utils'
 import store from '@/store'
+import u from 'cash-dom'
 
 export class Sheet implements ISheet{
   data: Array<ICell>;
   constructor(option:ISheetOption){ 
-    this.col = option.col
-    this.row = option.row
-    this.cellWidth = option.cellWidth
-    this.cellHeight = option.cellHeight
     this.lock = option.lock
     this.data = option.data
     this.initEmptyData();
+    this.init();
   }
+
+  private init(){
+    // 
+  }
+
   // 记录偏移距离
   scrollTop: number = 0;
   scrollLeft: number = 0;
-  contMap:Map<string,ICell>;
+  contMap:Map<string,Cell>;
 
-  colMap:Map<string,ICell>;
-  rowMap:Map<string,ICell>;
+  colMap:Map<string,Cell>;
+  rowMap:Map<string,Cell>;
+
+  totalCell:Cell;
 
   spWidth:Map<string,number>; // 记录更改了长度的单元格列数
   spHeight:Map<string,number>; // 记录更改了高度的单元格行数
@@ -30,11 +35,14 @@ export class Sheet implements ISheet{
   // 装载空数据
   initEmptyData():void{
     // console.log('layer',store.canvas.dom)
-    this.contMap = new Map<string,ICell>();
-    this.colMap = new Map<string,ICell>();
-    this.rowMap = new Map<string,ICell>();
+    this.contMap = new Map<string,Cell>();
+    this.colMap = new Map<string,Cell>();
+    this.rowMap = new Map<string,Cell>();
+
+    const { row,col,cellWidth,cellHeight } = store.config
+
     let abY = 0;
-    for(let i=0;i<this.row;i++){
+    for(let i=0;i<row;i++){
       let abX = 0;
 
       this.rowMap.set(
@@ -44,8 +52,8 @@ export class Sheet implements ISheet{
           col:0,
           x:abX,
           y:abY,
-          width:this.cellWidth,
-          height:this.cellHeight,
+          width:cellWidth,
+          height:cellHeight,
           fontSize:'12px',
           fontWeight:'500',
           fontItalic:'',
@@ -59,7 +67,7 @@ export class Sheet implements ISheet{
         })
       ) 
 
-      for(let j=0;j<this.col;j++){
+      for(let j=0;j<col;j++){
         const headerName = getExcelHeaderName(j+1)
         const rowNum = i+1
         const label = headerName+rowNum
@@ -67,14 +75,14 @@ export class Sheet implements ISheet{
         if(i===0){
           // 顶部行
           this.colMap.set(
-            headerName,
+            'col'+headerName,
             new Cell({
               row:0,
               col:j+1,
               x:abX,
               y:0,
-              width:this.cellWidth,
-              height:this.cellHeight,
+              width:cellWidth,
+              height:cellHeight,
               fontSize:'12px',
               fontWeight:'500',
               fontItalic:'',
@@ -98,8 +106,8 @@ export class Sheet implements ISheet{
             col:j+1,
             x:abX,
             y:abY,
-            width:this.cellWidth,
-            height:this.cellHeight,
+            width:cellWidth,
+            height:cellHeight,
             fontSize:'12px',
             fontWeight:'500',
             fontItalic:'',
@@ -112,9 +120,9 @@ export class Sheet implements ISheet{
             img:[]
           })
         )
-        abX += this.cellWidth
+        abX += cellWidth
       }
-      abY += this.cellHeight
+      abY += cellHeight
     }
   };
 
@@ -122,18 +130,26 @@ export class Sheet implements ISheet{
 
     const { cellHeight } = store.config
 
-    store.canvas.ctx.drawStrokeRect({
+    this.totalCell = new Cell({
+      row:0,
+      col:0,
       x:0,
       y:0,
       width:cellHeight,
       height:cellHeight,
-      lineWidth:1,
-      globalCompositeOperation:'destination-over',
-      color:store.config.borderColor
+      fontSize:'12px',
+      fontWeight:'500',
+      fontItalic:'',
+      fontFamily:'',
+      textAlign:'left',
+      textBaseline:'top',
+      strikethrough:false,
+      underline:false,
+      label:'total',
+      img:[]
     })
 
-    store.canvas.ctx.drawTriangleRect({x:cellHeight-6,y:6},{x:cellHeight-6,y:cellHeight-6},{x:6,y:cellHeight-6}
-      ,'#DCDCDC')
+    this.totalCell.drawTotalRect()
   }
 
   draw(left:number,top:number,forceLeft?:boolean,forceTop?:boolean): void {
@@ -149,33 +165,35 @@ export class Sheet implements ISheet{
 
     const isLeft = left === this.scrollLeft || forceLeft
     const isTop = top === this.scrollTop || forceTop
-    
+
+    if(isLeft && isTop){
+      this.clearCanvas(0,0,excelWidth,excelHeight)
+    }else if(isTop){
+      this.clearCanvas(0,cellHeight,excelWidth,excelHeight)
+    }else if(isLeft){
+      this.clearCanvas(cellHeight,0,excelWidth,excelHeight)
+    }
+
     if(forceLeft && forceTop){
       // 绘制左上角的cell
       this.drawTotalRect()
     }
 
-    if(isLeft){
-      this.clearCanvas(cellHeight,0,excelWidth,excelHeight)
-    }else if(isTop){
-      this.clearCanvas(0,cellHeight,excelWidth,excelHeight)
-    }
-
     for(let i=topRow;i<=bottomRow;i++){
       if(left === this.scrollLeft || forceLeft){
         const rowCell = this.rowMap.get('row'+i)
-        rowCell.drawHeaderRowStrokeRect(cellHeight)
+        rowCell.drawHeaderRowStrokeRect(cellHeight - top)
       }
       for(let j=leftCol;j<=rightCol;j++){
         const headerName = getExcelHeaderName(j)
         if(top === this.scrollTop || forceTop){
           if(i===topRow){
-            const headerCell = this.colMap.get(headerName)
-            headerCell.drawHeaderColStrokeRect(cellHeight)
+            const headerCell = this.colMap.get('col'+headerName)
+            headerCell.drawHeaderColStrokeRect(cellHeight - left)
           }
         }
         const contCell = this.contMap.get(headerName+i)
-        contCell.drawStrokeRect(cellHeight,cellHeight)
+        contCell.drawStrokeRect(cellHeight - left,cellHeight - top)
       }
       
     }
@@ -186,12 +204,37 @@ export class Sheet implements ISheet{
 
   clearCanvas(startX:number,startY:number,endX:number,endY:number){
     store.canvas.ctx.clearRect(startX,startY,endX,endY)
+    const { eventDom } = store.canvas;
+    eventDom.children().each((_,item)=>{
+      if(startX > 0){
+        const tempDom = u(item)
+        const label = tempDom.data('label') as string
+        if(label.includes('row') || label.includes('total')){
+
+        }else{
+          tempDom.remove()
+        }
+      }
+
+      if(startY > 0){
+        const tempDom = u(item)
+        const label = tempDom.data('label') as string
+        if(label.includes('col') || label.includes('total')){
+
+        }else{
+          tempDom.remove()
+        }
+      }
+    })
   }
 
   searchCol(dis:number,grat:boolean):number{
+
+    const { cellWidth } = store.config
+
     // console.log('dis',dis)
     const floor = grat?Math.ceil:Math.floor;
-    let tempCol = floor(dis/this.cellWidth)
+    let tempCol = floor(dis/cellWidth)
     // console.log('tempLN',tempCol,floor(dis/this.cellWidth))
     const tempLabel = getExcelHeaderName(tempCol)
     // console.log('tempL',tempLabel)
@@ -200,7 +243,7 @@ export class Sheet implements ISheet{
       return 1
     }else{
       let cell:Cell = this.contMap.get(tempLabel+1)
-      console.log('cell.x',cell,(tempLabel+1),grat,tempCol)
+      // console.log('cell.x',cell,(tempLabel+1),grat,tempCol)
       if(grat){
         while(cell.x < dis) {
           tempCol++
@@ -218,8 +261,11 @@ export class Sheet implements ISheet{
   }
 
   searchRow(dis:number,grat:boolean):number{
+
+    const { cellHeight } = store.config
+
     const floor = grat?Math.ceil:Math.floor;
-    let tempRow = floor(dis/this.cellWidth)
+    let tempRow = floor(dis/cellHeight)
     if(tempRow<1){
       return 1
     }else{
@@ -263,9 +309,5 @@ export class Sheet implements ISheet{
   }
 
   name: String;
-  col: number;
-  row: number;
-  cellWidth: number;
-  cellHeight: number;
   lock: Boolean;
 }
