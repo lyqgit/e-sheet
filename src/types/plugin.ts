@@ -10,7 +10,9 @@ export interface IPlugin{
 }
 
 export interface IScrollPlugin extends IPlugin{
-  barHeight:number
+  verBoundDiff:number
+  wheelStep:number
+  defaultBarWidth:number
   registryHorScroll():void // 注册横向滚动条
   registryVerScroll():void // 注册纵向滚动条
   barDomColor:string

@@ -80,6 +80,7 @@ export class eSheet implements IExcel {
     canvasEventWrapper.css('position','absolute')
     canvasEventWrapper.css('top','0')
     canvasEventWrapper.css('left','0')
+    canvasEventWrapper.css('zIndex','101')
 
     // canvas
     const canvasDom = u('<canvas>')

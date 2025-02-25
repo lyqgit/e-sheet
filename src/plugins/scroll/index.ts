@@ -18,15 +18,15 @@ export class ScrollPlugin implements IScrollPlugin{
 
   register(): void {
     u(document).on('mouseup',()=>{
-      console.log('停止')
+      // console.log('停止')
       u(document).off('mousemove')
       this.verBarDom.css('background',this.barDomColor)
       this.horBarDom.css('background',this.barDomColor)
-      const curSheet = this.excel.getCurSheet()
-      // curSheet.forceUpdateAll()
+      this.forceUpdateAll()
     })
     this.registryVerScroll();
     this.registryHorScroll();
+    this.registryWheel();
   }
 
   excel: IExcel;
@@ -39,6 +39,9 @@ export class ScrollPlugin implements IScrollPlugin{
 
   verPropor:number;
   horPropor:number;
+
+  wheelStep:number = 10
+  verBoundDiff:number;
 
   // 横向滚动
   registryHorScroll(): void {
@@ -132,6 +135,11 @@ export class ScrollPlugin implements IScrollPlugin{
       
     })
   }
+
+  forceUpdateAll(){
+    const curSheet = this.excel.getCurSheet()
+    curSheet.forceUpdateAll()
+  }
   
   sheetMoveX(reX:number){
     const curSheet = this.excel.getCurSheet()
@@ -192,6 +200,8 @@ export class ScrollPlugin implements IScrollPlugin{
 
     const boundDiff = parseFloat((barContainerDom.height() - barDom.height()).toFixed(2))
 
+    this.verBoundDiff = boundDiff
+
     barDom.on('mousedown',(eA:MouseEvent)=>{
       eA.preventDefault();
       const trasform = barDom.css('transform').match(/matrix\(\d+, \d+, \d+, \d+, \d+, (\d*\.?\d+)\)/)
@@ -219,7 +229,6 @@ export class ScrollPlugin implements IScrollPlugin{
           }else if(finalDis < 0 && diffDis < 0){
             finalDis = 0
           }
-
           barDom.css('transform',`translateY(${finalDis}px)`)
           this.sheetMoveY(finalDis/this.verPropor)
         })
@@ -228,5 +237,37 @@ export class ScrollPlugin implements IScrollPlugin{
     })
 
   }
-  barHeight:number // 滚动条宽度
+
+  // 竖向鼠标中间滚动条
+  registryWheel(){
+    const { canvasWrapperDom } = this.excel
+    let timeId = null
+
+    canvasWrapperDom.on('mouseover',()=>{
+      let recordDeltaY = 0;
+      canvasWrapperDom.on('wheel',(evt:WheelEvent)=>{
+        evt.preventDefault()
+        const diffDis = evt.deltaY>0?this.wheelStep:-this.wheelStep
+        const trasform = this.verBarDom.css('transform').match(/matrix\(\d+, \d+, \d+, \d+, \d+, (\d*\.?\d+)\)/)
+        let oriTransY = 0
+        if(trasform){
+          oriTransY = parseInt(trasform[1])
+        }
+        requestAnimationFrame(()=>{
+          clearTimeout(timeId);
+          recordDeltaY = oriTransY + diffDis
+          if(recordDeltaY > this.verBoundDiff && diffDis > 0){
+            recordDeltaY = this.verBoundDiff
+          }else if(recordDeltaY < 0 && diffDis < 0){
+            recordDeltaY = 0
+          }
+          this.verBarDom.css('transform',`translateY(${recordDeltaY}px)`)
+          this.sheetMoveY(recordDeltaY/this.verPropor)
+          timeId = setTimeout(()=>{
+            this.forceUpdateAll()
+          },300)
+        })
+      })
+    })
+  }
 }
