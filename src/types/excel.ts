@@ -17,9 +17,12 @@ export interface IExcelOptions{
 }
 
 export interface IExcel{
-  sheetArr:Array<Sheet>,
+  sheetArr:Array<Sheet>
   curSheet:number
   excelDom:Cash
   canvasWrapperDom:Cash
   getCurSheet():Sheet
+  resize():void
+  resizeCallback:Array<Function>
+  addResizeCallback:(callback:Function)=>void
 }

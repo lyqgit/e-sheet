@@ -58,6 +58,20 @@ export class eSheet implements IExcel {
 
   }
 
+  resizeCallback:Array<Function> = [];
+
+  addResizeCallback(callback:Function){
+    this.resizeCallback.push(callback)
+  }
+
+  resize(): void {
+    console.log('监听尺寸改变')
+    // 需要处理的地方
+    this.resizeCallback.forEach(itemFn=>{
+      itemFn()
+    })
+  }
+
   getCurSheet():Sheet{
     return this.sheetArr[this.curSheet]
   }

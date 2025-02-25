@@ -8,6 +8,65 @@ export class ScrollPlugin implements IScrollPlugin{
     this.excel = excel,
     this.store = store
   }
+
+  resize = (): void=> {
+
+    const { dom:canvasDom } = this.store.canvas
+    const { cellHeight,col,row } = this.store.config
+
+    const curSheet = this.excel.getCurSheet()
+
+
+    // 纵向重置
+    this.verContainerDom.css({
+      'height':canvasDom.height() - cellHeight,
+      'width':this.defaultBarWidth,
+      'position':'absolute',
+      'top':cellHeight,
+      'right':0,
+      'zIndex':200
+    })
+
+    const lastRow = curSheet.rowMap.get('row'+row)
+    this.verPropor = (canvasDom.height()-cellHeight)/(lastRow.y+lastRow.height)
+
+    this.verBarDom.css({
+      'width':this.defaultBarWidth,
+      'background':this.barDomColor,
+      'transformOrigin':'top',
+      'transform':'translateY(0px)',
+      'userSelect':'none',
+      'height':(canvasDom.height()-cellHeight)*this.verPropor,
+      'borderRadius':this.defaultBarWidth
+    })
+
+
+    // 横向
+
+    this.horContainerDom.css({
+      'height':this.defaultBarWidth,
+      'width':canvasDom.width() - cellHeight,
+      'position':'absolute',
+      'left':cellHeight,
+      'bottom':0,
+      'zIndex':200
+    })
+
+    const lastCol = curSheet.colMap.get('col'+col)
+    this.horPropor = (canvasDom.width() - cellHeight)/(lastCol.x+lastCol.width)
+
+    this.horBarDom.css({
+      'width':(canvasDom.width() - cellHeight)*this.horPropor,
+      'background':this.barDomColor,
+      'transformOrigin':'left',
+      'transform':'translateX(0px)',
+      'userSelect':'none',
+      'height':this.defaultBarWidth,
+      'borderRadius':this.defaultBarWidth
+    })
+
+    
+  }
   
   barDomColor:string = 'rgb(201, 201, 201)'
   barDomActiveColor:string = 'rgb(150, 150, 150)'
@@ -27,6 +86,7 @@ export class ScrollPlugin implements IScrollPlugin{
     this.registryVerScroll();
     this.registryHorScroll();
     this.registryWheel();
+    this.excel.addResizeCallback(this.resize)
   }
 
   excel: IExcel;
@@ -34,6 +94,9 @@ export class ScrollPlugin implements IScrollPlugin{
 
   verBarDom:Cash;
   horBarDom:Cash;
+
+  verContainerDom:Cash;
+  horContainerDom:Cash;
 
   defaultBarWidth:number = 10;
 
@@ -47,6 +110,7 @@ export class ScrollPlugin implements IScrollPlugin{
   registryHorScroll(): void {
     const { canvasWrapperDom } = this.excel
     const barContainerDom = u('<div>')
+    this.horContainerDom = barContainerDom
     const { dom:canvasDom } = this.store.canvas
     const { cellHeight,col } = this.store.config
     barContainerDom.css({
@@ -100,8 +164,8 @@ export class ScrollPlugin implements IScrollPlugin{
         oriTransX = parseInt(trasform[1])
       }
       // console.log('开始的位置',eA.pageX)
-      console.log('trasform',trasform)
-      console.log('trasform-----',barDom.css('transform'))
+      // console.log('trasform',trasform)
+      // console.log('trasform-----',barDom.css('transform'))
       u(document).on('mousemove',(eB:MouseEvent)=>{
         barDom.css('background',this.barDomActiveColor)
         requestAnimationFrame(()=>{
@@ -155,6 +219,7 @@ export class ScrollPlugin implements IScrollPlugin{
   registryVerScroll(): void {
     const { canvasWrapperDom } = this.excel
     const barContainerDom = u('<div>')
+    this.verContainerDom = barContainerDom
     const { dom:canvasDom } = this.store.canvas
     const { cellHeight,row } = this.store.config
     barContainerDom.css({

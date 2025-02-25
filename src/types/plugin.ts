@@ -15,6 +15,7 @@ export interface IScrollPlugin extends IPlugin{
   defaultBarWidth:number
   registryHorScroll():void // 注册横向滚动条
   registryVerScroll():void // 注册纵向滚动条
+  resize():void; // 监听尺寸变化的回调
   barDomColor:string
   barDomActiveColor:string
   horBarDom:Cash
