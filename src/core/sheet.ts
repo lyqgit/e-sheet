@@ -84,7 +84,7 @@ export class Sheet implements ISheet{
         if(i===0){
           // 顶部行
           this.colMap.set(
-            'col'+headerName,
+            'col'+(j+1),
             new Cell({
               row:0,
               col:j+1,
@@ -202,7 +202,7 @@ export class Sheet implements ISheet{
         const headerName = getExcelHeaderName(j)
         if(isLeft || isInit || forceUpdate){
           if(i===topRow){
-            const headerCell = this.colMap.get('col'+headerName)
+            const headerCell = this.colMap.get('col'+j)
             headerCell.drawHeaderColStrokeRect(cellHeight - left)
             drawDom && headerCell.ctDom(cellHeight - left,0,100)
           }
@@ -215,6 +215,14 @@ export class Sheet implements ISheet{
     }
     this.scrollLeft = left
     this.scrollTop = top
+  }
+
+  drawX(left:number,drawDom:boolean = true,forceUpdate:boolean = false){
+    this.draw(left,this.scrollTop,drawDom,forceUpdate)
+  }
+
+  drawY(top:number,drawDom:boolean = true,forceUpdate:boolean = false){
+    this.draw(this.scrollLeft,top,drawDom,forceUpdate)
   }
 
   forceUpdateAll(){
@@ -259,23 +267,22 @@ export class Sheet implements ISheet{
     const floor = grat?Math.ceil:Math.floor;
     let tempCol = floor(dis/cellWidth)
     // console.log('tempLN',tempCol,floor(dis/this.cellWidth))
-    const tempLabel = getExcelHeaderName(tempCol)
     // console.log('tempL',tempLabel)
-    if(tempLabel === ''){
+    if(tempCol < 1){
       // 在最左侧
       return 1
     }else{
-      let cell:Cell = this.contMap.get(tempLabel+1)
+      let cell:Cell = this.colMap.get('col'+tempCol)
       // console.log('cell.x',cell,(tempLabel+1),grat,tempCol)
       if(grat){
         while(cell && cell.x < dis) {
           tempCol++
-          cell = this.contMap.get(getExcelHeaderName(tempCol)+1)
+          cell = this.colMap.get('col'+tempCol)
         }
       }else{
         while(cell && cell.x > dis) {
           tempCol--
-          cell = this.contMap.get(getExcelHeaderName(tempCol)+1)
+          cell = this.colMap.get('col'+tempCol)
         }
       }
      
@@ -292,16 +299,16 @@ export class Sheet implements ISheet{
     if(tempRow<1){
       return 1
     }else{
-      let cell:Cell = this.contMap.get('A'+tempRow)
+      let cell:Cell = this.rowMap.get('row'+tempRow)
       if(grat){
         while(cell && cell.y < dis) {
           tempRow++
-          cell = this.contMap.get('A'+tempRow)
+          cell = this.rowMap.get('row'+tempRow)
         }
       }else{
         while(cell && cell.y > dis) {
           tempRow--
-          cell = this.contMap.get('A'+tempRow)
+          cell = this.rowMap.get('row'+tempRow)
         }
       }
 
