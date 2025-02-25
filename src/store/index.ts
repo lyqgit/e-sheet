@@ -2,6 +2,7 @@ import { ICanvas, IPlugin } from '@/types'
 import { Cash } from "cash-dom";
 
 interface IExcelConfig{
+  borderCellBgColor:string
   borderColor:string
   cellWidth:number
   cellHeight:number
@@ -36,6 +37,7 @@ export default {
   config:{
     borderColor:'#ECEDEE',
     defaultCol:60,
-    defaultRow:40
+    defaultRow:40,
+    borderCellBgColor:'#F9FBFD'
   }
 } as IStore

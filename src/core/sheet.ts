@@ -15,7 +15,7 @@ export class Sheet implements ISheet{
   initDraw(){
     // 初始绘制
     this.drawTotalRect()
-    this.forceUpdate()
+    this.forceUpdateAll()
   }
 
   // 记录偏移距离
@@ -160,9 +160,10 @@ export class Sheet implements ISheet{
     })
 
     this.totalCell.drawTotalRect()
+    this.totalCell.ctDom(0,0,100)
   }
 
-  draw(left:number,top:number,forceUpdate:boolean = false,drawDom:boolean = true): void {
+  draw(left:number,top:number,drawDom:boolean = true,forceUpdate:boolean = false): void {
 
     const [
       leftCol,
@@ -175,36 +176,41 @@ export class Sheet implements ISheet{
 
     const isLeft = left !== this.scrollLeft
     const isTop = top !== this.scrollTop
+    const isInit = left === top && left === 0 && top === 0
 
     // console.log('isLeft',isLeft,left,this.scrollLeft)
     // console.log('isTop',isTop,top,this.scrollTop)
-
-    if(isTop){
-      this.clearCanvas(cellHeight,0,excelWidth,excelHeight)
-    }else if(isLeft){
+    if(isInit || forceUpdate){
+      this.clearCanvas(0,0,excelWidth,excelHeight)
+    }else if(isTop){
       this.clearCanvas(0,cellHeight,excelWidth,excelHeight)
+    }else if(isLeft){
+      this.clearCanvas(cellHeight,0,excelWidth,excelHeight)
     }
 
     // 绘制左上角的cell
-    // if(isLeft && isTop){
-    //   this.drawTotalRect()
-    // }
+    if(isInit || forceUpdate){
+      this.drawTotalRect()
+    }
 
     for(let i=topRow;i<=bottomRow;i++){
-      if(isLeft || forceUpdate){
+      if(isTop || isInit || forceUpdate){
         const rowCell = this.rowMap.get('row'+i)
-        rowCell.drawHeaderRowStrokeRect(cellHeight - top,drawDom)
+        rowCell.drawHeaderRowStrokeRect(cellHeight - top)
+        drawDom && rowCell.ctDom(0,cellHeight - top,100)
       }
       for(let j=leftCol;j<=rightCol;j++){
         const headerName = getExcelHeaderName(j)
-        if(isTop || forceUpdate){
+        if(isLeft || isInit || forceUpdate){
           if(i===topRow){
             const headerCell = this.colMap.get('col'+headerName)
-            headerCell.drawHeaderColStrokeRect(cellHeight - left,drawDom)
+            headerCell.drawHeaderColStrokeRect(cellHeight - left)
+            drawDom && headerCell.ctDom(cellHeight - left,0,100)
           }
         }
         const contCell = this.contMap.get(headerName+i)
-        contCell.drawStrokeRect(cellHeight - left,cellHeight - top,drawDom)
+        contCell.drawStrokeRect(cellHeight - left,cellHeight - top)
+        drawDom && contCell.ctDom(cellHeight - left,cellHeight - top,100)
       }
       
     }
@@ -212,8 +218,12 @@ export class Sheet implements ISheet{
     this.scrollTop = top
   }
 
-  forceUpdate(){
+  forceUpdateAll(){
     this.draw(this.scrollLeft,this.scrollTop,true,true)
+  }
+
+  forceUpdateRect(){
+    this.draw(this.scrollLeft,this.scrollTop,false,true)
   }
 
   clearCanvas(startX:number,startY:number,endX:number,endY:number){

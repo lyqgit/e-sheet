@@ -22,7 +22,7 @@ export class ScrollPlugin implements IScrollPlugin{
       u(document).off('mousemove')
       this.verBarDom.css('background',this.barDomColor)
       const curSheet = this.excel.getCurSheet()
-      curSheet.forceUpdate()
+      curSheet.forceUpdateAll()
     })
     this.registryVerScroll();
     this.registryHorScroll();
@@ -44,7 +44,7 @@ export class ScrollPlugin implements IScrollPlugin{
   
   sheetMove(reX:number,reY:number){
     const curSheet = this.excel.getCurSheet()
-    curSheet.draw(reX,reY,false,false)
+    curSheet.draw(reX,reY,true,false)
   }
 
   registryVerScroll(): void {
@@ -57,7 +57,8 @@ export class ScrollPlugin implements IScrollPlugin{
       'width':this.defaultBarWidth,
       'position':'absolute',
       'top':cellHeight,
-      'right':0
+      'right':0,
+      'zIndex':200
     })
 
     canvasWrapperDom.append(barContainerDom)

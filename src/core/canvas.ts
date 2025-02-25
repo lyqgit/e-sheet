@@ -1,5 +1,5 @@
 import type { Cash } from 'cash-dom'
-import { ICanvas,IDot,IStrokeRectOption } from '@/types'
+import { ICanvas,IDot,IFillRectOption,IStrokeRectOption } from '@/types'
 import store from '@/store';
 
 export class Canvas implements ICanvas{
@@ -28,8 +28,10 @@ export class Canvas implements ICanvas{
     this.ctx.strokeStyle = option.color??'blue'
     this.ctx.strokeRect(option.x,option.y,option.width,option.height)
   }
-  drawFillRect(): void {
-    throw new Error('Method not implemented.');
+  drawFillRect(option:IFillRectOption): void {
+    this.ctx.fillStyle = option.color??store.config.borderCellBgColor
+    this.ctx.globalCompositeOperation = option.globalCompositeOperation??'source-over'
+    this.ctx.fillRect(option.x,option.y,option.width,option.height)
   }
   drawDashStrokeRect(): void {
     throw new Error('Method not implemented.');

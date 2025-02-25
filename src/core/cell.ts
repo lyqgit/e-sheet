@@ -22,25 +22,29 @@ export class Cell implements ICell{
     this.img = option.img
   }
 
-  drawTotalRect(drawDom:boolean = true){
-
-    const { cellHeight } = store.config
-
+  drawTotalRect(){
     store.canvas.ctx.drawStrokeRect({
       x:0,
       y:0,
-      width:cellHeight,
-      height:cellHeight,
+      width:this.width,
+      height:this.height,
       lineWidth:1,
       globalCompositeOperation:'destination-over',
       color:store.config.borderColor
     })
 
-    store.canvas.ctx.drawTriangleRect({x:cellHeight-6,y:6},{x:cellHeight-6,y:cellHeight-6},{x:6,y:cellHeight-6},'#DCDCDC')
-    drawDom && this.ctDom(0,0,cellHeight,cellHeight,100)
+    store.canvas.ctx.drawTriangleRect({x:this.height-6,y:6},{x:this.height-6,y:this.height-6},{x:6,y:this.height-6},'#DCDCDC')
+
+    store.canvas.ctx.drawFillRect({
+      x:0,
+      y:0,
+      width:this.width,
+      height:this.height,
+      globalCompositeOperation:'destination-over',
+    })
   }
 
-  ctDom(reX:number,reY:number,width:number,height:number,zIndex?:number){
+  ctDom(reX:number,reY:number,zIndex?:number){
 
     const { eventDom } = store.canvas
 
@@ -50,13 +54,15 @@ export class Cell implements ICell{
     tempRect.css('top',this.y+reY);
     zIndex && tempRect.css('z-index',zIndex);
     tempRect.data('label',this.label)
-    tempRect.css('width',width)
-    tempRect.css('height',height)
+    tempRect.data('row',this.row)
+    tempRect.data('col',this.col)
+    tempRect.css('width',this.width)
+    tempRect.css('height',this.height)
 
     eventDom.append(tempRect)
   }
 
-  drawHeaderColStrokeRect(reX:number,drawDom:boolean = true): void {
+  drawHeaderColStrokeRect(reX:number): void {
     store.canvas.ctx.drawStrokeRect({
       x:this.x+reX,
       y:0,
@@ -66,10 +72,18 @@ export class Cell implements ICell{
       globalCompositeOperation:'destination-over',
       color:store.config.borderColor
     })
-    drawDom && this.ctDom(reX,0,this.width,this.height,100)
+
+    store.canvas.ctx.drawFillRect({
+      x:this.x+reX,
+      y:0,
+      width:this.width,
+      height:this.height,
+      globalCompositeOperation:'destination-over',
+    })
+
   }
 
-  drawHeaderRowStrokeRect(reY:number,drawDom:boolean = true): void {
+  drawHeaderRowStrokeRect(reY:number): void {
     store.canvas.ctx.drawStrokeRect({
       x:0,
       y:this.y+reY,
@@ -79,10 +93,9 @@ export class Cell implements ICell{
       globalCompositeOperation:'destination-over',
       color:store.config.borderColor
     })
-    drawDom && this.ctDom(0,reY,this.height,this.height,100)
   }
 
-  drawStrokeRect(reX:number,reY:number,drawDom:boolean = true): void {
+  drawStrokeRect(reX:number,reY:number): void {
     store.canvas.ctx.drawStrokeRect({
       x:this.x+reX,
       y:this.y+reY,
@@ -92,7 +105,6 @@ export class Cell implements ICell{
       globalCompositeOperation:'destination-over',
       color:store.config.borderColor
     })
-    drawDom && this.ctDom(reX,reY,this.width,this.height)
   }
   
   row: number;
