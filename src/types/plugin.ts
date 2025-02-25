@@ -1,5 +1,6 @@
 import { IStore } from "@/store"
 import { IExcel } from "./excel"
+import { Cash } from "cash-dom";
 
 export interface IPlugin{
   excel:IExcel
@@ -14,4 +15,6 @@ export interface IScrollPlugin extends IPlugin{
   registryVerScroll():void // 注册纵向滚动条
   barDomColor:string
   barDomActiveColor:string
+  horBarDom:Cash
+  verBarDom:Cash
 }

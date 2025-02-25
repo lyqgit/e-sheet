@@ -22,7 +22,7 @@ export class Cell implements ICell{
     this.img = option.img
   }
 
-  drawTotalRect(){
+  drawTotalRect(drawDom:boolean = true){
 
     const { cellHeight } = store.config
 
@@ -37,7 +37,7 @@ export class Cell implements ICell{
     })
 
     store.canvas.ctx.drawTriangleRect({x:cellHeight-6,y:6},{x:cellHeight-6,y:cellHeight-6},{x:6,y:cellHeight-6},'#DCDCDC')
-    this.ctDom(0,0,cellHeight,cellHeight,100)
+    drawDom && this.ctDom(0,0,cellHeight,cellHeight,100)
   }
 
   ctDom(reX:number,reY:number,width:number,height:number,zIndex?:number){
@@ -56,7 +56,7 @@ export class Cell implements ICell{
     eventDom.append(tempRect)
   }
 
-  drawHeaderColStrokeRect(reX:number): void {
+  drawHeaderColStrokeRect(reX:number,drawDom:boolean = true): void {
     store.canvas.ctx.drawStrokeRect({
       x:this.x+reX,
       y:0,
@@ -66,10 +66,10 @@ export class Cell implements ICell{
       globalCompositeOperation:'destination-over',
       color:store.config.borderColor
     })
-    this.ctDom(reX,0,this.width,this.height,100)
+    drawDom && this.ctDom(reX,0,this.width,this.height,100)
   }
 
-  drawHeaderRowStrokeRect(reY:number): void {
+  drawHeaderRowStrokeRect(reY:number,drawDom:boolean = true): void {
     store.canvas.ctx.drawStrokeRect({
       x:0,
       y:this.y+reY,
@@ -79,10 +79,10 @@ export class Cell implements ICell{
       globalCompositeOperation:'destination-over',
       color:store.config.borderColor
     })
-    this.ctDom(0,reY,this.height,this.height,100)
+    drawDom && this.ctDom(0,reY,this.height,this.height,100)
   }
 
-  drawStrokeRect(reX:number,reY:number): void {
+  drawStrokeRect(reX:number,reY:number,drawDom:boolean = true): void {
     store.canvas.ctx.drawStrokeRect({
       x:this.x+reX,
       y:this.y+reY,
@@ -92,7 +92,7 @@ export class Cell implements ICell{
       globalCompositeOperation:'destination-over',
       color:store.config.borderColor
     })
-    this.ctDom(reX,reY,this.width,this.height)
+    drawDom && this.ctDom(reX,reY,this.width,this.height)
   }
   
   row: number;

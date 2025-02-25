@@ -9,12 +9,13 @@ export class Sheet implements ISheet{
   constructor(option:ISheetOption){ 
     this.lock = option.lock
     this.data = option.data
-    this.initEmptyData();
-    this.init();
+    this.initData(option.data);
   }
 
-  private init(){
-    // 
+  initDraw(){
+    // 初始绘制
+    this.drawTotalRect()
+    this.forceUpdate()
   }
 
   // 记录偏移距离
@@ -33,12 +34,21 @@ export class Sheet implements ISheet{
   mergeCell:Map<string,Array<string>>;
 
   // 装载空数据
-  initEmptyData():void{
+  initData(data:Array<ICell>):void{
     // console.log('layer',store.canvas.dom)
     this.contMap = new Map<string,Cell>();
     this.colMap = new Map<string,Cell>();
     this.rowMap = new Map<string,Cell>();
 
+    if(data.length === 0){
+      this.emptyData()
+    }else{
+      // 组装数据
+    }
+    
+  };
+
+  emptyData(){
     const { row,col,cellWidth,cellHeight } = store.config
 
     let abY = 0;
@@ -124,7 +134,7 @@ export class Sheet implements ISheet{
       }
       abY += cellHeight
     }
-  };
+  }
 
   drawTotalRect(){
 
@@ -152,7 +162,7 @@ export class Sheet implements ISheet{
     this.totalCell.drawTotalRect()
   }
 
-  draw(left:number,top:number,forceLeft?:boolean,forceTop?:boolean): void {
+  draw(left:number,top:number,forceUpdate:boolean = false,drawDom:boolean = true): void {
 
     const [
       leftCol,
@@ -163,37 +173,38 @@ export class Sheet implements ISheet{
 
     const { cellHeight,excelWidth,excelHeight } = store.config
 
-    const isLeft = left === this.scrollLeft || forceLeft
-    const isTop = top === this.scrollTop || forceTop
+    const isLeft = left !== this.scrollLeft
+    const isTop = top !== this.scrollTop
 
-    if(isLeft && isTop){
-      this.clearCanvas(0,0,excelWidth,excelHeight)
-    }else if(isTop){
-      this.clearCanvas(0,cellHeight,excelWidth,excelHeight)
-    }else if(isLeft){
+    // console.log('isLeft',isLeft,left,this.scrollLeft)
+    // console.log('isTop',isTop,top,this.scrollTop)
+
+    if(isTop){
       this.clearCanvas(cellHeight,0,excelWidth,excelHeight)
+    }else if(isLeft){
+      this.clearCanvas(0,cellHeight,excelWidth,excelHeight)
     }
 
-    if(forceLeft && forceTop){
-      // 绘制左上角的cell
-      this.drawTotalRect()
-    }
+    // 绘制左上角的cell
+    // if(isLeft && isTop){
+    //   this.drawTotalRect()
+    // }
 
     for(let i=topRow;i<=bottomRow;i++){
-      if(left === this.scrollLeft || forceLeft){
+      if(isLeft || forceUpdate){
         const rowCell = this.rowMap.get('row'+i)
-        rowCell.drawHeaderRowStrokeRect(cellHeight - top)
+        rowCell.drawHeaderRowStrokeRect(cellHeight - top,drawDom)
       }
       for(let j=leftCol;j<=rightCol;j++){
         const headerName = getExcelHeaderName(j)
-        if(top === this.scrollTop || forceTop){
+        if(isTop || forceUpdate){
           if(i===topRow){
             const headerCell = this.colMap.get('col'+headerName)
-            headerCell.drawHeaderColStrokeRect(cellHeight - left)
+            headerCell.drawHeaderColStrokeRect(cellHeight - left,drawDom)
           }
         }
         const contCell = this.contMap.get(headerName+i)
-        contCell.drawStrokeRect(cellHeight - left,cellHeight - top)
+        contCell.drawStrokeRect(cellHeight - left,cellHeight - top,drawDom)
       }
       
     }
@@ -201,6 +212,9 @@ export class Sheet implements ISheet{
     this.scrollTop = top
   }
 
+  forceUpdate(){
+    this.draw(this.scrollLeft,this.scrollTop,true,true)
+  }
 
   clearCanvas(startX:number,startY:number,endX:number,endY:number){
     store.canvas.ctx.clearRect(startX,startY,endX,endY)
@@ -230,7 +244,7 @@ export class Sheet implements ISheet{
 
   searchCol(dis:number,grat:boolean):number{
 
-    const { cellWidth } = store.config
+    const { cellWidth,col } = store.config
 
     // console.log('dis',dis)
     const floor = grat?Math.ceil:Math.floor;
@@ -245,24 +259,24 @@ export class Sheet implements ISheet{
       let cell:Cell = this.contMap.get(tempLabel+1)
       // console.log('cell.x',cell,(tempLabel+1),grat,tempCol)
       if(grat){
-        while(cell.x < dis) {
+        while(cell && cell.x < dis) {
           tempCol++
           cell = this.contMap.get(getExcelHeaderName(tempCol)+1)
         }
       }else{
-        while(cell.x > dis) {
+        while(cell && cell.x > dis) {
           tempCol--
           cell = this.contMap.get(getExcelHeaderName(tempCol)+1)
         }
       }
      
-      return cell.col
+      return cell?cell.col:col
     }
   }
 
   searchRow(dis:number,grat:boolean):number{
 
-    const { cellHeight } = store.config
+    const { cellHeight,row } = store.config
 
     const floor = grat?Math.ceil:Math.floor;
     let tempRow = floor(dis/cellHeight)
@@ -271,17 +285,18 @@ export class Sheet implements ISheet{
     }else{
       let cell:Cell = this.contMap.get('A'+tempRow)
       if(grat){
-        while(cell.y < dis) {
+        while(cell && cell.y < dis) {
           tempRow++
           cell = this.contMap.get('A'+tempRow)
         }
       }else{
-        while(cell.y > dis) {
+        while(cell && cell.y > dis) {
           tempRow--
           cell = this.contMap.get('A'+tempRow)
         }
       }
-      return cell.row
+
+      return cell?cell.row:row
     }
   }
 

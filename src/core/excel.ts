@@ -51,7 +51,7 @@ export class eSheet implements IExcel {
         data:[]
       })
       this.sheetArr.push(oneSheet)
-      oneSheet.draw(0,0,true,true)
+      oneSheet.initDraw()
     }
 
     this.initPlugin(options.plugins);
