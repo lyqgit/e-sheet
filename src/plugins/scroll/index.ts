@@ -87,17 +87,18 @@ export class ScrollPlugin implements IScrollPlugin{
 
     barContainerDom.append(barDom)
 
-    const boundDiff = parseInt((barContainerDom.width() - barDom.width()).toFixed(0))
+    const boundDiff = parseFloat((barContainerDom.width() - barDom.width()).toFixed(2))
 
     barDom.on('mousedown',(eA:MouseEvent)=>{
       eA.preventDefault();
-      const trasform = barDom.css('transform').match(/matrix\(\d+, \d+, \d+, \d+, (\d+), \d+\)/)
+      const trasform = barDom.css('transform').match(/matrix\(\d+, \d+, \d+, \d+, (\d*\.?\d+), \d+\)/)
       let oriTransX = 0
       if(trasform){
         oriTransX = parseInt(trasform[1])
       }
       // console.log('开始的位置',eA.pageX)
-      // console.log('trasform',trasform)
+      console.log('trasform',trasform)
+      console.log('trasform-----',barDom.css('transform'))
       u(document).on('mousemove',(eB:MouseEvent)=>{
         barDom.css('background',this.barDomActiveColor)
         requestAnimationFrame(()=>{
@@ -110,8 +111,14 @@ export class ScrollPlugin implements IScrollPlugin{
 
           if(finalDis > boundDiff && diffDis > 0){
             finalDis = boundDiff
+            // console.log('diffDis----',diffDis)
+            // console.log('boundDiff---',boundDiff)
+            // console.log('finalDis---',finalDis)
+            // console.log('oriTransX---',oriTransX)
+            // console.log('trasform----',trasform)
           }else if(finalDis < 0 && diffDis < 0){
-            
+            // console.log('trasform',trasform)
+            console.log('oriTransX',oriTransX)
             // console.log('diffDis',diffDis)
             // console.log('boundDiff',boundDiff)
             // console.log('finalDis',finalDis)
@@ -183,11 +190,11 @@ export class ScrollPlugin implements IScrollPlugin{
 
     barContainerDom.append(barDom)
 
-    const boundDiff = parseInt((barContainerDom.height() - barDom.height()).toFixed(0))
+    const boundDiff = parseFloat((barContainerDom.height() - barDom.height()).toFixed(2))
 
     barDom.on('mousedown',(eA:MouseEvent)=>{
       eA.preventDefault();
-      const trasform = barDom.css('transform').match(/matrix\(\d+, \d+, \d+, \d+, \d+, (\d+)\)/)
+      const trasform = barDom.css('transform').match(/matrix\(\d+, \d+, \d+, \d+, \d+, (\d*\.?\d+)\)/)
       let oriTransY = 0
       if(trasform){
         oriTransY = parseInt(trasform[1])
