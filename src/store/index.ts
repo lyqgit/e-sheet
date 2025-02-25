@@ -2,6 +2,9 @@ import { ICanvas, IPlugin } from '@/types'
 import { Cash } from "cash-dom";
 
 interface IExcelConfig{
+  selectedBgColor:string
+  selectedBorderBgColor:string
+  nonSelectBgColor:string
   borderCellBgColor:string
   borderColor:string
   cellWidth:number
@@ -35,9 +38,12 @@ export default {
     eventDom:null
   },
   config:{
-    borderColor:'#ECEDEE',
     defaultCol:60,
     defaultRow:40,
-    borderCellBgColor:'#F9FBFD'
+    borderCellBgColor:'#F9FBFD',
+    nonSelectBgColor:'#FFFFFF',
+    selectedBorderBgColor:'#0089FF',
+    selectedBgColor:'#EBF4FF',
+    borderColor:'#ECEDEE'
   }
 } as IStore

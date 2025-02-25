@@ -10,14 +10,15 @@ export interface IBaseCell{
   y:number,
   width:number,
   height:number,
-  fontSize:string
-  fontWeight:string
-  fontItalic:string
-  fontFamily:string
-  textAlign:string
-  textBaseline:string
-  strikethrough:Boolean
-  underline:Boolean,
+  fontSize?:number
+  fontWeight?:string
+  fontItalic?:string
+  fontFamily?:string
+  textAlign?:string
+  textBaseline?:string
+  strikethrough?:Boolean
+  underline?:Boolean,
+  textWrapType?:string
   label:string,
   img:Array<Img>
 }

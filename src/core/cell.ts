@@ -63,6 +63,16 @@ export class Cell implements ICell{
   }
 
   drawHeaderColStrokeRect(reX:number): void {
+
+    store.canvas.ctx.drawText({
+      x:this.x+reX,
+      y:0,
+      text:this.label,
+      rectWidth:this.width,
+      rectHeight:this.height,
+      globalCompositeOperation:'destination-over',
+    })
+
     store.canvas.ctx.drawStrokeRect({
       x:this.x+reX,
       y:0,
@@ -84,6 +94,16 @@ export class Cell implements ICell{
   }
 
   drawHeaderRowStrokeRect(reY:number): void {
+
+    store.canvas.ctx.drawText({
+      x:0,
+      y:this.y+reY,
+      text:this.label,
+      rectWidth:this.height,
+      rectHeight:this.height,
+      globalCompositeOperation:'destination-over',
+    })
+
     store.canvas.ctx.drawStrokeRect({
       x:0,
       y:this.y+reY,
@@ -92,6 +112,14 @@ export class Cell implements ICell{
       lineWidth:1,
       globalCompositeOperation:'destination-over',
       color:store.config.borderColor
+    })
+
+    store.canvas.ctx.drawFillRect({
+      x:0,
+      y:this.y+reY,
+      width:this.height,
+      height:this.height,
+      globalCompositeOperation:'destination-over',
     })
   }
 
@@ -113,7 +141,7 @@ export class Cell implements ICell{
   y: number;
   width: number;
   height: number;
-  fontSize: string;
+  fontSize: number;
   fontWeight: string;
   fontItalic: string;
   fontFamily: string;

@@ -14,7 +14,6 @@ export class Sheet implements ISheet{
 
   initDraw(){
     // 初始绘制
-    this.drawTotalRect()
     this.forceUpdateAll()
   }
 
@@ -64,7 +63,7 @@ export class Sheet implements ISheet{
           y:abY,
           width:cellWidth,
           height:cellHeight,
-          fontSize:'12px',
+          fontSize:12,
           fontWeight:'500',
           fontItalic:'',
           fontFamily:'',
@@ -93,7 +92,7 @@ export class Sheet implements ISheet{
               y:0,
               width:cellWidth,
               height:cellHeight,
-              fontSize:'12px',
+              fontSize:12,
               fontWeight:'500',
               fontItalic:'',
               fontFamily:'',
@@ -118,7 +117,7 @@ export class Sheet implements ISheet{
             y:abY,
             width:cellWidth,
             height:cellHeight,
-            fontSize:'12px',
+            fontSize:12,
             fontWeight:'500',
             fontItalic:'',
             fontFamily:'',
@@ -147,7 +146,7 @@ export class Sheet implements ISheet{
       y:0,
       width:cellHeight,
       height:cellHeight,
-      fontSize:'12px',
+      fontSize:12,
       fontWeight:'500',
       fontItalic:'',
       fontFamily:'',
@@ -181,11 +180,11 @@ export class Sheet implements ISheet{
     // console.log('isLeft',isLeft,left,this.scrollLeft)
     // console.log('isTop',isTop,top,this.scrollTop)
     if(isInit || forceUpdate){
-      this.clearCanvas(0,0,excelWidth,excelHeight)
+      this.clearCanvas(0,0,excelWidth,excelHeight,forceUpdate)
     }else if(isTop){
-      this.clearCanvas(0,cellHeight,excelWidth,excelHeight)
+      this.clearCanvas(0,cellHeight,excelWidth,excelHeight,forceUpdate)
     }else if(isLeft){
-      this.clearCanvas(cellHeight,0,excelWidth,excelHeight)
+      this.clearCanvas(cellHeight,0,excelWidth,excelHeight,forceUpdate)
     }
 
     // 绘制左上角的cell
@@ -226,14 +225,14 @@ export class Sheet implements ISheet{
     this.draw(this.scrollLeft,this.scrollTop,false,true)
   }
 
-  clearCanvas(startX:number,startY:number,endX:number,endY:number){
+  clearCanvas(startX:number,startY:number,endX:number,endY:number,forceUpdate:boolean = false){
     store.canvas.ctx.clearRect(startX,startY,endX,endY)
     const { eventDom } = store.canvas;
     eventDom.children().each((_,item)=>{
       if(startX > 0){
         const tempDom = u(item)
         const label = tempDom.data('label') as string
-        if(label.includes('row') || label.includes('total')){
+        if(label.includes('row') || (forceUpdate && label.includes('total'))){
 
         }else{
           tempDom.remove()
@@ -243,7 +242,7 @@ export class Sheet implements ISheet{
       if(startY > 0){
         const tempDom = u(item)
         const label = tempDom.data('label') as string
-        if(label.includes('col') || label.includes('total')){
+        if(label.includes('col') || (forceUpdate && label.includes('total'))){
 
         }else{
           tempDom.remove()

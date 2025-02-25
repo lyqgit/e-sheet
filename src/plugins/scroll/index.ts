@@ -22,7 +22,7 @@ export class ScrollPlugin implements IScrollPlugin{
       u(document).off('mousemove')
       this.verBarDom.css('background',this.barDomColor)
       const curSheet = this.excel.getCurSheet()
-      curSheet.forceUpdateAll()
+      // curSheet.forceUpdateAll()
     })
     this.registryVerScroll();
     this.registryHorScroll();
@@ -44,7 +44,7 @@ export class ScrollPlugin implements IScrollPlugin{
   
   sheetMove(reX:number,reY:number){
     const curSheet = this.excel.getCurSheet()
-    curSheet.draw(reX,reY,true,false)
+    curSheet.draw(reX,reY,false,false)
   }
 
   registryVerScroll(): void {
@@ -93,7 +93,7 @@ export class ScrollPlugin implements IScrollPlugin{
 
     barContainerDom.append(barDom)
 
-    const boundDiff = barContainerDom.height() - barDom.height()
+    const boundDiff = parseInt((barContainerDom.height() - barDom.height()).toFixed(0))
 
     barDom.on('mousedown',(eA:MouseEvent)=>{
       eA.preventDefault();
@@ -111,17 +111,20 @@ export class ScrollPlugin implements IScrollPlugin{
           const diffDis = eB.pageY - eA.pageY
           // console.log('oriTransY',oriTransY)
           // console.log('diffDis',diffDis)
+          
 
           let finalDis = oriTransY+diffDis
+          // console.log('boundDiff',boundDiff)
+          // console.log('finalDis',finalDis)
 
-          if(finalDis > boundDiff){
+          if(finalDis > boundDiff && diffDis > 0){
             finalDis = boundDiff
-          }else if(finalDis < 0){
+          }else if(finalDis < 0 && diffDis < 0){
             finalDis = 0
           }
 
-          this.sheetMove(0,finalDis/this.verPropor)
           barDom.css('transform',`translateY(${finalDis}px)`)
+          this.sheetMove(0,finalDis/this.verPropor)
         })
       })
       

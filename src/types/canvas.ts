@@ -9,7 +9,7 @@ export interface ICanvas{
   ctx:CanvasRenderingContext2D
   drawLine():void
   drawImage():void
-  drawText():void
+  drawText(option:ITextRectOption):void
   drawThroughLine():void
   clearRect(startX:number,startY:number,endX:number,endY:number):void
   drawStrokeRect(option:IStrokeRectOption):void
@@ -40,4 +40,23 @@ export interface IFillRectOption{
   height:number,
   color?:string,
   globalCompositeOperation?:GlobalCompositeOperation,
+}
+
+export interface ITextRectOption{
+  x:number,
+  y:number,
+  text:string,
+  rectWidth:number,
+  rectHeight:number,
+  globalCompositeOperation?:GlobalCompositeOperation,
+  color?:string,
+  textAlign?:CanvasTextAlign,
+  fontSize?:number,
+  fontWeight?:string
+  fontItalic?:string
+  fontFamily?:string
+  textBaseline?:CanvasTextBaseline
+  strikethrough?:Boolean
+  underline?:Boolean,
+  textWrapType?:string
 }
