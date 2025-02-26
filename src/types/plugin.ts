@@ -7,6 +7,7 @@ export interface IPlugin{
   store:IStore
   register():void;
   unregister():void;
+  docMouseUp():void;
 }
 
 export interface IScrollPlugin extends IPlugin{

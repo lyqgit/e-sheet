@@ -75,14 +75,15 @@ export class ScrollPlugin implements IScrollPlugin{
     
   }
 
+  docMouseUp=()=>{
+    u(document).off('mousemove')
+    this.verBarDom.css('background',this.barDomColor)
+    this.horBarDom.css('background',this.barDomColor)
+    this.forceUpdateAll()
+  }
+
   register(): void {
-    u(document).on('mouseup',()=>{
-      // console.log('停止')
-      u(document).off('mousemove')
-      this.verBarDom.css('background',this.barDomColor)
-      this.horBarDom.css('background',this.barDomColor)
-      this.forceUpdateAll()
-    })
+    
     this.registryVerScroll();
     this.registryHorScroll();
     this.registryWheel();

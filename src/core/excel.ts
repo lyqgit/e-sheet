@@ -133,6 +133,12 @@ export class eSheet implements IExcel {
     for(let i in store.config.plugins){
       store.config.plugins[i].register()
     }
+
+    u(document).on('mouseup',()=>{
+      for(let i in store.config.plugins){
+        store.config.plugins[i].docMouseUp()
+      }
+    })
   }
   
 

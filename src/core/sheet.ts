@@ -164,6 +164,7 @@ export class Sheet implements ISheet{
     this.totalCell.ctDom(0,0,100)
   }
 
+  // 绘制选中
   drawSelCell(left:number,top:number){
 
     const { ctx } = store.canvas
@@ -177,6 +178,47 @@ export class Sheet implements ISheet{
         y: singleCell.y + top,
         width: singleCell.width,
         height: singleCell.height,
+        color:selectedBorderBgColor,
+        globalCompositeOperation:'destination-over',
+        lineWidth:3
+      })
+    }else if(this.selCells.length > 1){
+
+      // console.log('this.selCells.length',this.selCells.length)
+
+      let x = 0;
+      let y = 0;
+      let width = 0;
+      let height = 0;
+
+      const firstCell = this.selCells[0]
+      const lastCell = this.selCells[this.selCells.length - 1]
+
+      // 先确定方向
+      if(firstCell.x < lastCell.x){
+        x = firstCell.x
+        width = lastCell.x - firstCell.x + firstCell.width
+      }else{
+        x = lastCell.x
+        width = firstCell.x - lastCell.x + lastCell.width
+      }
+
+      if(firstCell.y < lastCell.y){
+        y = firstCell.y
+        height = lastCell.y - firstCell.y + firstCell.height
+      }else{
+        y = lastCell.y
+        height = firstCell.y - lastCell.y + lastCell.height
+      }
+
+      // console.log('width',width)
+      // console.log('height',height)
+
+      ctx.drawStrokeRect({
+        x: x + left,
+        y: y + top,
+        width,
+        height,
         color:selectedBorderBgColor,
         globalCompositeOperation:'destination-over',
         lineWidth:3
@@ -215,9 +257,6 @@ export class Sheet implements ISheet{
       this.clearCanvas(cellHeight,0,excelWidth,excelHeight,drawDom,forceUpdate)
     }
 
-
-    
-
     // 绘制左上角的cell
     if(isInit || forceUpdate){
       this.drawTotalRect()
@@ -243,7 +282,6 @@ export class Sheet implements ISheet{
 
     // 绘制选中
     this.drawSelCell(cellHeight - left,cellHeight - top)
-    
 
     for(let i=topRow;i<=bottomRow;i++){
       for(let j=leftCol;j<=rightCol;j++){
@@ -252,7 +290,6 @@ export class Sheet implements ISheet{
         contCell.drawContRect(cellHeight - left,cellHeight - top)
         drawDom && dfDom.append(contCell.ctDom(cellHeight - left,cellHeight - top,100))
       }
-      
     }
 
     drawDom && eventDom.append(dfDom)
