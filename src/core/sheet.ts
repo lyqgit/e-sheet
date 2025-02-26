@@ -171,7 +171,10 @@ export class Sheet implements ISheet{
       bottomRow
     ] = this.getBoundMap(left,top);
 
+    const dfDom = u(document.createDocumentFragment())
+
     const { cellHeight,excelWidth,excelHeight } = store.config
+    const { eventDom } = store.canvas
 
     const isLeft = left !== this.scrollLeft
     const isTop = top !== this.scrollTop
@@ -196,7 +199,7 @@ export class Sheet implements ISheet{
       if(isTop || isInit || forceUpdate){
         const rowCell = this.rowMap.get('row'+i)
         rowCell.drawHeaderRowStrokeRect(cellHeight - top)
-        drawDom && rowCell.ctDom(0,cellHeight - top,100)
+        drawDom && dfDom.append(rowCell.ctDom(0,cellHeight - top,100))
       }
       for(let j=leftCol;j<=rightCol;j++){
         const headerName = getExcelHeaderName(j)
@@ -204,15 +207,18 @@ export class Sheet implements ISheet{
           if(i===topRow){
             const headerCell = this.colMap.get('col'+j)
             headerCell.drawHeaderColStrokeRect(cellHeight - left)
-            drawDom && headerCell.ctDom(cellHeight - left,0,100)
+            drawDom && dfDom.append(headerCell.ctDom(cellHeight - left,0,100))
           }
         }
         const contCell = this.contMap.get(headerName+i)
         contCell.drawStrokeRect(cellHeight - left,cellHeight - top)
-        drawDom && contCell.ctDom(cellHeight - left,cellHeight - top,100)
+        drawDom && dfDom.append(contCell.ctDom(cellHeight - left,cellHeight - top,100))
       }
       
     }
+
+    eventDom.append(dfDom)
+    
     this.scrollLeft = left
     this.scrollTop = top
   }

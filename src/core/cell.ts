@@ -46,8 +46,6 @@ export class Cell implements ICell{
 
   ctDom(reX:number,reY:number,zIndex?:number){
 
-    const { eventDom } = store.canvas
-
     const tempRect = u('<div>')
     tempRect.css('position','absolute');
     tempRect.css('left',this.x+reX);
@@ -59,7 +57,7 @@ export class Cell implements ICell{
     tempRect.css('width',this.width)
     tempRect.css('height',this.height)
 
-    eventDom.append(tempRect)
+    return tempRect
   }
 
   drawHeaderColStrokeRect(reX:number): void {
