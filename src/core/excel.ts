@@ -2,7 +2,8 @@ import { IExcelOptions,IExcel,IPlugin } from '@/types'
 import { judgeType } from '@/utils'
 import type { Cash } from 'cash-dom'
 import u from 'cash-dom';
-import { Sheet,Canvas } from '@/core'
+import { Sheet } from './sheet'
+import { Canvas } from './canvas'
 import store from '@/store'
 import { ScrollPlugin } from '@/plugins'
 
