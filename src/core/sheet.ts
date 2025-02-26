@@ -161,7 +161,6 @@ export class Sheet implements ISheet{
     })
 
     this.totalCell.drawTotalRect()
-    this.totalCell.ctDom(0,0,100)
   }
 
   // 绘制选中
@@ -236,6 +235,8 @@ export class Sheet implements ISheet{
       bottomRow
     ] = this.getBoundMap(left,top);
 
+    console.log('leftCol,rightCol,topRow,bottomRow',leftCol,rightCol,topRow,bottomRow)
+
     const dfDom = u(document.createDocumentFragment())
 
     const { cellHeight,excelWidth,excelHeight } = store.config
@@ -260,6 +261,7 @@ export class Sheet implements ISheet{
     // 绘制左上角的cell
     if(isInit || forceUpdate){
       this.drawTotalRect()
+      drawDom && dfDom.append(this.totalCell.ctRowDom(0,0,100))
     }
 
     // 绘制行
@@ -267,7 +269,7 @@ export class Sheet implements ISheet{
       for(let i=topRow;i<=bottomRow;i++){
         const rowCell = this.rowMap.get('row'+i)
         rowCell.drawHeaderRowRect(cellHeight - top)
-        drawDom && dfDom.append(rowCell.ctDom(0,cellHeight - top,100))
+        drawDom && dfDom.append(rowCell.ctRowDom(0,cellHeight - top,100))
       }
     }
 
@@ -385,7 +387,7 @@ export class Sheet implements ISheet{
     }else{
       let cell:Cell = this.rowMap.get('row'+tempRow)
       if(grat){
-        while(cell && cell.y < dis) {
+        while(cell && (cell.y+cell.height) < dis) {
           tempRow++
           cell = this.rowMap.get('row'+tempRow)
         }
@@ -410,6 +412,7 @@ export class Sheet implements ISheet{
 
     const td = top + cellHeight
     const bd = top + parseInt(store.canvas.dom.css('height'))
+
     const leftCol = this.searchCol(ld,false)
     const rightCol = this.searchCol(rd,true)
 
