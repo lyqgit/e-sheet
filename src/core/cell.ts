@@ -20,7 +20,12 @@ export class Cell implements ICell{
     this.underline = option.underline
     this.label = option.label
     this.img = option.img
+    this.text = option.text??''
   }
+  clearRect(startX: number, startY: number, endX: number, endY: number): void {
+    store.canvas.ctx.clearRect(startX,startY,endX,endY)
+  }
+  textWrapType?: string;
 
   drawTotalRect(){
     store.canvas.ctx.drawStrokeRect({
@@ -60,7 +65,7 @@ export class Cell implements ICell{
     return tempRect
   }
 
-  drawHeaderColStrokeRect(reX:number): void {
+  drawHeaderColRect(reX:number): void {
 
     store.canvas.ctx.drawText({
       x:this.x+reX,
@@ -91,7 +96,7 @@ export class Cell implements ICell{
 
   }
 
-  drawHeaderRowStrokeRect(reY:number): void {
+  drawHeaderRowRect(reY:number): void {
 
     store.canvas.ctx.drawText({
       x:0,
@@ -121,7 +126,17 @@ export class Cell implements ICell{
     })
   }
 
-  drawStrokeRect(reX:number,reY:number): void {
+  drawContRect(reX:number,reY:number): void {
+
+    store.canvas.ctx.drawText({
+      x:this.x+reX,
+      y:this.y+reY,
+      text:this.text,
+      rectWidth:this.width,
+      rectHeight:this.height,
+      globalCompositeOperation:'destination-over',
+    })
+
     store.canvas.ctx.drawStrokeRect({
       x:this.x+reX,
       y:this.y+reY,
@@ -148,6 +163,7 @@ export class Cell implements ICell{
   strikethrough: Boolean;
   underline: Boolean;
   label: string;
+  text: string;
   img: Img[];
 
 }

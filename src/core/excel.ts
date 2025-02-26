@@ -5,7 +5,7 @@ import u from 'cash-dom';
 import { Sheet } from './sheet'
 import { Canvas } from './canvas'
 import store from '@/store'
-import { ScrollPlugin } from '@/plugins'
+import { ScrollPlugin,SelectPlugin } from '@/plugins'
 
 export class eSheet implements IExcel {
 
@@ -124,7 +124,8 @@ export class eSheet implements IExcel {
   private initPlugin(plugins:Record<string,IPlugin>){
 
     store.config.plugins = {
-      scroll:new ScrollPlugin(this,store)
+      scroll:new ScrollPlugin(this,store),
+      select:new SelectPlugin(this,store),
     }
 
     store.config.plugins = { ...store.config.plugins, ...plugins }

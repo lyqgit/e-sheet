@@ -17,6 +17,8 @@ export class Sheet implements ISheet{
     this.forceUpdateAll()
   }
 
+  selCells:Array<Cell> = []
+
   // 记录偏移距离
   scrollTop: number = 0;
   scrollLeft: number = 0;
@@ -162,7 +164,28 @@ export class Sheet implements ISheet{
     this.totalCell.ctDom(0,0,100)
   }
 
+  drawSelCell(left:number,top:number){
+
+    const { ctx } = store.canvas
+    const { selectedBorderBgColor } = store.config
+
+    if(this.selCells.length === 1){
+      // 单个选中
+      const singleCell = this.selCells[0]
+      ctx.drawStrokeRect({
+        x: singleCell.x + left,
+        y: singleCell.y + top,
+        width: singleCell.width,
+        height: singleCell.height,
+        color:selectedBorderBgColor,
+        globalCompositeOperation:'destination-over',
+        lineWidth:3
+      })
+    }
+  }
+
   draw(left:number,top:number,drawDom:boolean = true,forceUpdate:boolean = false): void {
+    // 整体绘制规则：前面绘制的图形层级高
 
     const [
       leftCol,
@@ -182,43 +205,58 @@ export class Sheet implements ISheet{
 
     // console.log('isLeft',isLeft,left,this.scrollLeft)
     // console.log('isTop',isTop,top,this.scrollTop)
+
+    // 擦除画面
     if(isInit || forceUpdate){
-      this.clearCanvas(0,0,excelWidth,excelHeight,forceUpdate)
+      this.clearCanvas(0,0,excelWidth,excelHeight,drawDom,forceUpdate)
     }else if(isTop){
-      this.clearCanvas(0,cellHeight,excelWidth,excelHeight,forceUpdate)
+      this.clearCanvas(0,cellHeight,excelWidth,excelHeight,drawDom,forceUpdate)
     }else if(isLeft){
-      this.clearCanvas(cellHeight,0,excelWidth,excelHeight,forceUpdate)
+      this.clearCanvas(cellHeight,0,excelWidth,excelHeight,drawDom,forceUpdate)
     }
+
+
+    
 
     // 绘制左上角的cell
     if(isInit || forceUpdate){
       this.drawTotalRect()
     }
 
-    for(let i=topRow;i<=bottomRow;i++){
-      if(isTop || isInit || forceUpdate){
+    // 绘制行
+    if(isTop || isInit || forceUpdate){
+      for(let i=topRow;i<=bottomRow;i++){
         const rowCell = this.rowMap.get('row'+i)
-        rowCell.drawHeaderRowStrokeRect(cellHeight - top)
+        rowCell.drawHeaderRowRect(cellHeight - top)
         drawDom && dfDom.append(rowCell.ctDom(0,cellHeight - top,100))
       }
+    }
+
+    // 绘制列
+    if(isLeft || isInit || forceUpdate){
+      for(let j=leftCol;j<=rightCol;j++){
+        const headerCell = this.colMap.get('col'+j)
+        headerCell.drawHeaderColRect(cellHeight - left)
+        drawDom && dfDom.append(headerCell.ctDom(cellHeight - left,0,100))
+      }
+    }
+
+    // 绘制选中
+    this.drawSelCell(cellHeight - left,cellHeight - top)
+    
+
+    for(let i=topRow;i<=bottomRow;i++){
       for(let j=leftCol;j<=rightCol;j++){
         const headerName = getExcelHeaderName(j)
-        if(isLeft || isInit || forceUpdate){
-          if(i===topRow){
-            const headerCell = this.colMap.get('col'+j)
-            headerCell.drawHeaderColStrokeRect(cellHeight - left)
-            drawDom && dfDom.append(headerCell.ctDom(cellHeight - left,0,100))
-          }
-        }
         const contCell = this.contMap.get(headerName+i)
-        contCell.drawStrokeRect(cellHeight - left,cellHeight - top)
+        contCell.drawContRect(cellHeight - left,cellHeight - top)
         drawDom && dfDom.append(contCell.ctDom(cellHeight - left,cellHeight - top,100))
       }
       
     }
 
-    eventDom.append(dfDom)
-    
+    drawDom && eventDom.append(dfDom)
+
     this.scrollLeft = left
     this.scrollTop = top
   }
@@ -239,30 +277,33 @@ export class Sheet implements ISheet{
     this.draw(this.scrollLeft,this.scrollTop,false,true)
   }
 
-  clearCanvas(startX:number,startY:number,endX:number,endY:number,forceUpdate:boolean = false){
+  clearCanvas(startX:number,startY:number,endX:number,endY:number,drawDom:boolean = true,forceUpdate:boolean = false){
     store.canvas.ctx.clearRect(startX,startY,endX,endY)
     const { eventDom } = store.canvas;
-    eventDom.children().each((_,item)=>{
-      if(startX > 0){
-        const tempDom = u(item)
-        const label = tempDom.data('label') as string
-        if(label.includes('row') || (forceUpdate && label.includes('total'))){
-
-        }else{
-          tempDom.remove()
+    if(drawDom && forceUpdate){
+      eventDom.children().each((_,item)=>{
+        if(startX > 0){
+          const tempDom = u(item)
+          const label = tempDom.data('label') as string
+          if(label.includes('row') || (forceUpdate && label.includes('total'))){
+  
+          }else{
+            tempDom.remove()
+          }
         }
-      }
-
-      if(startY > 0){
-        const tempDom = u(item)
-        const label = tempDom.data('label') as string
-        if(label.includes('col') || (forceUpdate && label.includes('total'))){
-
-        }else{
-          tempDom.remove()
+  
+        if(startY > 0){
+          const tempDom = u(item)
+          const label = tempDom.data('label') as string
+          if(label.includes('col') || (forceUpdate && label.includes('total'))){
+  
+          }else{
+            tempDom.remove()
+          }
         }
-      }
-    })
+      })
+    }
+    
   }
 
   searchCol(dis:number,grat:boolean):number{

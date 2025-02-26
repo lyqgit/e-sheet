@@ -21,12 +21,14 @@ export interface IBaseCell{
   textWrapType?:string
   label:string,
   img:Array<Img>
+  text?:string
 }
 
 export interface ICell extends IBaseCell{
-  drawStrokeRect(reX:number,reY:number):void
-  drawHeaderColStrokeRect(reX:number):void
-  drawHeaderRowStrokeRect(reY:number):void
+  drawContRect(reX:number,reY:number):void
+  drawHeaderColRect(reX:number):void
+  drawHeaderRowRect(reY:number):void
+  clearRect(startX:number,startY:number,endX:number,endY:number):void
 }
 
 export interface ICellOption extends IBaseCell{

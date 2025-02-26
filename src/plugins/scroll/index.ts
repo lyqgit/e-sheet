@@ -308,7 +308,7 @@ export class ScrollPlugin implements IScrollPlugin{
     const { canvasWrapperDom } = this.excel
     let timeId = null
 
-    canvasWrapperDom.on('mouseover',()=>{
+    canvasWrapperDom.one('mouseover',()=>{
       let recordDeltaY = 0;
       canvasWrapperDom.on('wheel',(evt:WheelEvent)=>{
         evt.preventDefault()
@@ -330,7 +330,7 @@ export class ScrollPlugin implements IScrollPlugin{
           this.sheetMoveY(recordDeltaY/this.verPropor)
           timeId = setTimeout(()=>{
             this.forceUpdateAll()
-          },300)
+          },200)
         })
       })
     })
