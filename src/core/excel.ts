@@ -5,7 +5,7 @@ import u from 'cash-dom';
 import { Sheet } from './sheet'
 import { Canvas } from './canvas'
 import store from '@/store'
-import { ScrollPlugin,SelectPlugin } from '@/plugins'
+import { ScrollPlugin,SelectPlugin,BookPlugin } from '@/plugins'
 
 export class eSheet implements IExcel {
 
@@ -93,6 +93,7 @@ export class eSheet implements IExcel {
     canvasEventWrapper.css('width',excelWidth-10 + 'px')
     canvasEventWrapper.css('height',excelHeight-96-10+'px')
     canvasEventWrapper.css('position','absolute')
+    canvasEventWrapper.css('overflow','hidden')
     canvasEventWrapper.css('top','0')
     canvasEventWrapper.css('left','0')
     canvasEventWrapper.css('zIndex','101')
@@ -126,6 +127,7 @@ export class eSheet implements IExcel {
     store.config.plugins = {
       scroll:new ScrollPlugin(this,store),
       select:new SelectPlugin(this,store),
+      book:new BookPlugin(this,store),
     }
 
     store.config.plugins = { ...store.config.plugins, ...plugins }

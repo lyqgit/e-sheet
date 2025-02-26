@@ -18,6 +18,7 @@ export default class Tip extends HTMLElement {
                 const {x,y} = this.getBoundingClientRect()
                 tipDom.style.left = x+this.left+scrollLeft+'px'
                 tipDom.style.top = y+this.top+scrollTop+'px'
+                tipDom.style.zIndex = 300
                 document.body.appendChild(tipDom)
             }
 

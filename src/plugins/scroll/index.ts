@@ -5,7 +5,7 @@ import u, { Cash } from "cash-dom";
 
 export class ScrollPlugin implements IScrollPlugin{
   constructor(excel:IExcel,store:IStore){
-    this.excel = excel,
+    this.excel = excel
     this.store = store
   }
 

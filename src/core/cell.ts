@@ -49,8 +49,7 @@ export class Cell implements ICell{
     })
   }
 
-  ctDom(reX:number,reY:number,zIndex?:number){
-
+  ctBaseDom(reX:number,reY:number,width:number,height:number,zIndex?:number){
     const tempRect = u('<div>')
     tempRect.css('position','absolute');
     tempRect.css('left',this.x+reX);
@@ -59,10 +58,18 @@ export class Cell implements ICell{
     tempRect.data('label',this.label)
     tempRect.data('row',this.row)
     tempRect.data('col',this.col)
-    tempRect.css('width',this.width)
-    tempRect.css('height',this.height)
+    tempRect.css('width',width)
+    tempRect.css('height',height)
 
     return tempRect
+  }
+
+  ctRowDom(reX:number,reY:number,zIndex?:number){
+    return this.ctBaseDom(reX,reY,this.height,this.height,zIndex)
+  }
+
+  ctDom(reX:number,reY:number,zIndex?:number){
+    return this.ctBaseDom(reX,reY,this.width,this.height,zIndex)
   }
 
   drawHeaderColRect(reX:number): void {

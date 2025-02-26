@@ -6,7 +6,7 @@ import u from 'cash-dom'
 export class SelectPlugin implements IPlugin{
 
   constructor(excel:IExcel,store:IStore){
-    this.excel = excel,
+    this.excel = excel
     this.store = store
   }
   docMouseUp=(): void=> {
@@ -20,7 +20,6 @@ export class SelectPlugin implements IPlugin{
     this.singleMouse()
   }
   unregister(): void {
-    throw new Error("Method not implemented.");
   }
 
   // 点击单元格
