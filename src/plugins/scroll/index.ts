@@ -34,7 +34,7 @@ export class ScrollPlugin implements IScrollPlugin{
       'width':this.defaultBarWidth,
       'background':this.barDomColor,
       'transformOrigin':'top',
-      'transform':'translateY(0px)',
+      'transform':`translateY(${curSheet.scrollTop*this.verPropor}px)`,
       'userSelect':'none',
       'height':(canvasDom.height()-cellHeight)*this.verPropor,
       'borderRadius':this.defaultBarWidth
@@ -59,7 +59,7 @@ export class ScrollPlugin implements IScrollPlugin{
       'width':(canvasDom.width() - cellHeight)*this.horPropor,
       'background':this.barDomColor,
       'transformOrigin':'left',
-      'transform':'translateX(0px)',
+      'transform':`translateX(${curSheet.scrollLeft*this.horPropor}px)`,
       'userSelect':'none',
       'height':this.defaultBarWidth,
       'borderRadius':this.defaultBarWidth

@@ -26,9 +26,9 @@ export class SelectPlugin implements IPlugin{
   singleMouse(){
     const { eventDom } = this.store.canvas
 
-    const curSheet = this.excel.getCurSheet()
-
     eventDom.on('mousedown',(evtA:MouseEvent)=>{
+
+      const curSheet = this.excel.getCurSheet()
 
       // 清空选中的cell
       curSheet.selCells = []

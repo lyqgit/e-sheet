@@ -1,18 +1,21 @@
 import { IStore } from "@/store";
-import { IExcel, IPlugin } from "@/types";
+import { IExcel, IPlugin, IScrollPlugin } from "@/types";
 import u, { Cash } from 'cash-dom'
 
 export class BookPlugin implements IPlugin{
   excel: IExcel;
   store: IStore;
+  sheetArrLayoutDom:Cash;
 
   constructor(excel:IExcel,store:IStore){
     this.excel = excel
     this.store = store
+
   }
 
   register(): void {
     this.registerDom()
+    this.installData()
   }
   unregister(): void {
   }
@@ -24,8 +27,42 @@ export class BookPlugin implements IPlugin{
 
   }
 
-  createNewSheet(){
+  installData(){
+    const { sheetArr,curSheetIndex } = this.excel
+    sheetArr.forEach((item,i)=>{
+      this.sheetArrLayoutDom.append(
+        u('<div>').attr({
+          class:curSheetIndex===i?'item-span active-item-span':'item-span',
+          index:i.toString()
+        }).text(item.name)
+      )
+    })
+  }
 
+  switchSheet(i:number){
+    this.excel.switchSheet(i)
+    const { curSheetIndex } = this.excel
+    this.sheetArrLayoutDom.children().each((index,item)=>{
+      // console.log('item.className',item.className,'---------',currentSheetIndex,index,currentSheetIndex===index?'item-span active-item-span':'item-span')
+      u(item).attr('class',curSheetIndex===index?'item-span active-item-span':'item-span')
+    })
+    // 重置滚动条
+    const scrollPlugin = this.store.config.plugins['scroll'];
+    (scrollPlugin as IScrollPlugin).resize()
+  }
+
+  createNewSheet(){
+    this.excel.createEmptySheet()
+    const { sheetArr } = this.excel
+
+    this.sheetArrLayoutDom.append(
+      u('<div>').attr({
+        class:'item-span',
+        index:(sheetArr.length - 1).toString()
+      }).text(sheetArr[sheetArr.length - 1].name)
+    )
+
+    this.switchSheet(sheetArr.length - 1)
   }
 
   createSheetArrDom():Cash{
@@ -33,6 +70,10 @@ export class BookPlugin implements IPlugin{
     .addClass('sheet-arr-layout')
     .on('click',(evt:MouseEvent)=>{
       this.hideContextMenu()
+      const strIndex = u(evt.target as HTMLElement).attr('index')
+      if(strIndex){
+          this.switchSheet(parseInt(strIndex))
+      }
     })
   }
 
@@ -114,6 +155,8 @@ export class BookPlugin implements IPlugin{
   registerDom(){
     const sheetArrLayoutDom = this.createSheetArrDom()
 
+    this.sheetArrLayoutDom = sheetArrLayoutDom;
+
     const scrollhandleLayoutDom = this.createScrollhandleLayoutDom(sheetArrLayoutDom)
 
     const menuLayoutDom = this.createMenuLayoutDom()
@@ -127,7 +170,7 @@ export class BookPlugin implements IPlugin{
         scrollhandleLayoutDom
       )
     )
-    console.log('bookLayoutDom')
+    // console.log('bookLayoutDom')
     this.excel.excelDom.append(bookLayoutDom)
   }
 

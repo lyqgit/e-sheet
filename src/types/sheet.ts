@@ -9,7 +9,7 @@ export interface ISheet{
 }
 
 export interface ISheetOption{
-  name:String,
+  name:string,
   data:Array<ICell>
   lock:boolean
 }

@@ -6,7 +6,8 @@ import u from 'cash-dom'
 
 export class Sheet implements ISheet{
   data: Array<ICell>;
-  constructor(option:ISheetOption){ 
+  constructor(option:ISheetOption){
+    this.name = option.name
     this.lock = option.lock
     this.data = option.data
     this.initData(option.data);
@@ -235,7 +236,7 @@ export class Sheet implements ISheet{
       bottomRow
     ] = this.getBoundMap(left,top);
 
-    console.log('leftCol,rightCol,topRow,bottomRow',leftCol,rightCol,topRow,bottomRow)
+    // console.log('leftCol,rightCol,topRow,bottomRow',leftCol,rightCol,topRow,bottomRow)
 
     const dfDom = u(document.createDocumentFragment())
 
@@ -426,6 +427,6 @@ export class Sheet implements ISheet{
     ]
   }
 
-  name: String;
+  name: string;
   lock: Boolean;
 }

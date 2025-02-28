@@ -17,8 +17,10 @@ export interface IExcelOptions{
 }
 
 export interface IExcel{
+  switchSheet(i:number):void;
+  createEmptySheet():void;
   sheetArr:Array<Sheet>
-  curSheet:number
+  curSheetIndex:number
   excelDom:Cash
   canvasWrapperDom:Cash
   getCurSheet():Sheet

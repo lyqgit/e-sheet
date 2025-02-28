@@ -10,7 +10,7 @@ import { ScrollPlugin,SelectPlugin,BookPlugin } from '@/plugins'
 export class eSheet implements IExcel {
 
   sheetArr:Array<Sheet> = [];
-  curSheet: number = 0;
+  curSheetIndex: number = 0;
 
   excelDom:Cash;
   canvasWrapperDom:Cash
@@ -43,20 +43,16 @@ export class eSheet implements IExcel {
 
     }else{
 
-      const { lock } = store.config
-
-      // 没有数据，渲染默认内容，加载一个sheet
-      const oneSheet = new Sheet({
-        name:'未命名'+this.sheetArr.length+1,
-        lock:lock,
-        data:[]
-      })
-      this.sheetArr.push(oneSheet)
-      oneSheet.initDraw()
+      this.createEmptySheet()
     }
 
     this.initPlugin(options.plugins);
 
+  }
+  switchSheet(i: number): void {
+    this.curSheetIndex = i
+    const curSheet = this.getCurSheet()
+    curSheet.forceUpdateAll()
   }
 
   resizeCallback:Array<Function> = [];
@@ -74,7 +70,21 @@ export class eSheet implements IExcel {
   }
 
   getCurSheet():Sheet{
-    return this.sheetArr[this.curSheet]
+    return this.sheetArr[this.curSheetIndex]
+  }
+
+  createEmptySheet(){
+    const { lock } = store.config
+
+    // 没有数据，渲染默认内容，加载一个sheet
+    const oneSheet = new Sheet({
+      name:'未命名'+(this.sheetArr.length+1),
+      lock:lock,
+      data:[]
+    })
+    console.log("------",'未命名'+(this.sheetArr.length+1))
+    this.sheetArr.push(oneSheet)
+    oneSheet.initDraw()
   }
 
   // 装载canvas
