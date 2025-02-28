@@ -21,23 +21,15 @@ export class ScrollPlugin implements IScrollPlugin{
     this.verContainerDom.css({
       'height':canvasDom.height() - cellHeight,
       'width':this.defaultBarWidth,
-      'position':'absolute',
       'top':cellHeight,
-      'right':0,
-      'zIndex':200
     })
 
     const lastRow = curSheet.rowMap.get('row'+row)
     this.verPropor = (canvasDom.height()-cellHeight)/(lastRow.y+lastRow.height)
 
     this.verBarDom.css({
-      'width':this.defaultBarWidth,
-      'background':this.barDomColor,
-      'transformOrigin':'top',
       'transform':`translateY(${curSheet.scrollTop*this.verPropor}px)`,
-      'userSelect':'none',
       'height':(canvasDom.height()-cellHeight)*this.verPropor,
-      'borderRadius':this.defaultBarWidth
     })
 
 
@@ -46,10 +38,7 @@ export class ScrollPlugin implements IScrollPlugin{
     this.horContainerDom.css({
       'height':this.defaultBarWidth,
       'width':canvasDom.width() - cellHeight,
-      'position':'absolute',
       'left':cellHeight,
-      'bottom':0,
-      'zIndex':200
     })
 
     const lastCol = curSheet.colMap.get('col'+col)
@@ -57,12 +46,8 @@ export class ScrollPlugin implements IScrollPlugin{
 
     this.horBarDom.css({
       'width':(canvasDom.width() - cellHeight)*this.horPropor,
-      'background':this.barDomColor,
-      'transformOrigin':'left',
       'transform':`translateX(${curSheet.scrollLeft*this.horPropor}px)`,
-      'userSelect':'none',
       'height':this.defaultBarWidth,
-      'borderRadius':this.defaultBarWidth
     })
 
     
