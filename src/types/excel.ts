@@ -17,6 +17,7 @@ export interface IExcelOptions{
 }
 
 export interface IExcel{
+  removeSheet(i:number):void;
   switchSheet(i:number):void;
   createEmptySheet():void;
   sheetArr:Array<Sheet>

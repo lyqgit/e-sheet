@@ -49,6 +49,11 @@ export class eSheet implements IExcel {
     this.initPlugin(options.plugins);
 
   }
+
+  removeSheet(i:number){
+    this.sheetArr.splice(i,1)
+  }
+
   switchSheet(i: number): void {
     this.curSheetIndex = i
     const curSheet = this.getCurSheet()
@@ -82,7 +87,7 @@ export class eSheet implements IExcel {
       lock:lock,
       data:[]
     })
-    console.log("------",'未命名'+(this.sheetArr.length+1))
+    // console.log("------",'未命名'+(this.sheetArr.length+1))
     this.sheetArr.push(oneSheet)
     oneSheet.initDraw()
   }

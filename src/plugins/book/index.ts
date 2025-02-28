@@ -6,6 +6,7 @@ export class BookPlugin implements IPlugin{
   excel: IExcel;
   store: IStore;
   sheetArrLayoutDom:Cash;
+  contextmenuDom:Cash;
 
   constructor(excel:IExcel,store:IStore){
     this.excel = excel
@@ -15,16 +16,52 @@ export class BookPlugin implements IPlugin{
 
   register(): void {
     this.registerDom()
+    this.registryContextmenuDom()
     this.installData()
   }
+
   unregister(): void {
   }
+
   docMouseUp(): void {
-    
+    // this.hideContextMenu()
   }
 
   hideContextMenu(){
+    this.contextmenuDom.hide()
+  }
 
+  registryContextmenuDom(){
+    this.contextmenuDom = u('<div>').css('display','none').addClass('e-sheet-contextmenu-layout')
+    .append(
+      u('<div>').css('cursor','pointer').text('删除').addClass('item-btn').on('click',(evt:MouseEvent)=>{
+        if(this.excel.sheetArr.length === 1){
+          this.hideContextMenu()
+          return
+        }
+        const index = parseInt(u(evt.target as HTMLElement).parent().data('select'))
+        // console.log('清除索引',index)
+        this.removeSheet(index)
+        this.hideContextMenu()
+      })
+    )
+    
+
+    this.excel.excelDom.append(this.contextmenuDom)
+  }
+
+  removeSheet(i:number){
+    this.excel.removeSheet(i)
+
+    this.sheetArrLayoutDom.children().each((_,item)=>{
+      const tempDom = u(item)
+      // console.log('item',tempDom,tempDom.attr('index'))
+      parseInt(tempDom.attr('index')) === i && tempDom.remove()
+    })
+    // 如果时当前正在操作的sheet，则默认切换到前一个，否则切换到后面一个
+    if(i === this.excel.curSheetIndex){
+      this.switchSheet(i>0?i-1:i+1)
+    }
   }
 
   installData(){
@@ -74,6 +111,23 @@ export class BookPlugin implements IPlugin{
       if(strIndex){
           this.switchSheet(parseInt(strIndex))
       }
+    })
+    .on('contextmenu',(evt:MouseEvent)=>{
+      evt.preventDefault()
+      if(!this.sheetArrLayoutDom[0].contains(evt.target as HTMLElement) || this.sheetArrLayoutDom[0] === evt.target){
+        return
+      }
+      // console.log('evt.offsetX',evt)
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+      const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft;
+
+      this.contextmenuDom.data('select',u(evt.target as HTMLElement).attr('index'))
+      this.contextmenuDom.css({
+        left:scrollLeft+evt.x,
+        top:scrollTop+evt.y-34
+      })
+      this.contextmenuDom.show()
+      
     })
   }
 
