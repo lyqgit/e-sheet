@@ -38,3 +38,7 @@ export function transHeaderNameToNum(colTitle:string):number{
   }
   return resNum
 }
+
+export function isInDom(container:HTMLElement,target:HTMLElement){
+  return container !== target && container.contains(target)
+}

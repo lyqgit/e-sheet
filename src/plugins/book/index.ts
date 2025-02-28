@@ -1,5 +1,6 @@
 import { IStore } from "@/store";
 import { IExcel, IPlugin, IScrollPlugin } from "@/types";
+import { isInDom } from "@/utils";
 import u, { Cash } from 'cash-dom'
 
 export class BookPlugin implements IPlugin{
@@ -24,7 +25,7 @@ export class BookPlugin implements IPlugin{
   }
 
   docMouseUp(): void {
-    // this.hideContextMenu()
+
   }
 
   hideContextMenu(){
@@ -102,6 +103,16 @@ export class BookPlugin implements IPlugin{
     this.switchSheet(sheetArr.length - 1)
   }
 
+  setSheetName(index:number,label:string){
+    const { sheetArr } = this.excel
+    const labelArr = sheetArr.map(item=>item.name)
+    if(labelArr.includes(label) || !label){
+        return false
+    }
+    sheetArr[index].name = label
+    return true
+  }
+
   createSheetArrDom():Cash{
     return u('<div>')
     .addClass('sheet-arr-layout')
@@ -112,9 +123,41 @@ export class BookPlugin implements IPlugin{
           this.switchSheet(parseInt(strIndex))
       }
     })
+    .on('dblclick',(evt:MouseEvent)=>{
+      const itemDom = u(evt.target as HTMLElement)
+      const index = parseInt(itemDom.attr('index'))
+      const oriText = itemDom.text()
+      const inputDom = u('<input>').addClass('item-input')
+      .one('blur',_=>{
+        writeAndClose()
+      })
+      .one('keydown',(evt:KeyboardEvent)=>{
+        if(evt.key === 'Enter'){
+          writeAndClose()
+        }
+      })
+
+      const writeAndClose = ()=>{
+        // console.log('writeAndClose-index',index,inputDom.val())
+        if(this.setSheetName(index,inputDom.val() as string)){
+          itemDom.text(inputDom.val() as string)
+        }else{
+          itemDom.text(oriText)
+        }
+        inputDom.remove()
+      }
+      
+      inputDom.val(itemDom.text())
+      // console.log('itemDom.style.width',itemDom.getBoundingClientRect())
+      inputDom.css('width',itemDom.width())
+      itemDom.text('')
+      itemDom.append(inputDom)
+      inputDom.trigger('focus')
+    })
     .on('contextmenu',(evt:MouseEvent)=>{
       evt.preventDefault()
-      if(!this.sheetArrLayoutDom[0].contains(evt.target as HTMLElement) || this.sheetArrLayoutDom[0] === evt.target){
+      
+      if(!isInDom(this.sheetArrLayoutDom[0],evt.target as HTMLElement)){
         return
       }
       // console.log('evt.offsetX',evt)
