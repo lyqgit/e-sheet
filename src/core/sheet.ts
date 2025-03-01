@@ -296,6 +296,9 @@ export class Sheet implements ISheet{
       }
     }
 
+    // 绘制选中背景
+    this.setSelBgColor(cellHeight*scale - left,cellHeight*scale - top)
+
     drawDom && eventDom.append(dfDom)
 
     this.scrollLeft = left
@@ -428,6 +431,22 @@ export class Sheet implements ISheet{
       topRow,
       bottomRow
     ]
+  }
+
+  // 判断多选中，选中cell显示的颜色
+  setSelBgColor(left:number,top:number){
+    this.selCells.forEach((item,i)=>{
+      if(i>0){
+        store.canvas.ctx.drawFillRect({
+          x: item.xScale+left,
+          y: item.yScale+top,
+          width: item.widthScale,
+          height: item.heightScale,
+          color:store.config.selectedBgColor,
+          globalCompositeOperation:'destination-over',
+        })
+      }
+    })
   }
 
   name: string;
