@@ -30,12 +30,45 @@ export class SelectPlugin implements IPlugin{
 
       const curSheet = this.excel.getCurSheet()
 
-      // 清空选中的cell
-      curSheet.selCells = []
-
       // 首先单选
       const targetDom = u(evtA.target as HTMLElement)
       console.log('target',targetDom.data('col'))
+      console.log('target',targetDom.data('row'))
+      const targetDomCol = targetDom.data('col')
+      const targetDomRow = targetDom.data('row')
+      if(targetDomCol === 0 || targetDomRow === 0){
+        // 点击边界cell
+        // console.log('curSheet.selCells',curSheet.selCells)
+        if(targetDomCol === 0 && targetDomRow === 0){
+          // 点击到total
+          curSheet.selCells = Array.from(curSheet.contMap).map(item=>{
+            const [ _,cell ] = item
+            return cell
+          })
+        }else if(targetDomCol === 0){
+          curSheet.selCells = Array.from(curSheet.contMap).filter(itemA=>{
+            const [_,cell] = itemA
+            return cell.row === targetDomRow 
+          }).map(itemB=>{
+            const [ _,cell ] = itemB
+            return cell
+          })
+          // 点击到左侧行
+        }else if(targetDomRow === 0){
+          // 点击到上侧列
+          curSheet.selCells = Array.from(curSheet.contMap).filter(itemA=>{
+            const [_,cell] = itemA
+            return cell.col === targetDomCol 
+          }).map(itemB=>{
+            const [ _,cell ] = itemB
+            return cell
+          })
+        }
+        return
+      }else{
+        // 清空选中的cell
+        curSheet.selCells = []
+      }
       const label = targetDom.data('label')
       const cellA = curSheet.contMap.get(label)
       curSheet.selCells = [cellA]

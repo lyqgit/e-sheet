@@ -192,7 +192,6 @@ export class ScrollPlugin implements IScrollPlugin{
           let finalDis = oriTransX+diffDis
           // console.log('trasform',trasform)
           // console.log('oriTransX',oriTransX)
-
           if(finalDis > boundDiff && diffDis > 0){
             finalDis = boundDiff
             // console.log('diffDis----',diffDis)
@@ -238,7 +237,7 @@ export class ScrollPlugin implements IScrollPlugin{
     const barContainerDom = u('<div>')
     this.verContainerDom = barContainerDom
     const { dom:canvasDom } = this.store.canvas
-    const { cellHeight,row,scale } = this.store.config
+    const { cellHeight,row } = this.store.config
     barContainerDom.css({
       'height':canvasDom.height() - cellHeight,
       'width':this.defaultBarWidth,
