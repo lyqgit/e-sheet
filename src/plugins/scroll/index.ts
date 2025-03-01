@@ -12,42 +12,65 @@ export class ScrollPlugin implements IScrollPlugin{
   resize = (): void=> {
 
     const { dom:canvasDom } = this.store.canvas
-    const { cellHeight,col,row } = this.store.config
+    const { cellHeight,col,row,scale } = this.store.config
 
     const curSheet = this.excel.getCurSheet()
 
-
     // 纵向重置
     this.verContainerDom.css({
-      'height':canvasDom.height() - cellHeight,
+      'height':canvasDom.height() - cellHeight*scale,
       'width':this.defaultBarWidth,
-      'top':cellHeight,
+      'top':cellHeight*scale,
     })
 
     const lastRow = curSheet.rowMap.get('row'+row)
-    this.verPropor = (canvasDom.height()-cellHeight)/(lastRow.y+lastRow.height)
+    this.verPropor = (canvasDom.height()-cellHeight*scale)/(lastRow.yScale+lastRow.heightScale)
+
+    // console.log('scale',lastRow.yScale+lastRow.heightScale,this.verPropor)
+    // console.log('lastRow.yScale+lastRow.heightScale',lastRow.yScale+lastRow.heightScale,this.verPropor)
 
     this.verBarDom.css({
-      'transform':`translateY(${curSheet.scrollTop*this.verPropor}px)`,
-      'height':(canvasDom.height()-cellHeight)*this.verPropor,
+      'height':(canvasDom.height()-cellHeight*scale)*this.verPropor
     })
 
+    this.verBoundDiff = parseFloat((this.verContainerDom.height() - this.verBarDom.height()).toFixed(2))
+
+    const tY = curSheet.scrollTop*this.verPropor
+
+    const diffY = tY>this.verBoundDiff?this.verBoundDiff:tY
+
+    this.verBarDom.css({
+      'transform':`translateY(${diffY}px)`
+    })
+
+    // 更新sheet中的偏移
+    curSheet.scrollTop = diffY/this.verPropor
+    
+    // console.log('this.verBoundDiff',this.verBoundDiff)
 
     // 横向
 
     this.horContainerDom.css({
       'height':this.defaultBarWidth,
-      'width':canvasDom.width() - cellHeight,
-      'left':cellHeight,
+      'width':canvasDom.width() - cellHeight*scale,
+      'left':cellHeight*scale,
     })
 
     const lastCol = curSheet.colMap.get('col'+col)
-    this.horPropor = (canvasDom.width() - cellHeight)/(lastCol.x+lastCol.width)
+    this.horPropor = (canvasDom.width() - cellHeight*scale)/(lastCol.xScale+lastCol.widthScale)
 
     this.horBarDom.css({
-      'width':(canvasDom.width() - cellHeight)*this.horPropor,
-      'transform':`translateX(${curSheet.scrollLeft*this.horPropor}px)`,
-      'height':this.defaultBarWidth,
+      'width':(canvasDom.width() - cellHeight*scale)*this.horPropor,
+    })
+
+    this.horBoundDiff = parseFloat((this.horContainerDom.width() - this.horBarDom.width()).toFixed(2))
+
+    const tX = curSheet.scrollLeft*this.horPropor
+
+    const diffX = tX>this.horBoundDiff?this.horBoundDiff:tX;
+    
+    this.horBarDom.css({
+      'transform':`translateX(${diffX}px)`,
     })
 
     
@@ -91,6 +114,7 @@ export class ScrollPlugin implements IScrollPlugin{
 
   wheelStep:number = 10
   verBoundDiff:number;
+  horBoundDiff:number;
 
   // 横向滚动
   registryHorScroll(): void {
@@ -98,7 +122,7 @@ export class ScrollPlugin implements IScrollPlugin{
     const barContainerDom = u('<div>')
     this.horContainerDom = barContainerDom
     const { dom:canvasDom } = this.store.canvas
-    const { cellHeight,col } = this.store.config
+    const { cellHeight,col,scale } = this.store.config
     barContainerDom.css({
       'height':this.defaultBarWidth,
       'width':canvasDom.width() - cellHeight,
@@ -140,9 +164,16 @@ export class ScrollPlugin implements IScrollPlugin{
 
     barContainerDom.append(barDom)
 
-    const boundDiff = parseFloat((barContainerDom.width() - barDom.width()).toFixed(2))
+    let boundDiff = parseFloat((barContainerDom.width() - barDom.width()).toFixed(2))
+    
+    this.horBoundDiff = boundDiff
 
     barDom.on('mousedown',(eA:MouseEvent)=>{
+
+      // console.log('this.horBoundDiff',this.horBoundDiff)
+
+      boundDiff = this.horBoundDiff
+
       eA.preventDefault();
       const trasform = barDom.css('transform').match(/matrix\(\d+, \d+, \d+, \d+, (\d*\.?\d+), \d+\)/)
       let oriTransX = 0
@@ -171,7 +202,7 @@ export class ScrollPlugin implements IScrollPlugin{
             // console.log('trasform----',trasform)
           }else if(finalDis < 0 && diffDis < 0){
             // console.log('trasform',trasform)
-            console.log('oriTransX',oriTransX)
+            // console.log('oriTransX',oriTransX)
             // console.log('diffDis',diffDis)
             // console.log('boundDiff',boundDiff)
             // console.log('finalDis',finalDis)
@@ -207,7 +238,7 @@ export class ScrollPlugin implements IScrollPlugin{
     const barContainerDom = u('<div>')
     this.verContainerDom = barContainerDom
     const { dom:canvasDom } = this.store.canvas
-    const { cellHeight,row } = this.store.config
+    const { cellHeight,row,scale } = this.store.config
     barContainerDom.css({
       'height':canvasDom.height() - cellHeight,
       'width':this.defaultBarWidth,
@@ -249,11 +280,14 @@ export class ScrollPlugin implements IScrollPlugin{
 
     barContainerDom.append(barDom)
 
-    const boundDiff = parseFloat((barContainerDom.height() - barDom.height()).toFixed(2))
+    let boundDiff = parseFloat((barContainerDom.height() - barDom.height()).toFixed(2))
 
     this.verBoundDiff = boundDiff
 
     barDom.on('mousedown',(eA:MouseEvent)=>{
+
+      boundDiff = this.verBoundDiff
+
       eA.preventDefault();
       const trasform = barDom.css('transform').match(/matrix\(\d+, \d+, \d+, \d+, \d+, (\d*\.?\d+)\)/)
       let oriTransY = 0
@@ -272,7 +306,7 @@ export class ScrollPlugin implements IScrollPlugin{
           
 
           let finalDis = oriTransY+diffDis
-          // console.log('boundDiff',boundDiff)
+          console.log('boundDiff',boundDiff)
           // console.log('finalDis',finalDis)
 
           if(finalDis > boundDiff && diffDis > 0){

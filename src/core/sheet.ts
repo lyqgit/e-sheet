@@ -229,6 +229,8 @@ export class Sheet implements ISheet{
   draw(left:number,top:number,drawDom:boolean = true,forceUpdate:boolean = false): void {
     // 整体绘制规则：前面绘制的图形层级高
 
+    const { cellHeight,excelWidth,excelHeight,scale } = store.config
+
     const [
       leftCol,
       rightCol,
@@ -240,7 +242,6 @@ export class Sheet implements ISheet{
 
     const dfDom = u(document.createDocumentFragment())
 
-    const { cellHeight,excelWidth,excelHeight } = store.config
     const { eventDom } = store.canvas
 
     const isLeft = left !== this.scrollLeft
@@ -254,9 +255,9 @@ export class Sheet implements ISheet{
     if(isInit || forceUpdate){
       this.clearCanvas(0,0,excelWidth,excelHeight,drawDom,forceUpdate)
     }else if(isTop){
-      this.clearCanvas(0,cellHeight,excelWidth,excelHeight,drawDom,forceUpdate)
+      this.clearCanvas(0,cellHeight*scale,excelWidth,excelHeight,drawDom,forceUpdate)
     }else if(isLeft){
-      this.clearCanvas(cellHeight,0,excelWidth,excelHeight,drawDom,forceUpdate)
+      this.clearCanvas(cellHeight*scale,0,excelWidth,excelHeight,drawDom,forceUpdate)
     }
 
     // 绘制左上角的cell
@@ -269,8 +270,8 @@ export class Sheet implements ISheet{
     if(isTop || isInit || forceUpdate){
       for(let i=topRow;i<=bottomRow;i++){
         const rowCell = this.rowMap.get('row'+i)
-        rowCell.drawHeaderRowRect(cellHeight - top)
-        drawDom && dfDom.append(rowCell.ctRowDom(0,cellHeight - top,100))
+        rowCell.drawHeaderRowRect(cellHeight*scale - top)
+        drawDom && dfDom.append(rowCell.ctRowDom(0,cellHeight*scale - top,100))
       }
     }
 
@@ -278,20 +279,20 @@ export class Sheet implements ISheet{
     if(isLeft || isInit || forceUpdate){
       for(let j=leftCol;j<=rightCol;j++){
         const headerCell = this.colMap.get('col'+j)
-        headerCell.drawHeaderColRect(cellHeight - left)
-        drawDom && dfDom.append(headerCell.ctDom(cellHeight - left,0,100))
+        headerCell.drawHeaderColRect(cellHeight*scale - left)
+        drawDom && dfDom.append(headerCell.ctDom(cellHeight*scale - left,0,100))
       }
     }
 
     // 绘制选中
-    this.drawSelCell(cellHeight - left,cellHeight - top)
+    this.drawSelCell(cellHeight*scale - left,cellHeight*scale - top)
 
     for(let i=topRow;i<=bottomRow;i++){
       for(let j=leftCol;j<=rightCol;j++){
         const headerName = getExcelHeaderName(j)
         const contCell = this.contMap.get(headerName+i)
-        contCell.drawContRect(cellHeight - left,cellHeight - top)
-        drawDom && dfDom.append(contCell.ctDom(cellHeight - left,cellHeight - top,100))
+        contCell.drawContRect(cellHeight*scale - left,cellHeight*scale - top)
+        drawDom && dfDom.append(contCell.ctDom(cellHeight*scale - left,cellHeight*scale - top,100))
       }
     }
 
@@ -348,8 +349,8 @@ export class Sheet implements ISheet{
 
   searchCol(dis:number,grat:boolean):number{
 
-    const { cellWidth,col } = store.config
-
+    let { cellWidth,col,scale } = store.config
+    cellWidth *= scale
     // console.log('dis',dis)
     const floor = grat?Math.ceil:Math.floor;
     let tempCol = floor(dis/cellWidth)
@@ -362,12 +363,12 @@ export class Sheet implements ISheet{
       let cell:Cell = this.colMap.get('col'+tempCol)
       // console.log('cell.x',cell,(tempLabel+1),grat,tempCol)
       if(grat){
-        while(cell && cell.x < dis) {
+        while(cell && cell.xScale < dis) {
           tempCol++
           cell = this.colMap.get('col'+tempCol)
         }
       }else{
-        while(cell && cell.x > dis) {
+        while(cell && cell.xScale > dis) {
           tempCol--
           cell = this.colMap.get('col'+tempCol)
         }
@@ -379,21 +380,23 @@ export class Sheet implements ISheet{
 
   searchRow(dis:number,grat:boolean):number{
 
-    const { cellHeight,row } = store.config
-
+    let { cellHeight,row,scale } = store.config
+    cellHeight *= scale
     const floor = grat?Math.ceil:Math.floor;
     let tempRow = floor(dis/cellHeight)
+    // console.log('tempRow',tempRow)
+    // console.log('dis',dis)
     if(tempRow<1){
       return 1
     }else{
       let cell:Cell = this.rowMap.get('row'+tempRow)
       if(grat){
-        while(cell && (cell.y+cell.height) < dis) {
+        while(cell && (cell.yScale+cell.heightScale) < dis) {
           tempRow++
           cell = this.rowMap.get('row'+tempRow)
         }
       }else{
-        while(cell && cell.y > dis) {
+        while(cell && cell.yScale > dis) {
           tempRow--
           cell = this.rowMap.get('row'+tempRow)
         }
@@ -406,13 +409,13 @@ export class Sheet implements ISheet{
   // 获取展示内容的四个角
   getBoundMap(left:number,top:number):Array<number>{
 
-    const { cellHeight } = store.config
+    const { cellHeight,scale } = store.config
 
-    const ld = left + cellHeight;
-    const rd = left + parseInt(store.canvas.dom.css('width'))
+    const ld = left;
+    const rd = left+ store.canvas.dom.width() - cellHeight*scale
 
-    const td = top + cellHeight
-    const bd = top + parseInt(store.canvas.dom.css('height'))
+    const td = top
+    const bd = top + store.canvas.dom.height() - cellHeight*scale
 
     const leftCol = this.searchCol(ld,false)
     const rightCol = this.searchCol(rd,true)

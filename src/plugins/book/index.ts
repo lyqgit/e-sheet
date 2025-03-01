@@ -113,6 +113,14 @@ export class BookPlugin implements IPlugin{
     return true
   }
 
+  setCanvasScale(scale:number){
+    this.store.config.scale = scale
+    const curSheet = this.excel.getCurSheet()
+    const scrollPlugin = this.store.config.plugins['scroll'];
+    (scrollPlugin as IScrollPlugin).resize()
+    curSheet.forceUpdateAll()
+  }
+
   createSheetArrDom():Cash{
     return u('<div>')
     .addClass('sheet-arr-layout')
@@ -248,6 +256,39 @@ export class BookPlugin implements IPlugin{
         )
   }
 
+  createScaleLayoutDom():Cash{
+    const showScaleDom = u('<div>').text(this.store.config.scale.toString()).css({
+      marginLeft:10,
+      marginRight:10,
+      fontSize:12
+    })
+    return u('<div>').addClass('scroll-handle-layout').append(
+      u('<div>').text('-').css('cursor','pointer').css('margin-left','10px')
+      .on('click',_=>{
+        let { scale } = this.store.config
+        if(scale < 1){
+          return
+        }else{
+          scale -= 0.5
+        }
+        showScaleDom.text(scale.toString())
+        this.setCanvasScale(scale)
+      }),
+      showScaleDom,
+      u('<div>').text('+').css('cursor','pointer')
+      .on('click',_=>{
+        let { scale } = this.store.config
+        if(scale > 3){
+          return
+        }else{
+          scale += 0.5
+        }
+        showScaleDom.text(scale.toString())
+        this.setCanvasScale(scale)
+      })
+    )
+  }
+
   // 注册底部dom组件
   registerDom(){
     const sheetArrLayoutDom = this.createSheetArrDom()
@@ -258,13 +299,16 @@ export class BookPlugin implements IPlugin{
 
     const menuLayoutDom = this.createMenuLayoutDom()
 
+    const scaleLayoutDom = this.createScaleLayoutDom()
+
     const bookLayoutDom = u('<div>').addClass('e-sheet-book-layout')
     .append(
       u('<div>').addClass('e-sheet-book-con')
       .append(
         menuLayoutDom,
         sheetArrLayoutDom,
-        scrollhandleLayoutDom
+        scrollhandleLayoutDom,
+        scaleLayoutDom
       )
     )
     // console.log('bookLayoutDom')

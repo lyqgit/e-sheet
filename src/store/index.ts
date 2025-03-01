@@ -44,6 +44,7 @@ export default {
     nonSelectBgColor:'#FFFFFF',
     selectedBorderBgColor:'#0089FF',
     selectedBgColor:'#EBF4FF',
-    borderColor:'#ECEDEE'
+    borderColor:'#ECEDEE',
+    scale:1
   }
 } as IStore

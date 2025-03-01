@@ -22,29 +22,44 @@ export class Cell implements ICell{
     this.img = option.img
     this.text = option.text??''
   }
+  
   clearRect(startX: number, startY: number, endX: number, endY: number): void {
     store.canvas.ctx.clearRect(startX,startY,endX,endY)
   }
+  
   textWrapType?: string;
 
   drawTotalRect(){
     store.canvas.ctx.drawStrokeRect({
       x:0,
       y:0,
-      width:this.width,
-      height:this.height,
+      width:this.widthScale,
+      height:this.heightScale,
       lineWidth:1,
       globalCompositeOperation:'destination-over',
       color:store.config.borderColor
     })
 
-    store.canvas.ctx.drawTriangleRect({x:this.height-6,y:6},{x:this.height-6,y:this.height-6},{x:6,y:this.height-6},'#DCDCDC')
+    store.canvas.ctx.drawTriangleRect(
+      {
+        x:this.heightScale-this.defaultTri,
+        y:this.defaultTri
+      },
+      {
+        x:this.heightScale-this.defaultTri,
+        y:this.heightScale-this.defaultTri
+      },
+      {
+        x:6,
+        y:this.heightScale-this.defaultTri
+      }
+    ,'#DCDCDC')
 
     store.canvas.ctx.drawFillRect({
       x:0,
       y:0,
-      width:this.width,
-      height:this.height,
+      width:this.widthScale,
+      height:this.heightScale,
       globalCompositeOperation:'destination-over',
     })
   }
@@ -52,8 +67,8 @@ export class Cell implements ICell{
   ctBaseDom(reX:number,reY:number,width:number,height:number,zIndex?:number){
     const tempRect = u('<div>')
     tempRect.css('position','absolute');
-    tempRect.css('left',this.x+reX);
-    tempRect.css('top',this.y+reY);
+    tempRect.css('left',this.xScale+reX);
+    tempRect.css('top',this.yScale+reY);
     zIndex && tempRect.css('z-index',zIndex);
     tempRect.data('label',this.label)
     tempRect.data('row',this.row)
@@ -65,39 +80,39 @@ export class Cell implements ICell{
   }
 
   ctRowDom(reX:number,reY:number,zIndex?:number){
-    return this.ctBaseDom(reX,reY,this.height,this.height,zIndex)
+    return this.ctBaseDom(reX,reY,this.heightScale,this.heightScale,zIndex)
   }
 
   ctDom(reX:number,reY:number,zIndex?:number){
-    return this.ctBaseDom(reX,reY,this.width,this.height,zIndex)
+    return this.ctBaseDom(reX,reY,this.widthScale,this.heightScale,zIndex)
   }
 
   drawHeaderColRect(reX:number): void {
 
     store.canvas.ctx.drawText({
-      x:this.x+reX,
+      x:this.xScale+reX,
       y:0,
       text:this.label,
-      rectWidth:this.width,
-      rectHeight:this.height,
+      rectWidth:this.widthScale,
+      rectHeight:this.heightScale,
       globalCompositeOperation:'destination-over',
     })
 
     store.canvas.ctx.drawStrokeRect({
-      x:this.x+reX,
+      x:this.xScale+reX,
       y:0,
-      width:this.width,
-      height:this.height,
+      width:this.widthScale,
+      height:this.heightScale,
       lineWidth:1,
       globalCompositeOperation:'destination-over',
       color:store.config.borderColor
     })
 
     store.canvas.ctx.drawFillRect({
-      x:this.x+reX,
+      x:this.xScale+reX,
       y:0,
-      width:this.width,
-      height:this.height,
+      width:this.widthScale,
+      height:this.heightScale,
       globalCompositeOperation:'destination-over',
     })
 
@@ -107,18 +122,18 @@ export class Cell implements ICell{
 
     store.canvas.ctx.drawText({
       x:0,
-      y:this.y+reY,
+      y:this.yScale+reY,
       text:this.label,
-      rectWidth:this.height,
-      rectHeight:this.height,
+      rectWidth:this.heightScale,
+      rectHeight:this.heightScale,
       globalCompositeOperation:'destination-over',
     })
 
     store.canvas.ctx.drawStrokeRect({
       x:0,
-      y:this.y+reY,
-      width:this.height,
-      height:this.height,
+      y:this.yScale+reY,
+      width:this.heightScale,
+      height:this.heightScale,
       lineWidth:1,
       globalCompositeOperation:'destination-over',
       color:store.config.borderColor
@@ -126,9 +141,9 @@ export class Cell implements ICell{
 
     store.canvas.ctx.drawFillRect({
       x:0,
-      y:this.y+reY,
-      width:this.height,
-      height:this.height,
+      y:this.yScale+reY,
+      width:this.heightScale,
+      height:this.heightScale,
       globalCompositeOperation:'destination-over',
     })
   }
@@ -136,23 +151,53 @@ export class Cell implements ICell{
   drawContRect(reX:number,reY:number): void {
 
     store.canvas.ctx.drawText({
-      x:this.x+reX,
-      y:this.y+reY,
+      x:this.xScale+reX,
+      y:this.yScale+reY,
       text:this.text,
-      rectWidth:this.width,
-      rectHeight:this.height,
+      rectWidth:this.widthScale,
+      rectHeight:this.heightScale,
       globalCompositeOperation:'destination-over',
     })
 
     store.canvas.ctx.drawStrokeRect({
-      x:this.x+reX,
-      y:this.y+reY,
-      width:this.width,
-      height:this.height,
+      x:this.xScale+reX,
+      y:this.yScale+reY,
+      width:this.widthScale,
+      height:this.heightScale,
       lineWidth:1,
       globalCompositeOperation:'destination-over',
       color:store.config.borderColor
     })
+  }
+
+  get xScale():number{
+    const { scale } = store.config
+    return this.x*scale
+  }
+  
+  get yScale():number{
+    const { scale } = store.config
+    return this.y*scale
+  }
+
+  get widthScale():number{
+    const { scale } = store.config
+    return this.width*scale
+  }
+  
+  get heightScale():number{
+    const { scale } = store.config
+    return this.height*scale
+  }
+  
+  get fontSizeScale():number{
+    const { scale } = store.config
+    return this.fontSize*scale
+  }
+
+  get defaultTri():number{
+    const { scale } = store.config
+    return 6*scale
   }
   
   row: number;
