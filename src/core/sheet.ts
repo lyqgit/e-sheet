@@ -174,10 +174,10 @@ export class Sheet implements ISheet{
       // 单个选中
       const singleCell = this.selCells[0]
       ctx.drawStrokeRect({
-        x: singleCell.x + left,
-        y: singleCell.y + top,
-        width: singleCell.width,
-        height: singleCell.height,
+        x: singleCell.xScale + left,
+        y: singleCell.yScale + top,
+        width: singleCell.widthScale,
+        height: singleCell.heightScale,
         color:selectedBorderBgColor,
         globalCompositeOperation:'destination-over',
         lineWidth:3
@@ -195,20 +195,20 @@ export class Sheet implements ISheet{
       const lastCell = this.selCells[this.selCells.length - 1]
 
       // 先确定方向
-      if(firstCell.x < lastCell.x){
-        x = firstCell.x
-        width = lastCell.x - firstCell.x + firstCell.width
+      if(firstCell.xScale < lastCell.xScale){
+        x = firstCell.xScale
+        width = lastCell.xScale - firstCell.xScale + firstCell.widthScale
       }else{
-        x = lastCell.x
-        width = firstCell.x - lastCell.x + lastCell.width
+        x = lastCell.xScale
+        width = firstCell.xScale - lastCell.xScale + lastCell.widthScale
       }
 
-      if(firstCell.y < lastCell.y){
-        y = firstCell.y
-        height = lastCell.y - firstCell.y + firstCell.height
+      if(firstCell.yScale < lastCell.yScale){
+        y = firstCell.yScale
+        height = lastCell.yScale - firstCell.yScale + firstCell.heightScale
       }else{
-        y = lastCell.y
-        height = firstCell.y - lastCell.y + lastCell.height
+        y = lastCell.yScale
+        height = firstCell.yScale - lastCell.yScale + lastCell.heightScale
       }
 
       // console.log('width',width)
