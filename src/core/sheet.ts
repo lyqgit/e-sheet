@@ -213,7 +213,8 @@ export class Sheet implements ISheet{
 
       // console.log('width',width)
       // console.log('height',height)
-
+      
+      // 绘制选中范围
       ctx.drawStrokeRect({
         x: x + left,
         y: y + top,
@@ -223,6 +224,7 @@ export class Sheet implements ISheet{
         globalCompositeOperation:'destination-over',
         lineWidth:3
       })
+      
     }
   }
 
@@ -270,7 +272,7 @@ export class Sheet implements ISheet{
     if(isTop || isInit || forceUpdate){
       for(let i=topRow;i<=bottomRow;i++){
         const rowCell = this.rowMap.get('row'+i)
-        rowCell.drawHeaderRowRect(cellHeight*scale - top)
+        rowCell.drawHeaderRowRect(cellHeight*scale - top,this.setSelDirBgColor(i,'row'))
         drawDom && dfDom.append(rowCell.ctRowDom(0,cellHeight*scale - top,100))
       }
     }
@@ -279,7 +281,7 @@ export class Sheet implements ISheet{
     if(isLeft || isInit || forceUpdate){
       for(let j=leftCol;j<=rightCol;j++){
         const headerCell = this.colMap.get('col'+j)
-        headerCell.drawHeaderColRect(cellHeight*scale - left)
+        headerCell.drawHeaderColRect(cellHeight*scale - left,this.setSelDirBgColor(j,'col'))
         drawDom && dfDom.append(headerCell.ctDom(cellHeight*scale - left,0,100))
       }
     }
@@ -447,6 +449,32 @@ export class Sheet implements ISheet{
         })
       }
     })
+  }
+
+  // 判断选中时，最外侧边界的显示状态
+  setSelDirBgColor(num:number,dir:string):string{
+    if(this.selCells.length === 0){
+      return undefined
+    }
+    const firstCell = this.selCells[0]
+    const lastCell = this.selCells[this.selCells.length - 1]
+    let firstNum = 0
+    let lastNum = 0
+    if(firstCell[dir] - lastCell[dir] < 0){
+      firstNum = firstCell[dir]
+      lastNum = lastCell[dir]
+    }else{
+      firstNum = lastCell[dir]
+      lastNum = firstCell[dir]
+    }
+    if(num >= firstNum && num <= lastNum){
+      // console.log('firstNum',firstNum)
+      // console.log('lastNum',lastNum)
+      // console.log('num',num)
+      // console.log('this.selCells',this.selCells)
+      return store.config.selectedBgColor
+    }
+    return undefined
   }
 
   name: string;

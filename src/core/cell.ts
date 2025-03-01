@@ -87,7 +87,7 @@ export class Cell implements ICell{
     return this.ctBaseDom(reX,reY,this.widthScale,this.heightScale,zIndex)
   }
 
-  drawHeaderColRect(reX:number): void {
+  drawHeaderColRect(reX:number,color?:string): void {
 
     store.canvas.ctx.drawText({
       x:this.xScale+reX,
@@ -114,11 +114,12 @@ export class Cell implements ICell{
       width:this.widthScale,
       height:this.heightScale,
       globalCompositeOperation:'destination-over',
+      color
     })
 
   }
 
-  drawHeaderRowRect(reY:number): void {
+  drawHeaderRowRect(reY:number,color?:string): void {
 
     store.canvas.ctx.drawText({
       x:0,
@@ -145,6 +146,7 @@ export class Cell implements ICell{
       width:this.heightScale,
       height:this.heightScale,
       globalCompositeOperation:'destination-over',
+      color
     })
   }
 

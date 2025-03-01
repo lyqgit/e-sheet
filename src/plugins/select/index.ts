@@ -32,8 +32,8 @@ export class SelectPlugin implements IPlugin{
 
       // 首先单选
       const targetDom = u(evtA.target as HTMLElement)
-      console.log('target',targetDom.data('col'))
-      console.log('target',targetDom.data('row'))
+      // console.log('target-col',targetDom.data('col'))
+      // console.log('target-row',targetDom.data('row'))
       const targetDomCol = targetDom.data('col')
       const targetDomRow = targetDom.data('row')
       if(targetDomCol === 0 || targetDomRow === 0){
@@ -79,6 +79,7 @@ export class SelectPlugin implements IPlugin{
 
         curSheet.selCells = []
         const targetOverDom = u(evtB.target as HTMLElement)
+        // console.log('targetOverDom',targetOverDom)
         // 获取第二个cell，根据这个cell计算选中的所有cell
         const label = targetOverDom.data('label')
         const cellB = curSheet.contMap.get(label)
@@ -92,11 +93,16 @@ export class SelectPlugin implements IPlugin{
           }
         }
 
+        if(diffRow === 0 && diffCol === 0){
+          curSheet.selCells = [cellA]
+        }
+
         // console.log('curSheet.selCells',curSheet.selCells,diffCol,diffRow)
-        curSheet.selCells.length > 1 && curSheet.forceUpdateRect()
+        curSheet.selCells.length > 0 && curSheet.forceUpdateRect()
       })
       eventDom.one('mouseup',(evtC:MouseEvent)=>{
-        console.log('evt',evtC)
+        eventDom.off('mouseover')
+        // console.log('evt',evtC)
       })
     })
   }
