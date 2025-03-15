@@ -1,7 +1,8 @@
 import { IStore } from "@/store";
 import { IExcel, IPlugin } from "@/types";
 import u from 'cash-dom'
-import Base64Image from '@/image'
+import { setCursor } from '@/utils'
+
 
 export class GesturePlugin implements IPlugin {
   register(): void {
@@ -28,33 +29,29 @@ export class GesturePlugin implements IPlugin {
       const targetDomCol = targetDom.data('col')
       const targetDomRow = targetDom.data('row')
       if(targetDomCol > 0 && targetDomRow > 0){
-        gestureEventDom.css('cursor',this.setCursor('cell'))
+        gestureEventDom.css('cursor',setCursor('cell'))
       }else if(targetDomCol === 0 && targetDomRow > 0){
         // 顶部
         if(evt.offsetY <= this.diffDis && targetDomRow !== 1){
-          gestureEventDom.css('cursor',this.setCursor('row-resize'))
+          gestureEventDom.css('cursor',setCursor('row-resize'))
         }else if(targetDom.height() - evt.offsetY <= this.diffDis){
-          gestureEventDom.css('cursor',this.setCursor('row-resize'))
+          gestureEventDom.css('cursor',setCursor('row-resize'))
         }else{
-          gestureEventDom.css('cursor',this.setCursor('e-resize'))
+          gestureEventDom.css('cursor',setCursor('e-resize'))
         }
       }else if(targetDomCol > 0 && targetDomRow === 0){
         // 左侧
         if(evt.offsetX <= this.diffDis && targetDomCol !== 1){
-          gestureEventDom.css('cursor',this.setCursor('col-resize'))
+          gestureEventDom.css('cursor',setCursor('col-resize'))
         }else if(targetDom.width() - evt.offsetX <= this.diffDis){
-          gestureEventDom.css('cursor',this.setCursor('col-resize'))
+          gestureEventDom.css('cursor',setCursor('col-resize'))
         }else{
-          gestureEventDom.css('cursor',this.setCursor('s-resize'))
+          gestureEventDom.css('cursor',setCursor('s-resize'))
         }
       }else if(targetDomCol === 0 && targetDomRow === 0){
-        gestureEventDom.css('cursor',this.setCursor('cell'))
+        gestureEventDom.css('cursor',setCursor('cell'))
       }
     })
-  }
-
-  setCursor(shape:string){
-    return `url(${Base64Image[shape]}) 18 18, ${shape}`;
   }
 
 }

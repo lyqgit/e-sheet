@@ -1,3 +1,4 @@
+import Base64Image from '@/image'
 /**
  * @description 判断输入内容的类型
  * @param obj
@@ -41,4 +42,17 @@ export function transHeaderNameToNum(colTitle:string):number{
 
 export function isInDom(container:HTMLElement,target:HTMLElement){
   return container !== target && container.contains(target)
+}
+
+/**
+ * @description 设置鼠标样式
+ * @param {string} shape 
+ * @returns 
+ */
+export function setCursor(shape:string = 'default'){
+  if(shape === 'default'){
+    return shape
+  }else{
+    return `url(${Base64Image[shape]}) 18 18, ${shape}`;
+  }
 }
