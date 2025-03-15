@@ -5,7 +5,7 @@ import u from 'cash-dom';
 import { Sheet } from './sheet'
 import { Canvas } from './canvas'
 import store from '@/store'
-import { ScrollPlugin,SelectPlugin,BookPlugin } from '@/plugins'
+import { ScrollPlugin,SelectPlugin,BookPlugin,GesturePlugin } from '@/plugins'
 
 export class eSheet implements IExcel {
 
@@ -103,7 +103,14 @@ export class eSheet implements IExcel {
     canvasWrapper.css('position','relative')
     this.canvasWrapperDom = canvasWrapper
 
-    // 事件处理层
+    // 手势样式处理层
+    const canvasMoveEventWrapper = u('<div>')
+    canvasMoveEventWrapper.css({
+      'width':excelWidth + 'px',
+      'height':excelHeight-96+'px',
+    })
+
+    // 点击事件处理层
     const canvasEventWrapper = u('<div>')
     canvasEventWrapper.css('width',excelWidth-10 + 'px')
     canvasEventWrapper.css('height',excelHeight-96-10+'px')
@@ -121,10 +128,12 @@ export class eSheet implements IExcel {
     store.canvas.dom = canvasDom
     store.canvas.ctx = engine
     store.canvas.eventDom = canvasEventWrapper
+    store.canvas.gestureEventDom = canvasMoveEventWrapper
 
     // 组装dom
-    canvasWrapper.append(canvasDom)
-    canvasWrapper.append(canvasEventWrapper)
+    canvasMoveEventWrapper.append(canvasDom)
+    canvasMoveEventWrapper.append(canvasEventWrapper)
+    canvasWrapper.append(canvasMoveEventWrapper)
     this.excelDom.append(canvasWrapper)
   }
 
@@ -143,6 +152,7 @@ export class eSheet implements IExcel {
       scroll:new ScrollPlugin(this,store),
       select:new SelectPlugin(this,store),
       book:new BookPlugin(this,store),
+      gesture:new GesturePlugin(this,store),
     }
 
     store.config.plugins = { ...store.config.plugins, ...plugins }

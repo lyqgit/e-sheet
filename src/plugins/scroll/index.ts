@@ -305,7 +305,7 @@ export class ScrollPlugin implements IScrollPlugin{
           
 
           let finalDis = oriTransY+diffDis
-          console.log('boundDiff',boundDiff)
+          // console.log('boundDiff',boundDiff)
           // console.log('finalDis',finalDis)
 
           if(finalDis > boundDiff && diffDis > 0){

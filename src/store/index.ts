@@ -23,7 +23,8 @@ interface IExcelConfig{
 interface IStoreCanvas{
   dom:Cash,
   ctx:ICanvas,
-  eventDom:Cash
+  eventDom:Cash,
+  gestureEventDom:Cash,
 }
 
 export interface IStore{
@@ -35,7 +36,8 @@ export default {
   canvas:{
     dom:null,
     ctx:null,
-    eventDom:null
+    eventDom:null,
+    gestureEventDom:null
   },
   config:{
     defaultCol:60,
