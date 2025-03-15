@@ -83,6 +83,9 @@ export class SelectPlugin implements IPlugin{
         // 获取第二个cell，根据这个cell计算选中的所有cell
         const label = targetOverDom.data('label')
         const cellB = curSheet.contMap.get(label)
+        if(!cellB){
+          return
+        }
         const diffCol = cellB.col - cellA.col
         const diffRow = cellB.row - cellA.row
 
