@@ -21,6 +21,8 @@ export class Cell implements ICell{
     this.label = option.label
     this.img = option.img
     this.text = option.text??''
+    this.isMerge = false
+    this.isStartMergeLabel = false
   }
   
   clearRect(startX: number, startY: number, endX: number, endY: number): void {
@@ -172,6 +174,35 @@ export class Cell implements ICell{
     })
   }
 
+  drawMergeRect(reX:number,reY:number,lastCell:Cell): void {
+
+    const rectWidth = lastCell.xScale + lastCell.widthScale - this.xScale
+    const rectHeight = lastCell.yScale + lastCell.heightScale - this.yScale
+
+    store.canvas.ctx.drawText({
+      x:this.xScale+reX,
+      y:this.yScale+reY,
+      text:this.text,
+      rectWidth:rectWidth,
+      rectHeight:rectHeight,
+      globalCompositeOperation:'destination-over',
+    })
+
+    store.canvas.ctx.drawStrokeRect({
+      x:this.xScale+reX,
+      y:this.yScale+reY,
+      width:rectWidth,
+      height:rectHeight,
+      lineWidth:1,
+      globalCompositeOperation:'destination-over',
+      color:store.config.borderColor
+    })
+  }
+
+  ctMergeDom(reX:number,reY:number,lastCell:Cell,zIndex?:number){
+    return this.ctBaseDom(reX,reY,lastCell.xScale + lastCell.widthScale - this.xScale,lastCell.yScale + lastCell.heightScale - this.yScale,zIndex)
+  }
+
   get xScale():number{
     const { scale } = store.config
     return this.x*scale
@@ -219,5 +250,7 @@ export class Cell implements ICell{
   label: string;
   text: string;
   img: Img[];
+  isMerge: boolean;
+  isStartMergeLabel: boolean;
 
 }

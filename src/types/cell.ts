@@ -29,6 +29,8 @@ export interface ICell extends IBaseCell{
   drawHeaderColRect(reX:number,color?:string):void
   drawHeaderRowRect(reY:number,color?:string):void
   clearRect(startX:number,startY:number,endX:number,endY:number):void
+  isMerge:boolean
+  isStartMergeLabel:boolean
 }
 
 export interface ICellOption extends IBaseCell{

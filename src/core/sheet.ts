@@ -11,6 +11,7 @@ export class Sheet implements ISheet{
     this.lock = option.lock
     this.data = option.data
     this.initData(option.data);
+    this.mergeCell = new Map();
   }
 
   initDraw(){
@@ -33,7 +34,7 @@ export class Sheet implements ISheet{
   spWidth:Map<string,number>; // 记录更改了长度的单元格列数
   spHeight:Map<string,number>; // 记录更改了高度的单元格行数
 
-  mergeCell:Map<string,Array<string>>;
+  mergeCell:Map<string,Array<string>>; // 记录合并了单元格的label:label;
 
   // 装载空数据
   initData(data:Array<ICell>):void{
@@ -173,15 +174,30 @@ export class Sheet implements ISheet{
     if(this.selCells.length === 1){
       // 单个选中
       const singleCell = this.selCells[0]
-      ctx.drawStrokeRect({
-        x: singleCell.xScale + left,
-        y: singleCell.yScale + top,
-        width: singleCell.widthScale,
-        height: singleCell.heightScale,
-        color:selectedBorderBgColor,
-        globalCompositeOperation:'destination-over',
-        lineWidth:3
-      })
+      if(singleCell.isMerge){
+        // 绘制合并的单元格
+        const lastCell = this.contMap.get(this.mergeCell.get(singleCell.label)[1])
+        ctx.drawStrokeRect({
+          x: singleCell.xScale + left,
+          y: singleCell.yScale + top,
+          width: lastCell.xScale + lastCell.widthScale - singleCell.xScale,
+          height: lastCell.yScale + lastCell.heightScale - singleCell.yScale,
+          color:selectedBorderBgColor,
+          globalCompositeOperation:'destination-over',
+          lineWidth:3
+        })
+      }else{
+        ctx.drawStrokeRect({
+          x: singleCell.xScale + left,
+          y: singleCell.yScale + top,
+          width: singleCell.widthScale,
+          height: singleCell.heightScale,
+          color:selectedBorderBgColor,
+          globalCompositeOperation:'destination-over',
+          lineWidth:3
+        })
+      }
+      
     }else if(this.selCells.length > 1){
 
       // console.log('this.selCells.length',this.selCells.length)
@@ -293,8 +309,16 @@ export class Sheet implements ISheet{
       for(let j=leftCol;j<=rightCol;j++){
         const headerName = getExcelHeaderName(j)
         const contCell = this.contMap.get(headerName+i)
-        contCell.drawContRect(cellHeight*scale - left,cellHeight*scale - top)
-        drawDom && dfDom.append(contCell.ctDom(cellHeight*scale - left,cellHeight*scale - top,100))
+        if(contCell.isMerge && contCell.isStartMergeLabel){
+          const lastCell = this.contMap.get(this.mergeCell.get(contCell.label)[1])
+          contCell.drawMergeRect(cellHeight*scale - left,cellHeight*scale - top,lastCell)
+          drawDom && dfDom.append(contCell.ctMergeDom(cellHeight*scale - left,cellHeight*scale - top,lastCell,100))
+        }else if(contCell.isMerge){
+          // 不绘制表格
+        }else{
+          contCell.drawContRect(cellHeight*scale - left,cellHeight*scale - top)
+          drawDom && dfDom.append(contCell.ctDom(cellHeight*scale - left,cellHeight*scale - top,100))
+        }
       }
     }
 
@@ -457,7 +481,7 @@ export class Sheet implements ISheet{
       return undefined
     }
     const firstCell = this.selCells[0]
-    const lastCell = this.selCells[this.selCells.length - 1]
+    const lastCell = firstCell.isMerge?this.contMap.get(this.mergeCell.get(firstCell.label)[1]):this.selCells[this.selCells.length - 1]
     let firstNum = 0
     let lastNum = 0
     if(firstCell[dir] - lastCell[dir] < 0){

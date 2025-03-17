@@ -35,7 +35,15 @@ export class ContextmenuPlugin implements IPlugin {
       return
     }else if(selCells.length > 1){ 
       // 多个单元格
-      
+      console.log('curSheet.selCells',selCells)
+      const firstCell = selCells[0]
+      firstCell.isStartMergeLabel = true
+      curSheet.mergeCell.set(firstCell.label,[firstCell.label,selCells[selCells.length-1].label])
+      selCells.forEach(cell=>{
+        cell.isMerge = true
+      })
+      curSheet.selCells = [firstCell]
+      curSheet.forceUpdateAll()
     }
   }
 
@@ -47,6 +55,7 @@ export class ContextmenuPlugin implements IPlugin {
     const addImgBtn = u('<div>').text('插入图片').addClass('item-btn').css({cursor:'pointer'})
 
     mergeBtn.on('click',(_:MouseEvent)=>{
+      this.mergeCell()
       this.closeContextMenu()
     })
 
@@ -70,8 +79,8 @@ export class ContextmenuPlugin implements IPlugin {
       const [top,left] = getScrollTopAndLeft()
       this.containerDom.css({
         'display':'block',
-        'top':evt.pageY + top,
-        'left':evt.pageX + left
+        'top':evt.clientY + top,
+        'left':evt.clientX + left
       })
     })
   }

@@ -111,6 +111,9 @@ export class SelectPlugin implements IPlugin{
 
         if(diffRow === 0 && diffCol === 0){
           curSheet.selCells = [cellA]
+        }else{
+          // 排序
+          curSheet.selCells = curSheet.selCells.sort((a,b)=>(a.col - b.col < 0 || a.row - b.row < 0) ? -1 : 1)
         }
 
         // console.log('curSheet.selCells',curSheet.selCells,diffCol,diffRow)
