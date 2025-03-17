@@ -5,7 +5,7 @@ import u from 'cash-dom';
 import { Sheet } from './sheet'
 import { Canvas } from './canvas'
 import store from '@/store'
-import { ScrollPlugin,SelectPlugin,BookPlugin,GesturePlugin } from '@/plugins'
+import { ScrollPlugin,SelectPlugin,BookPlugin,GesturePlugin, ContextmenuPlugin } from '@/plugins'
 
 export class eSheet implements IExcel {
 
@@ -153,6 +153,7 @@ export class eSheet implements IExcel {
       select:new SelectPlugin(this,store),
       book:new BookPlugin(this,store),
       gesture:new GesturePlugin(this,store),
+      contextmenu:new ContextmenuPlugin(this,store),
     }
 
     store.config.plugins = { ...store.config.plugins, ...plugins }
@@ -161,9 +162,9 @@ export class eSheet implements IExcel {
       store.config.plugins[i].register()
     }
 
-    u(document).on('mouseup',()=>{
+    u(document).on('mouseup',(evt:MouseEvent)=>{
       for(let i in store.config.plugins){
-        store.config.plugins[i].docMouseUp()
+        store.config.plugins[i].docMouseUp(evt)
       }
     })
   }

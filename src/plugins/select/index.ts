@@ -27,15 +27,28 @@ export class SelectPlugin implements IPlugin{
     const { eventDom } = this.store.canvas
 
     eventDom.on('mousedown',(evtA:MouseEvent)=>{
+      // console.log('evtA',evtA)
+
+      
 
       const curSheet = this.excel.getCurSheet()
 
       // 首先单选
       const targetDom = u(evtA.target as HTMLElement)
+      
       // console.log('target-col',targetDom.data('col'))
       // console.log('target-row',targetDom.data('row'))
       const targetDomCol = targetDom.data('col')
       const targetDomRow = targetDom.data('row')
+
+      const label = targetDom.data('label')
+      const cellA = curSheet.contMap.get(label)
+
+      if(evtA.button === 2 && curSheet.isInSelCellsBylabel(label)){
+        // 右键点击，不执行后续操作
+        return
+      }
+
       if(targetDomCol === 0 || targetDomRow === 0){
         // 点击边界cell
         // console.log('curSheet.selCells',curSheet.selCells)
@@ -69,8 +82,8 @@ export class SelectPlugin implements IPlugin{
         // 清空选中的cell
         curSheet.selCells = []
       }
-      const label = targetDom.data('label')
-      const cellA = curSheet.contMap.get(label)
+      
+
       curSheet.selCells = [cellA]
       curSheet.forceUpdateRect()
       

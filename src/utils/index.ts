@@ -56,3 +56,12 @@ export function setCursor(shape:string = 'default'){
     return `url(${Base64Image[shape]}) 18 18, ${shape}`;
   }
 }
+
+/**
+ * @description 获取页面滚动的高度和宽度
+ */
+export function getScrollTopAndLeft():Array<number>{
+  const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+  const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft;
+  return [scrollTop,scrollLeft]
+}

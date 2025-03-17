@@ -477,6 +477,13 @@ export class Sheet implements ISheet{
     return undefined
   }
 
+  // 搜索目标label是否在当前选中的cell中
+  isInSelCellsBylabel(label:string){
+    return this.selCells.some((item)=>{
+      return item.label === label
+    })
+  }
+
   name: string;
   lock: Boolean;
 }
