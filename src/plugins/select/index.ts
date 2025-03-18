@@ -1,3 +1,4 @@
+import { Cell } from "@/core";
 import { IStore } from "@/store";
 import { IExcel, IPlugin } from "@/types";
 import { getExcelHeaderName } from "@/utils";
@@ -22,14 +23,101 @@ export class SelectPlugin implements IPlugin{
   unregister(): void {
   }
 
+  getCellsInMerge(tempAllCells:Array<Cell>):Array<Cell>{
+
+    let mergeStartArr = []
+
+    const curSheet = this.excel.getCurSheet()
+
+    const sortSelCells = tempAllCells.sort((a,b)=>(a.col - b.col < 0 || a.row - b.row < 0) ? -1 : 1)
+    const simpleFirstCell = sortSelCells[0]
+    const simpleLastCell = sortSelCells[sortSelCells.length - 1]
+
+    let mergeEndArr = []
+
+    sortSelCells.forEach(cell=>{
+      if(cell.isMerge && cell.isStartMergeLabel && mergeStartArr.findIndex(it=>it.label === cell.getMergeStartLabel()) === -1){
+        mergeStartArr.push(cell)
+        mergeEndArr.push(curSheet.contMap.get(cell.getMergeEndLabel()))
+      }else if(cell.isMerge && mergeStartArr.findIndex(it=>it.label === cell.getMergeStartLabel()) === -1){
+        mergeStartArr.push(curSheet.contMap.get(cell.getMergeStartLabel()))
+        mergeEndArr.push(curSheet.contMap.get(cell.getMergeEndLabel()))
+      }
+    })
+
+    const mergeStartArrLength = mergeStartArr.length
+
+    // mergeStartArr = mergeStartArr.sort((a,b)=>(a.col - b.col < 0 || a.row - b.row < 0) ? -1 : 1)
+    // mergeEndArr = mergeEndArr.sort((a,b)=>(a.col - b.col < 0 || a.row - b.row < 0) ? -1 : 1)
+
+    // const mergeLeftTop = mergeStartArr[0]
+    // const mergeRightBottom = mergeEndArr[mergeEndArr.length-1]
+
+    const mergeLeftTopRow = Math.min(...mergeStartArr.map(item=>item.row))
+    const mergeLeftTopCol = Math.min(...mergeStartArr.map(item=>item.col))
+
+    const mergeRightBottomRow = Math.max(...mergeEndArr.map(item=>item.row))
+    const mergeRightBottomCol = Math.max(...mergeEndArr.map(item=>item.col))
+
+    // console.log('----------------------=-----------',simpleLastCell,mergeRightBottom,mergeEndArr)
+
+    // console.log('simpleFirstCell-=-----------',simpleFirstCell)
+    // console.log('simpleLastCell-=-----------',simpleLastCell)
+    // console.log('mergeLeftTop-=-----------',mergeLeftTop)
+    // console.log('mergeRightBottom-=-----------',mergeRightBottom)
+
+    const leftTopRow = [simpleFirstCell.row,mergeLeftTopRow].sort((a,b)=>a-b)[0]
+    const leftTopCol = [simpleFirstCell.col,mergeLeftTopCol].sort((a,b)=>a-b)[0]
+
+    const rightBottomRow = [simpleLastCell.row,mergeRightBottomRow].sort((a,b)=>a-b)[1]
+    const rightBottomCol = [simpleLastCell.col,mergeRightBottomCol].sort((a,b)=>a-b)[1]
+
+    let tempNowAllCells = []
+
+    for(let i=leftTopRow;i<=rightBottomRow;i++){
+      for(let j=leftTopCol;j<=rightBottomCol;j++){
+        const cell = curSheet.contMap.get(getExcelHeaderName(j)+i)
+        tempNowAllCells.push(cell)
+      }
+    }
+
+    let mergeNowStartArr = []
+
+    tempNowAllCells.forEach(item=>{
+      const mergeStartLabel = item.getMergeStartLabel()
+      if(item.isMerge && mergeStartLabel && mergeNowStartArr.findIndex(it=>it.label === mergeStartLabel) === -1){
+        mergeNowStartArr.push(curSheet.contMap.get(mergeStartLabel))
+      }
+    })
+
+    if(mergeNowStartArr.length>mergeStartArrLength){
+      return this.getCellsInMerge(tempNowAllCells)
+    }
+
+    return [curSheet.contMap.get(getExcelHeaderName(leftTopCol)+leftTopRow),curSheet.contMap.get(getExcelHeaderName(rightBottomCol)+rightBottomRow)]
+
+  }
+
+
+  getDiagonal(cellArr:Array<Cell>):Array<Cell>{
+    const curSheet = this.excel.getCurSheet()
+    const mergeLeftTopRow = Math.min(...cellArr.map(item=>item.row))
+    const mergeLeftTopCol = Math.min(...cellArr.map(item=>item.col))
+
+    const mergeRightBottomRow = Math.max(...cellArr.map(item=>item.row))
+    const mergeRightBottomCol = Math.max(...cellArr.map(item=>item.col))
+    return [
+      curSheet.contMap.get(getExcelHeaderName(mergeLeftTopCol)+mergeLeftTopRow),
+      curSheet.contMap.get(getExcelHeaderName(mergeRightBottomCol)+mergeRightBottomRow)
+    ]
+  }
+
   // 点击单元格
   singleMouse(){
     const { eventDom } = this.store.canvas
 
     eventDom.on('mousedown',(evtA:MouseEvent)=>{
       // console.log('evtA',evtA)
-
-      
 
       const curSheet = this.excel.getCurSheet()
 
@@ -82,15 +170,31 @@ export class SelectPlugin implements IPlugin{
         // 清空选中的cell
         curSheet.selCells = []
       }
+
+      curSheet.firstCell = cellA
       
 
       curSheet.selCells = [cellA]
       curSheet.forceUpdateRect()
+
+      
       
       // 可能多选
       eventDom.on('mouseover',(evtB:MouseEvent)=>{
+        // 只需找出第二个点即可
+        let tempAllCells = [] // 记录所有选中的cell
+        let mergeStartArr = []
 
-        curSheet.selCells = []
+        // curSheet.selCells.forEach(item=>{
+        //   const mergeStartLabel = item.getMergeStartLabel()
+        //   if(item.isMerge && mergeStartArr.findIndex(it=>it.label === mergeStartLabel) === -1){
+        //     mergeStartArr.push(curSheet.contMap.get(mergeStartLabel))
+        //   }
+        // })
+
+        
+
+        curSheet.selCells = [cellA]
         const targetOverDom = u(evtB.target as HTMLElement)
         // console.log('targetOverDom',targetOverDom)
         // 获取第二个cell，根据这个cell计算选中的所有cell
@@ -99,13 +203,18 @@ export class SelectPlugin implements IPlugin{
         if(!cellB){
           return
         }
+
         const diffCol = cellB.col - cellA.col
         const diffRow = cellB.row - cellA.row
 
         for(let i=cellA.row;diffRow>0?i<=cellB.row:i>=cellB.row;diffRow>0?i++:i--){
           for(let j=cellA.col;diffCol>0?j<=cellB.col:j>=cellB.col;diffCol>0?j++:j--){
             const cell = curSheet.contMap.get(getExcelHeaderName(j)+i)
-            curSheet.selCells.push(cell)
+            tempAllCells.push(cell)
+            const mergeStartLabel = cell.getMergeStartLabel()
+            if(cell.isMerge && mergeStartArr.findIndex(it=>it.label === mergeStartLabel) === -1){
+              mergeStartArr.push(curSheet.contMap.get(mergeStartLabel))
+            }
           }
         }
 
@@ -113,10 +222,14 @@ export class SelectPlugin implements IPlugin{
           curSheet.selCells = [cellA]
         }else{
           // 排序
-          curSheet.selCells = curSheet.selCells.sort((a,b)=>(a.col - b.col < 0 || a.row - b.row < 0) ? -1 : 1)
+          if(mergeStartArr.some(cellItem=>cellItem.isMerge)){
+            curSheet.selCells = this.getCellsInMerge(tempAllCells)
+          }else{
+            curSheet.selCells = this.getDiagonal([cellA,cellB])
+          }
         }
 
-        // console.log('curSheet.selCells',curSheet.selCells,diffCol,diffRow)
+        // console.log('curSheet.selCells',curSheet.selCells)
         curSheet.selCells.length > 0 && curSheet.forceUpdateRect()
       })
       eventDom.one('mouseup',(evtC:MouseEvent)=>{

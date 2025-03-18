@@ -31,6 +31,7 @@ export interface ICell extends IBaseCell{
   clearRect(startX:number,startY:number,endX:number,endY:number):void
   isMerge:boolean
   isStartMergeLabel:boolean
+  mergeLabel:string
 }
 
 export interface ICellOption extends IBaseCell{

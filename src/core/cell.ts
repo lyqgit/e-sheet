@@ -21,8 +21,7 @@ export class Cell implements ICell{
     this.label = option.label
     this.img = option.img
     this.text = option.text??''
-    this.isMerge = false
-    this.isStartMergeLabel = false
+    this.mergeLabel = ''
   }
   
   clearRect(startX: number, startY: number, endX: number, endY: number): void {
@@ -232,6 +231,34 @@ export class Cell implements ICell{
     const { scale } = store.config
     return 6*scale
   }
+
+  get isMerge():boolean{
+    return this.mergeLabel.length > 0
+  }
+
+  get isStartMergeLabel():boolean{
+    if(this.isMerge){
+      return this.mergeLabel.split(':')[0] === this.label
+    }else{
+      return false
+    }
+  }
+
+  getMergeStartLabel():string{
+    if(this.isMerge){
+      return this.mergeLabel.split(':')[0]
+    }else{
+      return ''
+    }
+  }
+
+  getMergeEndLabel():string{
+    if(this.isMerge){
+      return this.mergeLabel.split(':')[1]
+    }else{
+      return ''
+    }
+  }
   
   row: number;
   col: number;
@@ -250,7 +277,6 @@ export class Cell implements ICell{
   label: string;
   text: string;
   img: Img[];
-  isMerge: boolean;
-  isStartMergeLabel: boolean;
+  mergeLabel:string
 
 }

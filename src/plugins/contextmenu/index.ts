@@ -1,7 +1,7 @@
 import { IStore } from "@/store";
 import { IExcel, IPlugin } from "@/types";
 import u, { Cash } from 'cash-dom'
-import { getScrollTopAndLeft } from '@/utils'
+import { getExcelHeaderName, getScrollTopAndLeft } from '@/utils'
 
 export class ContextmenuPlugin implements IPlugin {
   excel: IExcel;
@@ -35,13 +35,21 @@ export class ContextmenuPlugin implements IPlugin {
       return
     }else if(selCells.length > 1){ 
       // 多个单元格
-      console.log('curSheet.selCells',selCells)
-      const firstCell = selCells[0]
-      firstCell.isStartMergeLabel = true
-      curSheet.mergeCell.set(firstCell.label,[firstCell.label,selCells[selCells.length-1].label])
-      selCells.forEach(cell=>{
-        cell.isMerge = true
-      })
+      // console.log('curSheet.selCells',selCells)
+      // 排序
+      const sortSelCells = curSheet.selCells
+      const firstCell = sortSelCells[0]
+      const lastCell = sortSelCells[sortSelCells.length-1]
+      curSheet.mergeCell.set(firstCell.label,[firstCell.label,lastCell.label])
+      for(let i=firstCell.row;i<=lastCell.row;i++){
+        for(let j=firstCell.col;j<=lastCell.col;j++){
+          const cell = curSheet.contMap.get(getExcelHeaderName(j)+i)
+          cell.mergeLabel = firstCell.label+':'+lastCell.label
+        }
+      }
+      // sortSelCells.forEach(cell=>{
+      //   cell.mergeLabel = firstCell.label+':'+sortSelCells[sortSelCells.length-1].label
+      // })
       curSheet.selCells = [firstCell]
       curSheet.forceUpdateAll()
     }

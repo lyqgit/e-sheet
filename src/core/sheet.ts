@@ -34,6 +34,8 @@ export class Sheet implements ISheet{
   spWidth:Map<string,number>; // 记录更改了长度的单元格列数
   spHeight:Map<string,number>; // 记录更改了高度的单元格行数
 
+  firstCell:Cell;
+
   mergeCell:Map<string,Array<string>>; // 记录合并了单元格的label:label;
 
   // 装载空数据
@@ -310,6 +312,7 @@ export class Sheet implements ISheet{
         const headerName = getExcelHeaderName(j)
         const contCell = this.contMap.get(headerName+i)
         if(contCell.isMerge && contCell.isStartMergeLabel){
+          // console.log('headerName',headerName+i)
           const lastCell = this.contMap.get(this.mergeCell.get(contCell.label)[1])
           contCell.drawMergeRect(cellHeight*scale - left,cellHeight*scale - top,lastCell)
           drawDom && dfDom.append(contCell.ctMergeDom(cellHeight*scale - left,cellHeight*scale - top,lastCell,100))
@@ -461,18 +464,32 @@ export class Sheet implements ISheet{
 
   // 判断多选中，选中cell显示的颜色
   setSelBgColor(left:number,top:number){
-    this.selCells.forEach((item,i)=>{
-      if(i>0){
-        store.canvas.ctx.drawFillRect({
-          x: item.xScale+left,
-          y: item.yScale+top,
-          width: item.widthScale,
-          height: item.heightScale,
-          color:store.config.selectedBgColor,
-          globalCompositeOperation:'destination-over',
-        })
+
+    if(this.selCells.length === 0){
+      return
+    }
+
+    // console.log('this.selCells',this.selCells)
+
+    const cellA = this.selCells[0]
+    const cellB = this.selCells[this.selCells.length - 1]
+
+    for(let i=cellA.row;i<=cellB.row;i++){
+      for(let j=cellA.col;j<=cellB.col;j++){
+        if(i !== this.firstCell.row || j !== this.firstCell.col){
+          const cell = this.contMap.get(getExcelHeaderName(j)+i)
+          store.canvas.ctx.drawFillRect({
+            x: cell.xScale+left,
+            y: cell.yScale+top,
+            width: cell.widthScale,
+            height: cell.heightScale,
+            color:store.config.selectedBgColor,
+            globalCompositeOperation:'destination-over',
+          })
+        }
       }
-    })
+    }
+
   }
 
   // 判断选中时，最外侧边界的显示状态
@@ -481,7 +498,7 @@ export class Sheet implements ISheet{
       return undefined
     }
     const firstCell = this.selCells[0]
-    const lastCell = firstCell.isMerge?this.contMap.get(this.mergeCell.get(firstCell.label)[1]):this.selCells[this.selCells.length - 1]
+    const lastCell = this.selCells[this.selCells.length - 1]
     let firstNum = 0
     let lastNum = 0
     if(firstCell[dir] - lastCell[dir] < 0){
@@ -503,9 +520,24 @@ export class Sheet implements ISheet{
 
   // 搜索目标label是否在当前选中的cell中
   isInSelCellsBylabel(label:string){
-    return this.selCells.some((item)=>{
-      return item.label === label
-    })
+    if(this.selCells.length === 0){
+      return
+    }
+
+    const cellA = this.selCells[0]
+    const cellB = this.selCells[this.selCells.length - 1]
+
+    const diffCol = cellB.col - cellA.col
+    const diffRow = cellB.row - cellA.row
+
+    for(let i=cellA.row;diffRow>0?i<=cellB.row:i>=cellB.row;diffRow>0?i++:i--){
+      for(let j=cellA.col;diffCol>0?j<=cellB.col:j>=cellB.col;diffCol>0?j++:j--){
+        if(getExcelHeaderName(j)+i === label){
+          return true
+        }
+      }
+    }
+    return false
   }
 
   name: string;
