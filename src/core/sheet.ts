@@ -509,7 +509,12 @@ export class Sheet implements ISheet{
       return undefined
     }
     const firstCell = this.selCells[0]
-    const lastCell = this.selCells[this.selCells.length - 1]
+    let lastCell = this.selCells[this.selCells.length - 1]
+
+    // 如果是合并的单元格，需要获取最后一个单元格
+    if(firstCell.isMerge && this.selCells.length === 1){
+      lastCell = this.contMap.get(this.mergeCell.get(firstCell.label)[1])
+    }
     let firstNum = 0
     let lastNum = 0
     if(firstCell[dir] - lastCell[dir] < 0){
