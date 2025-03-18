@@ -138,40 +138,43 @@ export class SelectPlugin implements IPlugin{
       }
 
       if(targetDomCol === 0 || targetDomRow === 0){
+        curSheet.firstCell = undefined
         // 点击边界cell
         // console.log('curSheet.selCells',curSheet.selCells)
         if(targetDomCol === 0 && targetDomRow === 0){
           // 点击到total
-          curSheet.selCells = Array.from(curSheet.contMap).map(item=>{
+          const tempCells = Array.from(curSheet.contMap).map(item=>{
             const [ _,cell ] = item
             return cell
           })
+          curSheet.selCells = [tempCells[0],tempCells[tempCells.length-1]]
         }else if(targetDomCol === 0){
-          curSheet.selCells = Array.from(curSheet.contMap).filter(itemA=>{
+          const tempCells = Array.from(curSheet.contMap).filter(itemA=>{
             const [_,cell] = itemA
             return cell.row === targetDomRow 
           }).map(itemB=>{
             const [ _,cell ] = itemB
             return cell
           })
+          curSheet.selCells = [tempCells[0],tempCells[tempCells.length-1]]
           // 点击到左侧行
         }else if(targetDomRow === 0){
           // 点击到上侧列
-          curSheet.selCells = Array.from(curSheet.contMap).filter(itemA=>{
+          const tempCells = Array.from(curSheet.contMap).filter(itemA=>{
             const [_,cell] = itemA
             return cell.col === targetDomCol 
           }).map(itemB=>{
             const [ _,cell ] = itemB
             return cell
           })
+          curSheet.selCells = [tempCells[0],tempCells[tempCells.length-1]]
         }
         return
       }else{
         // 清空选中的cell
         curSheet.selCells = []
+        curSheet.firstCell = cellA
       }
-
-      curSheet.firstCell = cellA
       
 
       curSheet.selCells = [cellA]

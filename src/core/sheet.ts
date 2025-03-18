@@ -473,10 +473,21 @@ export class Sheet implements ISheet{
 
     const cellA = this.selCells[0]
     const cellB = this.selCells[this.selCells.length - 1]
+    // console.log('this.firstCell',this.firstCell)
 
     for(let i=cellA.row;i<=cellB.row;i++){
       for(let j=cellA.col;j<=cellB.col;j++){
-        if(i !== this.firstCell.row || j !== this.firstCell.col){
+        if(this.firstCell && (i !== this.firstCell.row || j !== this.firstCell.col)){
+          const cell = this.contMap.get(getExcelHeaderName(j)+i)
+          store.canvas.ctx.drawFillRect({
+            x: cell.xScale+left,
+            y: cell.yScale+top,
+            width: cell.widthScale,
+            height: cell.heightScale,
+            color:store.config.selectedBgColor,
+            globalCompositeOperation:'destination-over',
+          })
+        }else if(!this.firstCell){
           const cell = this.contMap.get(getExcelHeaderName(j)+i)
           store.canvas.ctx.drawFillRect({
             x: cell.xScale+left,
