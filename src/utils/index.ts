@@ -1,4 +1,5 @@
 import Base64Image from '@/image'
+import { ICell } from '@/types';
 /**
  * @description 判断输入内容的类型
  * @param obj
@@ -64,4 +65,40 @@ export function getScrollTopAndLeft():Array<number>{
   const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
   const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft;
   return [scrollTop,scrollLeft]
+}
+
+export interface ParamsDoubleLoop {
+  initI:number,
+  maxI:number,
+  initJ:number, 
+  maxJ:number,
+  callback:(i:number,j:number)=>void
+}
+
+/**
+ * @description 双循环
+ * @param param 
+ */
+export function doubleLoop(param:ParamsDoubleLoop){
+  for(let i=param.initI;i<=param.maxI;i++){
+    for(let j=param.initJ;j<=param.maxJ;j++){
+      param.callback(i,j)
+    }
+  }
+}
+
+/**
+ * @description 双循环
+ * @param firstCell
+ * @param lastCell
+ * @param callback 
+ */
+export function doubleLoopByCell(firstCell:ICell,lastCell:ICell,callback:(i:number,j:number)=>void){
+  doubleLoop({
+    initI:firstCell.row,
+    maxI:lastCell.row,
+    initJ:firstCell.col,
+    maxJ:lastCell.col,
+    callback
+  })
 }

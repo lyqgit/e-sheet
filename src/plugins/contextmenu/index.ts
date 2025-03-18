@@ -1,7 +1,7 @@
 import { IStore } from "@/store";
 import { IExcel, IPlugin } from "@/types";
 import u, { Cash } from 'cash-dom'
-import { getExcelHeaderName, getScrollTopAndLeft } from '@/utils'
+import { doubleLoop, doubleLoopByCell, getExcelHeaderName, getScrollTopAndLeft } from '@/utils'
 
 export class ContextmenuPlugin implements IPlugin {
   excel: IExcel;
@@ -25,6 +25,46 @@ export class ContextmenuPlugin implements IPlugin {
   containerDom:Cash;
 
   /**
+   * @description 拆分单元格
+   */
+  splitCell(){
+    const curSheet = this.excel.getCurSheet()
+    const { selCells,firstCell } = curSheet
+    console.log('selCells',selCells)
+    console.log('firstCell',firstCell)
+    if(selCells.length > 1){
+      // 多个单元格
+      return
+    }
+
+    if(!firstCell){
+      // 没有选中单元格
+      return
+    }
+
+    if(!firstCell.isMerge){
+      // 没有合并单元格
+      return
+    }else{
+      // 拆分单元格
+      const mergeStartLabel = firstCell.getMergeStartLabel()
+      const mergeEndLabel = firstCell.getMergeEndLabel()
+      const mergeStartCell = curSheet.contMap.get(mergeStartLabel)
+      const mergeEndCell = curSheet.contMap.get(mergeEndLabel)
+
+      doubleLoopByCell(mergeStartCell,mergeEndCell,(i:number,j:number)=>{
+        const cell = curSheet.contMap.get(getExcelHeaderName(j)+i)
+        cell.mergeLabel = ''
+      })
+
+      curSheet.selCells = [mergeStartCell,mergeEndCell]
+
+      curSheet.forceUpdateAll()
+    }
+
+  }
+
+  /**
    * 合并单元格
    */
   mergeCell(){
@@ -40,16 +80,32 @@ export class ContextmenuPlugin implements IPlugin {
       const sortSelCells = curSheet.selCells
       const firstCell = sortSelCells[0]
       const lastCell = sortSelCells[sortSelCells.length-1]
+
       curSheet.mergeCell.set(firstCell.label,[firstCell.label,lastCell.label])
-      for(let i=firstCell.row;i<=lastCell.row;i++){
-        for(let j=firstCell.col;j<=lastCell.col;j++){
-          const cell = curSheet.contMap.get(getExcelHeaderName(j)+i)
-          cell.mergeLabel = firstCell.label+':'+lastCell.label
-        }
+
+      const tempAllSelCells = []
+
+      doubleLoopByCell(firstCell,lastCell,(i:number,j:number)=>{
+        const cell = curSheet.contMap.get(getExcelHeaderName(j)+i)
+        tempAllSelCells.push(cell)
+      })
+
+      // for(let i=firstCell.row;i<=lastCell.row;i++){
+      //   for(let j=firstCell.col;j<=lastCell.col;j++){
+      //     const cell = curSheet.contMap.get(getExcelHeaderName(j)+i)
+      //     tempAllSelCells.push(cell)
+      //   }
+      // }
+
+      if(tempAllSelCells.some(item=>item.isMerge)){
+        // 提示不可合并
+        return
+      }else{
+        tempAllSelCells.forEach(item=>{
+          item.mergeLabel = firstCell.label+':'+lastCell.label
+        })
       }
-      // sortSelCells.forEach(cell=>{
-      //   cell.mergeLabel = firstCell.label+':'+sortSelCells[sortSelCells.length-1].label
-      // })
+
       curSheet.selCells = [firstCell]
       curSheet.forceUpdateAll()
     }
@@ -64,6 +120,11 @@ export class ContextmenuPlugin implements IPlugin {
 
     mergeBtn.on('click',(_:MouseEvent)=>{
       this.mergeCell()
+      this.closeContextMenu()
+    })
+
+    splitBtn.on('click',(_:MouseEvent)=>{
+      this.splitCell()
       this.closeContextMenu()
     })
 
