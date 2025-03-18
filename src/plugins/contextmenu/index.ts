@@ -1,7 +1,7 @@
 import { IStore } from "@/store";
 import { IExcel, IPlugin } from "@/types";
 import u, { Cash } from 'cash-dom'
-import { doubleLoop, doubleLoopByCell, getExcelHeaderName, getScrollTopAndLeft } from '@/utils'
+import { doubleLoopByCell, getExcelHeaderName, getScrollTopAndLeft } from '@/utils'
 
 export class ContextmenuPlugin implements IPlugin {
   excel: IExcel;
@@ -30,20 +30,23 @@ export class ContextmenuPlugin implements IPlugin {
   splitCell(){
     const curSheet = this.excel.getCurSheet()
     const { selCells,firstCell } = curSheet
-    console.log('selCells',selCells)
-    console.log('firstCell',firstCell)
+    // console.log('selCells',selCells)
+    // console.log('firstCell',firstCell)
     if(selCells.length > 1){
       // 多个单元格
+      this.excel.showDialog('提示','选中多个单元格，无法拆分')
       return
     }
 
     if(!firstCell){
       // 没有选中单元格
+      this.excel.showDialog('提示','没有选中单元格，无法拆分')
       return
     }
 
     if(!firstCell.isMerge){
       // 没有合并单元格
+      this.excel.showDialog('提示','选中的单元格无法拆分')
       return
     }else{
       // 拆分单元格
@@ -72,6 +75,7 @@ export class ContextmenuPlugin implements IPlugin {
     const { selCells } = curSheet
     if(selCells.length === 1){
       // 只有一个单元格
+      this.excel.showDialog('提示','单个单元格无法合并')
       return
     }else if(selCells.length > 1){ 
       // 多个单元格
@@ -99,6 +103,7 @@ export class ContextmenuPlugin implements IPlugin {
 
       if(tempAllSelCells.some(item=>item.isMerge)){
         // 提示不可合并
+        this.excel.showDialog('提示','所选中的单元格中有已合并的，遂无法合并')
         return
       }else{
         tempAllSelCells.forEach(item=>{

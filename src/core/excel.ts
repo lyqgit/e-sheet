@@ -5,7 +5,7 @@ import u from 'cash-dom';
 import { Sheet } from './sheet'
 import { Canvas } from './canvas'
 import store from '@/store'
-import { ScrollPlugin,SelectPlugin,BookPlugin,GesturePlugin, ContextmenuPlugin } from '@/plugins'
+import { ScrollPlugin,SelectPlugin,BookPlugin,GesturePlugin, ContextmenuPlugin,SettingPlugin } from '@/plugins'
 
 export class eSheet implements IExcel {
 
@@ -154,6 +154,7 @@ export class eSheet implements IExcel {
       book:new BookPlugin(this,store),
       gesture:new GesturePlugin(this,store),
       contextmenu:new ContextmenuPlugin(this,store),
+      setting:new SettingPlugin(this,store),
     }
 
     store.config.plugins = { ...store.config.plugins, ...plugins }
@@ -176,5 +177,17 @@ export class eSheet implements IExcel {
 
     this.excelDom.css('width',excelWidth+'px')
     this.excelDom.css('height',excelHeight+'px')
+    this.warnDialogDom = u('<e-sheet-warn-dialog-tip>').attr('show','false')
+    this.excelDom.append(this.warnDialogDom)
   }
+
+  warnDialogDom:Cash
+
+  showDialog(title:string,content:string){
+    this.warnDialogDom.attr({
+      t:title,
+      content,
+      show:'true'
+    })
+}
 }

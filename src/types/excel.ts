@@ -28,4 +28,5 @@ export interface IExcel{
   resize():void
   resizeCallback:Array<Function>
   addResizeCallback:(callback:Function)=>void
+  showDialog(title:string,content:string):void
 }
