@@ -1,5 +1,9 @@
 import Base64Image from '@/image'
 import { ICell } from '@/types';
+
+export { EventEmitterIns } from './event-emitter'
+
+
 /**
  * @description 判断输入内容的类型
  * @param obj

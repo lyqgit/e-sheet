@@ -5,7 +5,15 @@ import u from 'cash-dom';
 import { Sheet } from './sheet'
 import { Canvas } from './canvas'
 import store from '@/store'
-import { ScrollPlugin,SelectPlugin,BookPlugin,GesturePlugin, ContextmenuPlugin,SettingPlugin } from '@/plugins'
+import { 
+  ScrollPlugin,
+  SelectPlugin,
+  BookPlugin,
+  GesturePlugin,
+  ContextmenuPlugin,
+  SettingPlugin,
+  InputPlugin,
+ } from '@/plugins'
 
 export class eSheet implements IExcel {
 
@@ -155,6 +163,7 @@ export class eSheet implements IExcel {
       gesture:new GesturePlugin(this,store),
       contextmenu:new ContextmenuPlugin(this,store),
       setting:new SettingPlugin(this,store),
+      input:new InputPlugin(this,store),
     }
 
     store.config.plugins = { ...store.config.plugins, ...plugins }
