@@ -112,6 +112,7 @@ export class ContextmenuPlugin implements IPlugin {
       }
 
       curSheet.selCells = [firstCell]
+      curSheet.firstCell = firstCell
       curSheet.forceUpdateAll()
     }
   }
