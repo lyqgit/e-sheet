@@ -147,14 +147,14 @@ export class ContextmenuPlugin implements IPlugin {
   }
 
   registryContextMenuEvent(){
-    const { eventDom } = this.store.canvas
-    eventDom.on('contextmenu',(evt:MouseEvent)=>{
+    const { canvasWrapperDom } = this.excel
+    canvasWrapperDom.on('contextmenu',(evt:MouseEvent)=>{
       evt.preventDefault()
-      const [top,left] = getScrollTopAndLeft()
+      const cashRect = u(evt.target as HTMLElement)
       this.containerDom.css({
         'display':'block',
-        'top':evt.clientY + top,
-        'left':evt.clientX + left
+        'top':cashRect.position().top+evt.offsetY,
+        'left':cashRect.position().left+evt.offsetX
       })
     })
   }

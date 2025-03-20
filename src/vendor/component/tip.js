@@ -11,7 +11,7 @@ export default class Tip extends HTMLElement {
         this.className = 'e-sheet-tip'
 
         this.addEventListener('mouseover',evt=>{
-            console.log('evt',this.getBoundingClientRect())
+            // console.log('evt',this.getBoundingClientRect())
             // console.log('evt',this.firstChild.getBoundingClientRect())
             if(!document.body.contains(tipDom)){
                 const tipLabelWidth = this.tipLabel.length * 12
