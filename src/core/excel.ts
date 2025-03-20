@@ -99,21 +99,21 @@ export class eSheet implements IExcel {
 
     const canvasWrapper = u('<div>')
     canvasWrapper.css('width',excelWidth + 'px')
-    canvasWrapper.css('height',excelHeight-96+'px')
+    canvasWrapper.css('height',excelHeight - 108+'px')
     canvasWrapper.css('position','relative')
     this.canvasWrapperDom = canvasWrapper
 
     // 手势样式处理层
     const canvasMoveEventWrapper = u('<div>')
     canvasMoveEventWrapper.css({
-      'width':excelWidth + 'px',
-      'height':excelHeight-96+'px',
+      'width':excelWidth - 10 + 'px',
+      'height':excelHeight - 118+'px',
     })
 
     // 点击事件处理层
     const canvasEventWrapper = u('<div>')
     canvasEventWrapper.css('width',excelWidth-10 + 'px')
-    canvasEventWrapper.css('height',excelHeight-96-10+'px')
+    canvasEventWrapper.css('height',excelHeight-118+'px')
     canvasEventWrapper.css('position','absolute')
     canvasEventWrapper.css('overflow','hidden')
     canvasEventWrapper.css('top','0')
@@ -123,7 +123,7 @@ export class eSheet implements IExcel {
     // canvas
     const canvasDom = u('<canvas>')
     canvasDom.attr('width',(excelWidth-10).toString())
-    canvasDom.attr('height',(excelHeight-96-10).toString())
+    canvasDom.attr('height',(excelHeight-118).toString())
     const engine = new Canvas(canvasDom)
     store.canvas.dom = canvasDom
     store.canvas.ctx = engine
