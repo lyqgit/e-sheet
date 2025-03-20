@@ -291,7 +291,7 @@ export class Sheet implements ISheet{
       for(let i=topRow;i<=bottomRow;i++){
         const rowCell = this.rowMap.get('row'+i)
         rowCell.drawHeaderRowRect(cellHeight*scale - top,this.setSelDirBgColor(i,'row'))
-        drawDom && dfDom.append(rowCell.ctRowDom(0,cellHeight*scale - top,100))
+        drawDom && dfDom.append(rowCell.ctRowDom(0,cellHeight*scale - top,150))
       }
     }
 
@@ -300,7 +300,7 @@ export class Sheet implements ISheet{
       for(let j=leftCol;j<=rightCol;j++){
         const headerCell = this.colMap.get('col'+j)
         headerCell.drawHeaderColRect(cellHeight*scale - left,this.setSelDirBgColor(j,'col'))
-        drawDom && dfDom.append(headerCell.ctDom(cellHeight*scale - left,0,100))
+        drawDom && dfDom.append(headerCell.ctDom(cellHeight*scale - left,0,150))
       }
     }
 
