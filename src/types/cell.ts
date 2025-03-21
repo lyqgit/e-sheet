@@ -22,6 +22,8 @@ export interface IBaseCell{
   label:string,
   img:Array<Img>
   text?:string
+  fontColor?:string
+  bgColor?:string
 }
 
 export interface ICell extends IBaseCell{

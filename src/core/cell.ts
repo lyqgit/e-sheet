@@ -11,6 +11,7 @@ export class Cell implements ICell{
     this.width = option.width
     this.height = option.height
     this.fontSize = option.fontSize
+    this.fontColor = option.fontColor
     this.fontWeight = option.fontWeight
     this.fontItalic = option.fontItalic
     this.fontFamily = option.fontFamily
@@ -22,6 +23,7 @@ export class Cell implements ICell{
     this.img = option.img
     this.text = option.text??''
     this.mergeLabel = ''
+    this.bgColor = option.bgColor
   }
   
   clearRect(startX: number, startY: number, endX: number, endY: number): void {
@@ -160,6 +162,8 @@ export class Cell implements ICell{
       textAlign:this.textAlign as CanvasTextAlign,
       rectWidth:this.widthScale,
       rectHeight:this.heightScale,
+      fontColor:this.fontColor,
+      fontSize:this.fontSize,
       globalCompositeOperation:'destination-over',
     })
 
@@ -171,6 +175,15 @@ export class Cell implements ICell{
       lineWidth:1,
       globalCompositeOperation:'destination-over',
       color:store.config.borderColor
+    })
+
+    store.canvas.ctx.drawFillRect({
+      x:this.xScale+reX,
+      y:this.yScale+reY,
+      width:this.widthScale,
+      height:this.heightScale,
+      color:this.bgColor??'#ffffff',
+      globalCompositeOperation:'destination-over',
     })
   }
 
@@ -279,5 +292,7 @@ export class Cell implements ICell{
   text: string;
   img: Img[];
   mergeLabel:string
+  fontColor?:string
+  bgColor?:string
 
 }
