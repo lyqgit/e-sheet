@@ -1,7 +1,7 @@
 import { IStore } from "@/store";
 import { IExcel, IPlugin } from "@/types";
 import u, { Cash } from 'cash-dom'
-import { doubleLoopByCell, getExcelHeaderName, getScrollTopAndLeft } from '@/utils'
+import { doubleLoopByCell, EventEmitterIns, getExcelHeaderName, getScrollTopAndLeft } from '@/utils'
 
 export class ContextmenuPlugin implements IPlugin {
   excel: IExcel;
@@ -113,6 +113,10 @@ export class ContextmenuPlugin implements IPlugin {
 
       curSheet.selCells = [firstCell]
       curSheet.firstCell = firstCell
+      EventEmitterIns.emit('setting',{
+        type:'cell-label-input',
+        data:firstCell
+      })
       curSheet.forceUpdateAll()
     }
   }

@@ -1,3 +1,5 @@
+import { ICell } from "@/types";
+
 class EventEmitter<T extends Record<string, any>> {
   private events: { [K in keyof T]?: Array<(payload: T[K]) => void> } = {};
 
@@ -22,14 +24,9 @@ class EventEmitter<T extends Record<string, any>> {
   }
 }
 
-export interface ICellLabelInputEvent{
-  label:string,
-  value:string
-}
-
 export interface ISettingEvents{
   type:string,
-  data:string | ICellLabelInputEvent
+  data:string | ICell
 }
 
 // 定义可用的事件类型

@@ -182,10 +182,7 @@ export class SelectPlugin implements IPlugin{
 
       EventEmitterIns.emit('setting',{
         type:'cell-label-input',
-        data:{
-          label:cellA.label,
-          value:cellA.text
-        }
+        data:cellA
       })
       
       // 可能多选

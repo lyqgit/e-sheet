@@ -157,6 +157,7 @@ export class Cell implements ICell{
       x:this.xScale+reX,
       y:this.yScale+reY,
       text:this.text,
+      textAlign:this.textAlign as CanvasTextAlign,
       rectWidth:this.widthScale,
       rectHeight:this.heightScale,
       globalCompositeOperation:'destination-over',

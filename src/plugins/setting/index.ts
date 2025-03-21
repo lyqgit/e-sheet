@@ -1,8 +1,8 @@
 import { IStore } from "@/store";
-import { IExcel, IPlugin } from "@/types";
+import { IExcel, IPlugin,ICell } from "@/types";
 import type { Cash } from "cash-dom";
 import u from "cash-dom";
-import { EventEmitterIns,ICellLabelInputEvent } from '@/utils'
+import { EventEmitterIns } from '@/utils'
 
 
 export class SettingPlugin implements IPlugin{
@@ -21,13 +21,31 @@ export class SettingPlugin implements IPlugin{
     this.store = store
   }
 
+  setCellAttr(attr:ICell){
+    this.labelInputDom.val(attr.label)
+    this.fxInputDom.val(attr.text)
+    this.fontHorAddrGroup.attr('value',attr.textAlign)
+    this.fontVerAddrGroup.attr('value',attr.textBaseline)
+    this.fontSizeSelectDom.attr('value',attr.fontSize.toString())
+    this.fontWeightBtnDom.attr('current',attr.fontWeight)
+    this.fontStrikethroughBtnDom.attr('current',attr.strikethrough.toString())
+    this.fontUnderlineBtnDom.attr('current',attr.underline.toString())
+    this.fontItalicBtnDom.attr('current',attr.fontItalic)
+
+    if(attr.isMerge){
+      this.cellMergerBtnDom.css('display','none')
+      this.cellSplitBtnDom.css('display','flex')
+    }else{
+      this.cellMergerBtnDom.css('display','flex')
+      this.cellSplitBtnDom.css('display','none')
+    }
+  }
+
   emitterListen(){
     EventEmitterIns.on('setting',({type,data})=>{
       // console.log('label',data)
       if(type === 'cell-label-input'){
-        const { label,value } = data as ICellLabelInputEvent
-        this.labelInputDom.val(label)
-        this.fxInputDom.val(value)
+        this.setCellAttr(data as ICell)
       }
     })
   }
@@ -795,9 +813,15 @@ export class SettingPlugin implements IPlugin{
         console.log('evt',evt)
         // this.convenientChangeStepArr(4,'textAlign',evt.detail)
 
-        // this.cellFontTextAlignChange(evt.detail)
+        this.cellFontTextAlignChange(evt.detail)
         // this.wsSendCellAttrByTypeAndData(4)
     })
+  }
+
+  cellFontTextAlignChange(textAlign:string){
+    const curSheet = this.excel.getCurSheet();
+    curSheet.firstCell.textAlign = textAlign;
+    curSheet.forceUpdateRect()
   }
 
   fontVerAddrGroup:Cash
