@@ -160,10 +160,16 @@ export class Cell implements ICell{
       y:this.yScale+reY,
       text:this.text,
       textAlign:this.textAlign as CanvasTextAlign,
+      textBaseline:this.textBaseline as CanvasTextBaseline,
       rectWidth:this.widthScale,
       rectHeight:this.heightScale,
       fontColor:this.fontColor,
       fontSize:this.fontSize,
+      fontWeight:this.fontWeight,
+      fontFamily:this.fontFamily,
+      fontItalic:this.fontItalic,
+      underline:this.underline,
+      strikethrough:this.strikethrough,
       globalCompositeOperation:'destination-over',
     })
 
@@ -272,6 +278,52 @@ export class Cell implements ICell{
     }else{
       return ''
     }
+  }
+
+  getJson():ICellOption{
+    return {
+      row:this.row,
+      col:this.col,
+      x:this.x,
+      y:this.y,
+      width:this.width,
+      height:this.height,
+      fontSize:this.fontSize,
+      fontWeight:this.fontWeight,
+      fontItalic:this.fontItalic,
+      fontFamily:this.fontFamily,
+      textAlign:this.textAlign,
+      textBaseline:this.textBaseline,
+      strikethrough:this.strikethrough,
+      underline:this.underline,
+      label:this.label,
+      text:this.text,
+      img:this.img,
+      fontColor:this.fontColor,
+      bgColor:this.bgColor
+    }
+  }
+
+  setCellByJson(json:ICellOption):void{
+    this.row = json.row
+    this.col = json.col
+    this.x = json.x
+    this.y = json.y
+    this.width = json.width
+    this.height = json.height
+    this.fontSize = json.fontSize
+    this.fontWeight = json.fontWeight
+    this.fontItalic = json.fontItalic
+    this.fontFamily = json.fontFamily
+    this.textAlign = json.textAlign
+    this.textBaseline = json.textBaseline
+    this.strikethrough = json.strikethrough
+    this.underline = json.underline
+    this.label = json.label
+    this.text = json.text
+    this.img = json.img
+    this.fontColor = json.fontColor
+    this.bgColor = json.bgColor
   }
   
   row: number;
