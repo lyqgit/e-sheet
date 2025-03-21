@@ -1,6 +1,6 @@
 import { IStore } from "@/store";
 import { IExcel, IPlugin } from "@/types";
-import type { Cash } from 'cash-dom'
+import { Cash } from 'cash-dom'
 import u from 'cash-dom'
 import { EventEmitterIns } from '@/utils'
 
@@ -35,7 +35,7 @@ export class InputPlugin implements IPlugin {
     const { eventDom } = this.store.canvas
     const { canvasWrapperDom } = this.excel
 
-    const curSheet = this.excel.getCurSheet()
+    
 
     const inputDom = u('<textarea>').css({
       display:'none',
@@ -52,6 +52,8 @@ export class InputPlugin implements IPlugin {
 
     canvasWrapperDom.append(inputDom)
 
+    let isWriteTargetDom:null | Cash
+
     eventDom.on('dblclick',evt=>{
 
       // 首先单选
@@ -65,6 +67,8 @@ export class InputPlugin implements IPlugin {
         return
       }
 
+      isWriteTargetDom = targetDom
+
       const { top,left } = targetDom.position()
 
       inputDom.css({
@@ -77,20 +81,32 @@ export class InputPlugin implements IPlugin {
         height:targetDom.height(),
       })
 
+      const curSheet = this.excel.getCurSheet()
+      const cell = curSheet.contMap.get(isWriteTargetDom.data('label'))
+
+      inputDom.val(cell.text)
+
       inputDom.get(0).focus()
 
-      inputDom.on('blur',()=>{
-        const cell = curSheet.contMap.get(targetDom.data('label'))
-        cell.text = inputDom.val() as string
-        this.hideInput()
-        curSheet.forceUpdateRect()
-      })
+    })
 
-      inputDom.on('input',_=>{
-        EventEmitterIns.emit("input",inputDom.val() as string)
-        console.log('输入内容',inputDom.val())
-      })
+    inputDom.on('blur',_=>{
+      const curSheet = this.excel.getCurSheet()
+      const cell = curSheet.contMap.get(isWriteTargetDom.data('label'))
+      cell.text = inputDom.val() as string
+      this.hideInput()
+      curSheet.forceUpdateRect()
+    })
 
+    inputDom.on('input',_=>{
+      const curSheet = this.excel.getCurSheet()
+      const cell = curSheet.contMap.get(isWriteTargetDom.data('label'))
+      cell.text = inputDom.val() as string
+      EventEmitterIns.emit("setting",{
+        type:'cell-label-input',
+        data:cell
+      })
+      // console.log('输入内容',inputDom.val())
     })
 
   }

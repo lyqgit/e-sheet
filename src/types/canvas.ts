@@ -49,7 +49,8 @@ export interface ITextRectOption{
   rectWidth:number,
   rectHeight:number,
   globalCompositeOperation?:GlobalCompositeOperation,
-  color?:string,
+  fontColor?:string,
+  bgColor?:string,
   textAlign?:CanvasTextAlign,
   fontSize?:number,
   fontWeight?:string

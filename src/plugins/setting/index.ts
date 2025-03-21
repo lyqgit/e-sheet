@@ -31,7 +31,8 @@ export class SettingPlugin implements IPlugin{
     this.fontStrikethroughBtnDom.attr('current',attr.strikethrough.toString())
     this.fontUnderlineBtnDom.attr('current',attr.underline.toString())
     this.fontItalicBtnDom.attr('current',attr.fontItalic)
-
+    this.fontColorSelectDom.attr('color',attr?.fontColor)
+    this.bgColorSelectDom.attr('color',attr?.bgColor)
     if(attr.isMerge){
       this.cellMergerBtnDom.css('display','none')
       this.cellSplitBtnDom.css('display','flex')
@@ -68,7 +69,9 @@ export class SettingPlugin implements IPlugin{
     })
 
 
-    this.fxInputDom = u('<input>').addClass('fx-input')
+    this.fxInputDom = u('<input>').addClass('fx-input').on('input',_=>{
+      this.setCellAttrbyDom('text',this.fxInputDom.val())
+    })
 
     const settingDom = u('<div>').addClass('e-sheet-setting-input-bar-layout')
     .append(
@@ -858,8 +861,36 @@ export class SettingPlugin implements IPlugin{
         // this.convenientChangeStepArr(2,'fontSize',parseInt(evt.detail))
         // this.cellFontSizeChange(evt.detail)
         // this.wsSendCellAttrByTypeAndData(2)
+        this.setCellAttrbyDom('fontSize',parseInt(evt.detail))
     })
     this.fontSizeSelectDom.attr('label','字号')
-}
+  }
+
+  /**
+   * @description 通过setting设置cell的属性
+   */
+  setCellAttrbyDom(type:string,data:any){
+    const curSheet = this.excel.getCurSheet()
+    const firstCell = curSheet.firstCell
+    switch(type){
+      case 'bgColor':
+        firstCell.bgColor = data
+        break 
+      case 'fontColor':
+        firstCell.fontColor = data
+        break 
+      case 'fontSize':
+        firstCell.fontSize = data
+        break;
+      case 'text':
+        firstCell.text = data
+        break;
+    }
+
+    console.log('设置',type,firstCell)
+
+    curSheet.forceUpdateRect()
+
+  }
 
 }
