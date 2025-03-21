@@ -2,12 +2,15 @@ import { IStore } from "@/store";
 import { IExcel, IPlugin } from "@/types";
 import type { Cash } from "cash-dom";
 import u from "cash-dom";
+import { EventEmitterIns } from '@/utils'
 
 
 export class SettingPlugin implements IPlugin{
   excel: IExcel;
   store: IStore;
   register(): void {
+    this.registrySettingDom()
+    this.emitterListen()
   }
   unregister(): void {
   }
@@ -16,8 +19,17 @@ export class SettingPlugin implements IPlugin{
   constructor(excel:IExcel,store:IStore){
     this.excel = excel
     this.store = store
-    this.registrySettingDom()
   }
+
+  emitterListen(){
+    EventEmitterIns.on('setting',({type,data})=>{
+      // console.log('label',data)
+      if(type === 'cell-label-input'){
+        this.labelInputDom.val(data)
+      }
+    })
+  }
+  
 
   labelInputDom:Cash
   fxInputDom:Cash
@@ -26,6 +38,7 @@ export class SettingPlugin implements IPlugin{
    * @description 装载dom
    */
   registrySettingDom(){
+
     this.labelInputDom = u('<input>').addClass('cell-label-input')
     .on('blur',_=>{
       
@@ -33,6 +46,7 @@ export class SettingPlugin implements IPlugin{
     .on('keydown',_=>{
       
     })
+
 
     this.fxInputDom = u('<input>').addClass('fx-input')
 
@@ -43,7 +57,10 @@ export class SettingPlugin implements IPlugin{
     )
     .append(
       u('<div>').addClass('right-input-layout')
-      .append(this.fxInputDom)
+      .append(
+        u('<span>').addClass('prefix-label').text('fx'),
+        this.fxInputDom
+      )
     )
 
     settingDom.insertBefore(this.excel.canvasWrapperDom)
@@ -139,7 +156,6 @@ export class SettingPlugin implements IPlugin{
     settingTopDom.append(this.freezeFuncDom)
 
     settingTopDom.insertBefore(settingDom)
-
   }
   createStepDom(): Cash {
     const stepForwardDom = u('<e-sheet-radio-button>').attr({

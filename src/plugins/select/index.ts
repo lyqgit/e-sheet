@@ -1,7 +1,7 @@
 import { Cell } from "@/core";
 import { IStore } from "@/store";
 import { IExcel, IPlugin } from "@/types";
-import { getExcelHeaderName } from "@/utils";
+import { getExcelHeaderName,EventEmitterIns } from "@/utils";
 import u from 'cash-dom'
 
 export class SelectPlugin implements IPlugin{
@@ -180,7 +180,10 @@ export class SelectPlugin implements IPlugin{
       curSheet.selCells = [cellA]
       curSheet.forceUpdateRect()
 
-      
+      EventEmitterIns.emit('setting',{
+        type:'cell-label-input',
+        data:cellA.label
+      })
       
       // 可能多选
       eventDom.on('mouseover',(evtB:MouseEvent)=>{

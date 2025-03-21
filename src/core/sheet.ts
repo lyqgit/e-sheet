@@ -1,6 +1,6 @@
 import { ISheet,ISheetOption,ICell } from '@/types'
 import { Cell } from './cell'
-import { getExcelHeaderName } from '@/utils'
+import { EventEmitterIns, getExcelHeaderName } from '@/utils'
 import store from '@/store'
 import u from 'cash-dom'
 
@@ -15,7 +15,13 @@ export class Sheet implements ISheet{
   }
 
   initDraw(){
-    // 初始绘制
+    // 初始绘制，默认选中A1
+    this.selCells = [this.contMap.get('A1')]
+    this.firstCell = this.contMap.get('A1')
+    EventEmitterIns.emit('setting',{
+      type:'cell-label-input',
+      data:'A1'
+    })
     this.forceUpdateAll()
   }
 

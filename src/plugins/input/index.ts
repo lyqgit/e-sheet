@@ -83,6 +83,7 @@ export class InputPlugin implements IPlugin {
         const cell = curSheet.contMap.get(targetDom.data('label'))
         cell.text = inputDom.val() as string
         this.hideInput()
+        curSheet.forceUpdateRect()
       })
 
       inputDom.on('input',_=>{

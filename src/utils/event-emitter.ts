@@ -22,11 +22,18 @@ class EventEmitter<T extends Record<string, any>> {
   }
 }
 
+interface SettingEvents{
+  type:string,
+  data:string
+}
+
 // 定义可用的事件类型
 interface Events {
   message: string;
   update: { id: number; status: string };
-  input:string
+  input:string,
+  'cell-label-input':string,
+  'setting':SettingEvents
 }
 
 // 使用 EventEmitter
@@ -34,4 +41,4 @@ const EventEmitterIns = new EventEmitter<Events>();
 
 export { 
   EventEmitterIns
- }
+}

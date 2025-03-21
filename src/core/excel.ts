@@ -45,16 +45,20 @@ export class eSheet implements IExcel {
     // 实例化Canvas
     this.initCanvas()
 
+    let firstSheet:Sheet = null
+
     // 查看是否有数据，如果初始化时带入数据，则直接根据数据渲染
     if(Array.isArray(options?.data) && options?.data.length > 0){
       // 装载数据
 
     }else{
 
-      this.createEmptySheet()
+      firstSheet = this.createEmptySheet()
     }
 
     this.initPlugin(options.plugins);
+
+    firstSheet.initDraw()
 
   }
 
@@ -97,7 +101,7 @@ export class eSheet implements IExcel {
     })
     // console.log("------",'未命名'+(this.sheetArr.length+1))
     this.sheetArr.push(oneSheet)
-    oneSheet.initDraw()
+    return oneSheet
   }
 
   // 装载canvas
