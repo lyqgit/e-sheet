@@ -2,7 +2,7 @@ import { IStore } from "@/store";
 import { IExcel, IPlugin } from "@/types";
 import type { Cash } from "cash-dom";
 import u from "cash-dom";
-import { EventEmitterIns } from '@/utils'
+import { EventEmitterIns,ICellLabelInputEvent } from '@/utils'
 
 
 export class SettingPlugin implements IPlugin{
@@ -25,7 +25,9 @@ export class SettingPlugin implements IPlugin{
     EventEmitterIns.on('setting',({type,data})=>{
       // console.log('label',data)
       if(type === 'cell-label-input'){
-        this.labelInputDom.val(data)
+        const { label,value } = data as ICellLabelInputEvent
+        this.labelInputDom.val(label)
+        this.fxInputDom.val(value)
       }
     })
   }

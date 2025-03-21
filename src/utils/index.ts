@@ -1,7 +1,7 @@
 import Base64Image from '@/image'
 import { ICell } from '@/types';
 
-export { EventEmitterIns } from './event-emitter'
+export * from './event-emitter'
 
 
 /**

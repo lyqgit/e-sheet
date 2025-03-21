@@ -20,7 +20,10 @@ export class Sheet implements ISheet{
     this.firstCell = this.contMap.get('A1')
     EventEmitterIns.emit('setting',{
       type:'cell-label-input',
-      data:'A1'
+      data:{
+        label:'A1',
+        value:this.firstCell.text
+      }
     })
     this.forceUpdateAll()
   }
