@@ -31,8 +31,8 @@ export class SettingPlugin implements IPlugin{
     this.fontStrikethroughBtnDom.attr('current',attr.strikethrough.toString())
     this.fontUnderlineBtnDom.attr('current',attr.underline.toString())
     this.fontItalicBtnDom.attr('current',attr.fontItalic)
-    this.fontColorSelectDom.attr('color',attr?.fontColor)
-    this.bgColorSelectDom.attr('color',attr?.bgColor)
+    this.fontColorSelectDom.attr('color',attr.fontColor)
+    this.bgColorSelectDom.attr('color',attr.bgColor?attr.bgColor:'#ffffff')
     if(attr.isMerge){
       this.cellMergerBtnDom.css('display','none')
       this.cellSplitBtnDom.css('display','flex')
@@ -628,7 +628,7 @@ export class SettingPlugin implements IPlugin{
 
     bgColorSelectDom.on('e-sheet-icon-color-svg-onchange',evt=>{
         // this.convenientChangeStepArr(8,'bgColor',evt.detail)
-        // this.cellBgColorChange(evt.detail)
+        this.setCellAttrbyDom('bgColor',evt.detail)
         // this.wsSendCellAttrByTypeAndData(8)
     })
 
@@ -646,7 +646,7 @@ export class SettingPlugin implements IPlugin{
 
     fontColorSelectDom.on('e-sheet-icon-color-svg-onchange',evt=>{
         // this.convenientChangeStepArr(7,'fontColor',evt.detail)
-        // this.cellFontColorChange(evt.detail)
+        this.setCellAttrbyDom('fontColor',evt.detail)
         // this.wsSendCellAttrByTypeAndData(7)
     })
 
@@ -680,16 +680,16 @@ export class SettingPlugin implements IPlugin{
 
     this.fontStrikethroughBtnDom = fontStrikethroughBtnDom
     fontStrikethroughBtnDom.on('e-sheet-radio-group-change',evt=>{
-        console.log('evt',evt)
-        // if(fontStrikethroughBtnDom.getAttribute('current') === ''){
-        //     fontStrikethroughBtnDom.setAttribute('current',evt.detail)
-        //     this.convenientChangeStepArr(18,'strikethrough',evt.detail)
-        //     this.cellStrikethroughChange('true')
-        // }else{
-        //     fontStrikethroughBtnDom.setAttribute('current','')
-        //     this.convenientChangeStepArr(18,'strikethrough','')
-        //     this.cellStrikethroughChange('')
-        // }
+        // console.log('evt',evt)
+        if(fontStrikethroughBtnDom.attr('current') === 'false'){
+            fontStrikethroughBtnDom.attr('current',evt.detail)
+            // this.convenientChangeStepArr(18,'strikethrough',evt.detail)
+            this.setCellAttrbyDom('strikethrough',true)
+        }else{
+            fontStrikethroughBtnDom.attr('current','false')
+            // this.convenientChangeStepArr(18,'strikethrough','')
+            this.setCellAttrbyDom('strikethrough',false)
+        }
         // this.wsSendCellAttrByTypeAndData(18)
     })
   }
@@ -715,16 +715,16 @@ export class SettingPlugin implements IPlugin{
     
     this.fontUnderlineBtnDom = fontUnderlineBtnDom
     fontUnderlineBtnDom.on('e-sheet-radio-group-change',evt=>{
-        console.log('evt',evt)
-        // if(fontUnderlineBtnDom.getAttribute('current') === ''){
-        //     fontUnderlineBtnDom.setAttribute('current',evt.detail)
-        //     this.convenientChangeStepArr(19,'underline',evt.detail)
-        //     this.cellUnderlineChange('true')
-        // }else{
-        //     fontUnderlineBtnDom.setAttribute('current','')
-        //     this.convenientChangeStepArr(19,'underline','')
-        //     this.cellUnderlineChange('')
-        // }
+        // console.log('evt',evt)
+        if(fontUnderlineBtnDom.attr('current') === 'false'){
+            fontUnderlineBtnDom.attr('current',evt.detail)
+            // this.convenientChangeStepArr(19,'underline',evt.detail)
+            this.setCellAttrbyDom('underline','true')
+        }else{
+            fontUnderlineBtnDom.attr('current','false')
+            // this.convenientChangeStepArr(19,'underline','')
+            this.setCellAttrbyDom('underline',false)
+        }
         // this.wsSendCellAttrByTypeAndData(19)
     })
   }
@@ -751,15 +751,15 @@ export class SettingPlugin implements IPlugin{
 
     fontItalicBtnDom.on('e-sheet-radio-group-change',evt=>{
         // console.log('evt',evt)
-        // if(fontItalicBtnDom.getAttribute('current') === ''){
-        //     fontItalicBtnDom.setAttribute('current',evt.detail)
-        //     this.convenientChangeStepArr(6,'fontItalic',evt.detail)
-        //     this.cellFontItalicChange(evt.detail)
-        // }else{
-        //     fontItalicBtnDom.setAttribute('current','')
-        //     this.convenientChangeStepArr(6,'fontItalic','')
-        //     this.cellFontItalicChange('')
-        // }
+        if(fontItalicBtnDom.attr('current') === ''){
+            fontItalicBtnDom.attr('current',evt.detail)
+            this.setCellAttrbyDom('fontItalic',evt.detail)
+            // this.cellFontItalicChange(evt.detail)
+        }else{
+            fontItalicBtnDom.attr('current','')
+            this.setCellAttrbyDom('fontItalic','')
+            // this.cellFontItalicChange('')
+        }
         // this.wsSendCellAttrByTypeAndData(6)
 
     })
@@ -772,8 +772,11 @@ export class SettingPlugin implements IPlugin{
    */
 
   createFontWeightBtnDom() {
+
+    const fontWeight = 'bold'
+
     // 粗体
-    const fontWeightBtnDom = u('<e-sheet-radio-button>').attr({'label':'粗体','value':'bold'})
+    const fontWeightBtnDom = u('<e-sheet-radio-button>').attr({'label':'粗体','value':fontWeight})
     .append(
       u('<e-sheet-icon-svg>').attr({'category':'font','position':'weight'})
     )
@@ -782,15 +785,13 @@ export class SettingPlugin implements IPlugin{
     this.fontWeightBtnDom = fontWeightBtnDom
     fontWeightBtnDom.on('e-sheet-radio-group-change',evt=>{
         console.log('evt',evt)
-        // if(fontWeightBtnDom.getAttribute('current') === ''){
-        //     fontWeightBtnDom.setAttribute('current',evt.detail)
-        //     this.convenientChangeStepArr(5,'fontWeight',evt.detail)
-        //     this.cellFontWeightChange(evt.detail)
-        // }else{
-        //     fontWeightBtnDom.setAttribute('current','')
-        //     this.convenientChangeStepArr(5,'fontWeight','')
-        //     this.cellFontWeightChange('')
-        // }
+        if(fontWeightBtnDom.attr('current') === ''){
+            fontWeightBtnDom.attr('current',evt.detail)
+            this.setCellAttrbyDom('fontWeight',evt.detail)
+        }else{
+            fontWeightBtnDom.attr('current','')
+            this.setCellAttrbyDom('fontWeight','')
+        }
         // this.wsSendCellAttrByTypeAndData(5)
     })
   }
@@ -813,7 +814,7 @@ export class SettingPlugin implements IPlugin{
     )
 
     this.fontHorAddrGroup.on('e-sheet-radio-group-onchange',evt=>{
-        console.log('evt',evt)
+        // console.log('evt',evt)
         // this.convenientChangeStepArr(4,'textAlign',evt.detail)
 
         this.cellFontTextAlignChange(evt.detail)
@@ -844,9 +845,9 @@ export class SettingPlugin implements IPlugin{
     )
 
     this.fontVerAddrGroup.on('e-sheet-radio-group-onchange',evt=>{
-        console.log('evt',evt)
+        // console.log('evt',evt)
         // this.convenientChangeStepArr(3,'textBaseLine',evt.detail)
-        // this.cellFontTextBaseLineChange(evt.detail)
+        this.setCellAttrbyDom('textBaseline',evt.detail)
         // this.wsSendCellAttrByTypeAndData(3)
     })
   }
@@ -872,22 +873,11 @@ export class SettingPlugin implements IPlugin{
   setCellAttrbyDom(type:string,data:any){
     const curSheet = this.excel.getCurSheet()
     const firstCell = curSheet.firstCell
-    switch(type){
-      case 'bgColor':
-        firstCell.bgColor = data
-        break 
-      case 'fontColor':
-        firstCell.fontColor = data
-        break 
-      case 'fontSize':
-        firstCell.fontSize = data
-        break;
-      case 'text':
-        firstCell.text = data
-        break;
-    }
+    const json = {}
+    json[type] = data
+    firstCell.setCellByJson(json)
 
-    console.log('设置',type,firstCell)
+    // console.log('设置',type,firstCell)
 
     curSheet.forceUpdateRect()
 

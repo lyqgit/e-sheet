@@ -3,6 +3,29 @@ export interface Img {
   url:HTMLImageElement
 }
 
+export interface IBaseJsonCell{
+  row?:number,
+  col?:number,
+  x?:number,
+  y?:number,
+  width?:number,
+  height?:number,
+  fontSize?:number
+  fontWeight?:string
+  fontItalic?:string
+  fontFamily?:string
+  textAlign?:string
+  textBaseline?:string
+  strikethrough?:Boolean
+  underline?:Boolean,
+  textWrapType?:string
+  label?:string,
+  img?:Array<Img>
+  text?:string
+  fontColor?:string
+  bgColor?:string
+}
+
 export interface IBaseCell{
   row:number,
   col:number,

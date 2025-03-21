@@ -1,4 +1,4 @@
-import { ICell, ICellOption, Img } from "@/types";
+import { IBaseJsonCell, ICell, ICellOption, Img } from "@/types";
 import store from '@/store'
 import u from 'cash-dom'
 
@@ -183,14 +183,17 @@ export class Cell implements ICell{
       color:store.config.borderColor
     })
 
-    store.canvas.ctx.drawFillRect({
-      x:this.xScale+reX,
-      y:this.yScale+reY,
-      width:this.widthScale,
-      height:this.heightScale,
-      color:this.bgColor??'#ffffff',
-      globalCompositeOperation:'destination-over',
-    })
+    if(this.bgColor){
+      store.canvas.ctx.drawFillRect({
+        x:this.xScale+reX,
+        y:this.yScale+reY,
+        width:this.widthScale,
+        height:this.heightScale,
+        color:this.bgColor,
+        globalCompositeOperation:'destination-over',
+      })
+    }
+    
   }
 
   drawMergeRect(reX:number,reY:number,lastCell:Cell): void {
@@ -304,7 +307,7 @@ export class Cell implements ICell{
     }
   }
 
-  setCellByJson(json:ICellOption):void{
+  setCellByJson(json:IBaseJsonCell):void{
     for(let k in json){
       this[k] = json[k]
     }

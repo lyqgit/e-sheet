@@ -15,9 +15,10 @@ export class Canvas implements ICanvas{
   }
   drawText(option:ITextRectOption): void {
     const { ctx } = this
-    const { fontWeight,fontItalic,fontFamily,fontSize,rectHeight,rectWidth,x,y,text,textBaseline,textAlign } = option
-    ctx.font = `${fontWeight??500+' '}${fontItalic??'normal'+' '}${fontSize??12}px ${fontFamily??'serif'}`
-    ctx.fillStyle= option.fontColor??"black";
+    const { fontWeight,fontItalic,fontFamily,fontSize,rectHeight,rectWidth,x,y,text,textBaseline,textAlign,strikethrough,underline,fontColor } = option
+    ctx.font = `${fontWeight?fontWeight:300} ${fontItalic?fontItalic:'normal'} ${fontSize?fontSize:12}px ${fontFamily?fontFamily:'serif'}`
+
+    ctx.fillStyle= fontColor?fontColor:"black";
     const baseX = x+rectWidth/2
     const baseY = y+rectHeight/2
 
@@ -55,9 +56,63 @@ export class Canvas implements ICanvas{
     }
 
     ctx.fillText(tempText,alignX,alignY,rectWidth)
+
+
+    if(strikethrough&& text){
+      const strikeObj = ctx.measureText(tempText)
+      if(textAlign === 'right' && textBaseline==='middle'){
+          this.drawThroughLine(alignX-strikeObj.width,alignY,alignX,alignY)
+      }if(textAlign === 'left' && textBaseline==='middle'){
+          this.drawThroughLine(alignX,alignY,alignX+strikeObj.width,alignY)
+      }if(textAlign === 'center' && textBaseline==='top'){
+          this.drawThroughLine(alignX-(strikeObj.width/2),alignY+fontSize/2,alignX+(strikeObj.width/2),alignY+fontSize/2)
+      }if(textAlign === 'center' && textBaseline==='bottom'){
+          this.drawThroughLine(alignX-(strikeObj.width/2),alignY-fontSize/2,alignX+(strikeObj.width/2),alignY-fontSize/2)
+      }if(textAlign === 'right' && textBaseline==='bottom'){
+          this.drawThroughLine(alignX-strikeObj.width,alignY-fontSize/2,alignX,alignY-fontSize/2)
+      }if(textAlign === 'right' && textBaseline==='top'){
+          this.drawThroughLine(alignX-strikeObj.width,alignY+fontSize/2,alignX,alignY+fontSize/2)
+      }if(textAlign === 'left' && textBaseline==='bottom'){
+          this.drawThroughLine(alignX,alignY-fontSize/2,alignX+strikeObj.width,alignY-fontSize/2)
+      }if(textAlign === 'left' && textBaseline==='top'){
+          this.drawThroughLine(alignX,alignY+fontSize/2,alignX+strikeObj.width,alignY+fontSize/2)
+      }else if(textAlign === 'center' && textBaseline==='middle'){
+          this.drawThroughLine(alignX-(strikeObj.width/2),alignY,alignX+(strikeObj.width/2),alignY)
+      }
+    }
+
+    if(underline&&text){
+      const strikeObj = ctx.measureText(tempText)
+      if(textAlign === 'right' && textBaseline==='middle'){
+          this.drawThroughLine(alignX-strikeObj.width,alignY+fontSize/2,alignX,alignY+fontSize/2)
+      }if(textAlign === 'left' && textBaseline==='middle'){
+          this.drawThroughLine(alignX,alignY+fontSize/2,alignX+strikeObj.width,alignY+fontSize/2)
+      }if(textAlign === 'center' && textBaseline==='top'){
+          this.drawThroughLine(alignX-(strikeObj.width/2),alignY+fontSize,alignX+(strikeObj.width/2),alignY+fontSize)
+      }if(textAlign === 'center' && textBaseline==='bottom'){
+          this.drawThroughLine(alignX-(strikeObj.width/2),alignY,alignX+(strikeObj.width/2),alignY)
+      }if(textAlign === 'right' && textBaseline==='bottom'){
+          this.drawThroughLine(alignX-strikeObj.width,alignY,alignX,alignY)
+      }if(textAlign === 'right' && textBaseline==='top'){
+          this.drawThroughLine(alignX-strikeObj.width,alignY+fontSize,alignX,alignY+fontSize)
+      }if(textAlign === 'left' && textBaseline==='bottom'){
+          this.drawThroughLine(alignX,alignY,alignX+strikeObj.width,alignY)
+      }if(textAlign === 'left' && textBaseline==='top'){
+          this.drawThroughLine(alignX,alignY+fontSize,alignX+strikeObj.width,alignY+fontSize)
+      }else if(textAlign === 'center' && textBaseline==='middle'){
+          this.drawThroughLine(alignX-(strikeObj.width/2),alignY+fontSize/2,alignX+(strikeObj.width/2),alignY+fontSize/2)
+      }
+    }
+
   }
-  drawThroughLine(): void {
-    throw new Error('Method not implemented.');
+  drawThroughLine(startX:number,startY:number,endX:number,endY:number): void {
+    this.ctx.strokeStyle = 'black'
+    this.ctx.lineWidth = 1
+    this.ctx.beginPath();
+    this.ctx.moveTo(startX,startY)
+    this.ctx.lineTo(endX,endY)
+    this.ctx.closePath();
+    this.ctx.stroke();
   }
   clearRect(startX:number,startY:number,endX:number,endY:number): void {
     this.ctx.clearRect(startX,startY,endX,endY)

@@ -10,7 +10,7 @@ export interface ICanvas{
   drawLine():void
   drawImage():void
   drawText(option:ITextRectOption):void
-  drawThroughLine():void
+  drawThroughLine(startX:number,startY:number,endX:number,endY:number):void
   clearRect(startX:number,startY:number,endX:number,endY:number):void
   drawStrokeRect(option:IStrokeRectOption):void
   drawFillRect(option:IFillRectOption):void
