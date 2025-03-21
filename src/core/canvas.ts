@@ -17,7 +17,7 @@ export class Canvas implements ICanvas{
     const { ctx } = this
     const { fontWeight,fontItalic,fontFamily,fontSize,rectHeight,rectWidth,x,y,text,textBaseline,textAlign } = option
     ctx.font = `${fontWeight??500+' '}${fontItalic??'normal'+' '}${fontSize??12}px ${fontFamily??'serif'}`
-    ctx.fillStyle= option.color??"black";
+    ctx.fillStyle= option.fontColor??"black";
     const baseX = x+rectWidth/2
     const baseY = y+rectHeight/2
 
