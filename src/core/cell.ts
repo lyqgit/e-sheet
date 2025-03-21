@@ -305,25 +305,9 @@ export class Cell implements ICell{
   }
 
   setCellByJson(json:ICellOption):void{
-    this.row = json.row
-    this.col = json.col
-    this.x = json.x
-    this.y = json.y
-    this.width = json.width
-    this.height = json.height
-    this.fontSize = json.fontSize
-    this.fontWeight = json.fontWeight
-    this.fontItalic = json.fontItalic
-    this.fontFamily = json.fontFamily
-    this.textAlign = json.textAlign
-    this.textBaseline = json.textBaseline
-    this.strikethrough = json.strikethrough
-    this.underline = json.underline
-    this.label = json.label
-    this.text = json.text
-    this.img = json.img
-    this.fontColor = json.fontColor
-    this.bgColor = json.bgColor
+    for(let k in json){
+      this[k] = json[k]
+    }
   }
   
   row: number;
