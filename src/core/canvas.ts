@@ -15,10 +15,32 @@ export class Canvas implements ICanvas{
   }
   drawText(option:ITextRectOption): void {
     const { ctx } = this
-    const { fontWeight,fontItalic,fontFamily,fontSize,rectHeight,rectWidth,x,y,text,textBaseline,textAlign,strikethrough,underline,fontColor } = option
+    const { fontWeight,fontItalic,fontFamily,fontSize,rectHeight,rectWidth,x,y,text,textBaseline,textAlign,strikethrough,underline,fontColor,textWrapType } = option
     ctx.font = `${fontWeight?fontWeight:300} ${fontItalic?fontItalic:'normal'} ${fontSize?fontSize:12}px ${fontFamily?fontFamily:'serif'}`
 
     ctx.fillStyle= fontColor?fontColor:"black";
+
+    if(textWrapType === 'wrap'){
+      ctx.textBaseline = "top";
+      ctx.textAlign = "start";
+      const txtArr = text.split('\n')
+      txtArr.forEach((item,index)=>{
+          ctx.fillText(item,x+2,y+2+index*fontSize)
+          const lineWidth = ctx.measureText(item).width;
+          if(strikethrough){
+              const fontSizeHalf = fontSize/2
+              // console.log('画穿过线',item,x,y,y+index*font.fontSize+fontSizeHalf,x+lineWidth+2)
+              this.drawThroughLine(x,y+index*fontSize+fontSizeHalf,x+lineWidth+2,y+index*fontSize+fontSizeHalf)
+          }
+          if(underline){
+              this.drawThroughLine(x,y+(index+1)*fontSize,x+lineWidth+2,y+(index+1)*fontSize)
+          }
+      })
+      return
+  }
+
+
+
     const baseX = x+rectWidth/2
     const baseY = y+rectHeight/2
 

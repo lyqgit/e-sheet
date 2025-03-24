@@ -11,6 +11,7 @@ export class SettingPlugin implements IPlugin{
   register(): void {
     this.registrySettingDom()
     this.emitterListen()
+    this.setTextWrapInHeader()
   }
   unregister(): void {
   }
@@ -20,6 +21,12 @@ export class SettingPlugin implements IPlugin{
     this.excel = excel
     this.store = store
   }
+
+  setTextWrapInHeader(type?:string){
+    const tempType = type??'cut'
+    this.textWrapGroup.attr('value',tempType)
+    this.setTextWrapChange(tempType)
+}
 
   setCellAttr(attr:ICell){
     this.labelInputDom.val(attr.label)
@@ -485,7 +492,7 @@ export class SettingPlugin implements IPlugin{
     
     this.textWrapGroup = textWrapGroup
     textWrapGroup.on('e-sheet-radio-group-onchange',evt=>{
-        console.log('evt',evt)
+        // console.log('evt',evt)
         // const currentSheet = this.core.getCurrentSheet();
         // this.changeStepArr({
         //     type:21,
@@ -493,9 +500,15 @@ export class SettingPlugin implements IPlugin{
         //     next:evt.detail
         // })
         // this.core.ws.wsSend(21,{textWrapType:evt.detail})
-        // this.setTextWrapChange(evt.detail)
+        this.setTextWrapChange(evt.detail)
     })
   }
+
+  setTextWrapChange(type:string){
+    const curSheet = this.excel.getCurSheet();
+    curSheet.textWrapType = type
+    curSheet.forceUpdateRect()
+}
 
   cellSplitBtnDom:Cash
 

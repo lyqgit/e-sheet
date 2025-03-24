@@ -50,7 +50,7 @@ export interface IBaseCell{
 }
 
 export interface ICell extends IBaseCell{
-  drawContRect(reX:number,reY:number):void
+  drawContRect(reX:number,reY:number,textWrapType:string):void
   drawHeaderColRect(reX:number,color?:string):void
   drawHeaderRowRect(reY:number,color?:string):void
   clearRect(startX:number,startY:number,endX:number,endY:number):void

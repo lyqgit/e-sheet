@@ -5,6 +5,11 @@ import store from '@/store'
 import u from 'cash-dom'
 
 export class Sheet implements ISheet{
+  /**
+     * @description cut-截断  wrap-换行
+     * @type {string}
+     */
+  textWrapType = 'cut';
   data: Array<ICell>;
   constructor(option:ISheetOption){
     this.name = option.name
@@ -323,12 +328,12 @@ export class Sheet implements ISheet{
         if(contCell.isMerge && contCell.isStartMergeLabel){
           // console.log('headerName',headerName+i)
           const lastCell = this.contMap.get(this.mergeCell.get(contCell.label)[1])
-          contCell.drawMergeRect(cellHeight*scale - left,cellHeight*scale - top,lastCell)
+          contCell.drawMergeRect(cellHeight*scale - left,cellHeight*scale - top,lastCell,this.textWrapType)
           drawDom && dfDom.append(contCell.ctMergeDom(cellHeight*scale - left,cellHeight*scale - top,lastCell,100))
         }else if(contCell.isMerge){
           // 不绘制表格
         }else{
-          contCell.drawContRect(cellHeight*scale - left,cellHeight*scale - top)
+          contCell.drawContRect(cellHeight*scale - left,cellHeight*scale - top,this.textWrapType)
           drawDom && dfDom.append(contCell.ctDom(cellHeight*scale - left,cellHeight*scale - top,100))
         }
       }

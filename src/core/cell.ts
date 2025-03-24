@@ -153,7 +153,7 @@ export class Cell implements ICell{
     })
   }
 
-  drawContRect(reX:number,reY:number): void {
+  drawContRect(reX:number,reY:number,textWrapType:string): void {
 
     store.canvas.ctx.drawText({
       x:this.xScale+reX,
@@ -170,6 +170,7 @@ export class Cell implements ICell{
       fontItalic:this.fontItalic,
       underline:this.underline,
       strikethrough:this.strikethrough,
+      textWrapType,
       globalCompositeOperation:'destination-over',
     })
 
@@ -196,7 +197,7 @@ export class Cell implements ICell{
     
   }
 
-  drawMergeRect(reX:number,reY:number,lastCell:Cell): void {
+  drawMergeRect(reX:number,reY:number,lastCell:Cell,textWrapType:string): void {
 
     const rectWidth = lastCell.xScale + lastCell.widthScale - this.xScale
     const rectHeight = lastCell.yScale + lastCell.heightScale - this.yScale
@@ -207,6 +208,16 @@ export class Cell implements ICell{
       text:this.text,
       rectWidth:rectWidth,
       rectHeight:rectHeight,
+      textAlign:this.textAlign as CanvasTextAlign,
+      textBaseline:this.textBaseline as CanvasTextBaseline,
+      fontColor:this.fontColor,
+      fontSize:this.fontSize,
+      fontWeight:this.fontWeight,
+      fontFamily:this.fontFamily,
+      fontItalic:this.fontItalic,
+      underline:this.underline,
+      strikethrough:this.strikethrough,
+      textWrapType,
       globalCompositeOperation:'destination-over',
     })
 
