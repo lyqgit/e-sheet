@@ -506,6 +506,8 @@ export class SettingPlugin implements IPlugin{
   createCellSplitBtnDom() {
     const cellSplitBtnDom = u('<e-sheet-tip>').css({
         display:'none',
+    }).attr({
+      'tip-label':'拆分单元格' 
     }).append(
       u('<div>').addClass('e-sheet-font-style-layout e-sheet-cell-hover').css({
         padding:'2px',
@@ -520,7 +522,10 @@ export class SettingPlugin implements IPlugin{
     )
     
     cellSplitBtnDom.on('click',_=>{
-      
+      EventEmitterIns.emit('contextmenu',{
+        type:'split-cell',
+        data:''
+      })
     })
 
     // cellSplitBtnDom.onclick=_=>{
@@ -580,7 +585,10 @@ export class SettingPlugin implements IPlugin{
     )
 
     cellMergerBtnDom.on('click',_=>{
-
+      EventEmitterIns.emit('contextmenu',{
+        type:'merge-cell',
+        data:''
+      })
     })
 
     // cellMergerBtnDom.onclick=_=>{

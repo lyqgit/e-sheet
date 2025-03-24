@@ -36,6 +36,7 @@ interface Events {
   input:string,
   'cell-label-input':string,
   'setting':ISettingEvents
+  'contextmenu':ISettingEvents
 }
 
 // 使用 EventEmitter

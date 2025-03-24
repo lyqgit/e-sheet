@@ -1,13 +1,14 @@
 import { IStore } from "@/store";
 import { IExcel, IPlugin } from "@/types";
 import u, { Cash } from 'cash-dom'
-import { doubleLoopByCell, EventEmitterIns, getExcelHeaderName, getScrollTopAndLeft } from '@/utils'
+import { doubleLoopByCell, EventEmitterIns, getExcelHeaderName } from '@/utils'
 
 export class ContextmenuPlugin implements IPlugin {
   excel: IExcel;
   store: IStore;
   register(): void {
     this.registryContextMenu()
+    this.emitterListen()
   }
   unregister(): void {
   }
@@ -20,6 +21,18 @@ export class ContextmenuPlugin implements IPlugin {
   constructor(excel: IExcel, store: IStore) {
     this.excel = excel
     this.store = store 
+  }
+
+  emitterListen(){
+    EventEmitterIns.on('contextmenu',({type,data})=>{
+      if(type === 'merge-cell'){
+        this.mergeCell()
+      }
+      
+      if(type === 'split-cell'){
+        this.splitCell()
+      }
+    })
   }
 
   containerDom:Cash;
@@ -61,6 +74,11 @@ export class ContextmenuPlugin implements IPlugin {
       })
 
       curSheet.selCells = [mergeStartCell,mergeEndCell]
+
+      EventEmitterIns.emit('setting',{
+        type:'cell-label-input',
+        data:mergeStartCell
+      })
 
       curSheet.forceUpdateAll()
     }
