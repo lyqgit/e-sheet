@@ -152,7 +152,7 @@ export class SettingPlugin implements IPlugin{
     this.createFilterFuncDom()
     this.createFreezeFuncDom()
 
-    const cellMergeAndSplitLayoutDom = u('<div>').addClass('cell-merge-and-split-layout')
+    const cellMergeAndSplitLayoutDom = u('<div>').addClass('font-position-layout')
 
     cellMergeAndSplitLayoutDom.append(this.cellMergerBtnDom)
     cellMergeAndSplitLayoutDom.append(this.cellSplitBtnDom)
@@ -254,10 +254,8 @@ export class SettingPlugin implements IPlugin{
         alignItems: 'center' 
       }).append(
         funcRadioDom,
-        u('<div>').attr({
-          innerText: '冻结',
-          className: 'e-sheet-cell-font'  
-        }).css({
+        u('<div>').text('冻结').addClass('e-sheet-cell-font')
+        .css({
           marginTop: '6px'
         })
       )
@@ -392,10 +390,8 @@ export class SettingPlugin implements IPlugin{
                     position: 'cell-img'
                 })
             ),
-            u('<div>').attr({
-                innerText: '图片',
-                className: 'e-sheet-cell-font' 
-            }).css({
+            u('<div>').text('图片').addClass('e-sheet-cell-font')
+            .css({
                 marginTop: '6px' 
             })
         ),

@@ -15,7 +15,7 @@ export default class Tip extends HTMLElement {
             // console.log('evt',this.firstChild.getBoundingClientRect())
             if(!document.body.contains(tipDom)){
                 const tipLabelWidth = this.tipLabel.length * 12
-                const diffY = -32
+                const diffY = this.top?-32:28
                 const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
                 const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft;
                 const {x,y,width} = this.getBoundingClientRect()
