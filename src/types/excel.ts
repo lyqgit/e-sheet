@@ -1,5 +1,4 @@
 import { Sheet } from '@/core'
-import { IBaseExcel } from './base'
 import { ISheet } from './sheet'
 import { Cash } from 'cash-dom'
 import { IPlugin } from './plugin'
@@ -19,7 +18,7 @@ export interface IExcelOptions{
 export interface IExcel{
   removeSheet(i:number):void;
   switchSheet(i:number):void;
-  createEmptySheet():void;
+  createEmptySheet():Sheet;
   sheetArr:Array<Sheet>
   curSheetIndex:number
   excelDom:Cash

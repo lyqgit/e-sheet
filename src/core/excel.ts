@@ -91,7 +91,7 @@ export class eSheet implements IExcel {
     return this.sheetArr[this.curSheetIndex]
   }
 
-  createEmptySheet(){
+  createEmptySheet():Sheet{
     const { lock } = store.config
 
     // 没有数据，渲染默认内容，加载一个sheet

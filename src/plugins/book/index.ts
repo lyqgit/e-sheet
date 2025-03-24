@@ -85,12 +85,11 @@ export class BookPlugin implements IPlugin{
       u(item).attr('class',curSheetIndex===index?'item-span active-item-span':'item-span')
     })
     // 重置滚动条
-    const scrollPlugin = this.store.config.plugins['scroll'];
-    (scrollPlugin as IScrollPlugin).resize()
+    this.excel.resize()
   }
 
   createNewSheet(){
-    this.excel.createEmptySheet()
+    this.excel.createEmptySheet().initSelect()
     const { sheetArr } = this.excel
 
     this.sheetArrLayoutDom.append(

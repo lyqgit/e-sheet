@@ -23,13 +23,17 @@ export class Sheet implements ISheet{
 
   initDraw(){
     // 初始绘制，默认选中A1
+    this.initSelect()
+    this.forceUpdateAll()
+  }
+
+  initSelect(){
     this.selCells = [this.contMap.get('A1')]
     this.firstCell = this.contMap.get('A1')
     EventEmitterIns.emit('setting',{
       type:'cell-label-input',
       data:this.firstCell
     })
-    this.forceUpdateAll()
   }
 
   selCells:Array<Cell> = []
