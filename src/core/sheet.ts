@@ -18,6 +18,8 @@ export class Sheet implements ISheet{
     this.initData(option.data);
     this.mergeCell = new Map();
   }
+  col: number
+  row: number
 
   initDraw(){
     // 初始绘制，默认选中A1
@@ -67,6 +69,9 @@ export class Sheet implements ISheet{
   emptyData(){
     const { row,col,cellWidth,cellHeight } = store.config
 
+    this.row = row
+    this.col = col
+
     let abY = 0;
     for(let i=0;i<row;i++){
       let abX = 0;
@@ -78,7 +83,7 @@ export class Sheet implements ISheet{
           col:0,
           x:abX,
           y:abY,
-          width:cellWidth,
+          width:cellHeight,
           height:cellHeight,
           fontSize:12,
           fontColor:'black',

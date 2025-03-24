@@ -128,7 +128,7 @@ export class Cell implements ICell{
       x:0,
       y:this.yScale+reY,
       text:this.label,
-      rectWidth:this.heightScale,
+      rectWidth:this.widthScale,
       rectHeight:this.heightScale,
       globalCompositeOperation:'destination-over',
     })
@@ -136,7 +136,7 @@ export class Cell implements ICell{
     store.canvas.ctx.drawStrokeRect({
       x:0,
       y:this.yScale+reY,
-      width:this.heightScale,
+      width:this.widthScale,
       height:this.heightScale,
       lineWidth:1,
       globalCompositeOperation:'destination-over',
@@ -146,7 +146,7 @@ export class Cell implements ICell{
     store.canvas.ctx.drawFillRect({
       x:0,
       y:this.yScale+reY,
-      width:this.heightScale,
+      width:this.widthScale,
       height:this.heightScale,
       globalCompositeOperation:'destination-over',
       color

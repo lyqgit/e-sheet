@@ -25,13 +25,17 @@ export class GesturePlugin implements IPlugin {
   showGesture(){
     const { gestureEventDom } = this.store.canvas
     gestureEventDom.on('mousemove',evt=>{
+      const { expandLock } = this.store.config
+      if(expandLock){
+        return
+      }
       const targetDom = u(evt.target as HTMLElement)
       const targetDomCol = targetDom.data('col')
       const targetDomRow = targetDom.data('row')
       if(targetDomCol > 0 && targetDomRow > 0){
         gestureEventDom.css('cursor',setCursor('cell'))
       }else if(targetDomCol === 0 && targetDomRow > 0){
-        // 顶部
+        // 左侧
         if(evt.offsetY <= this.diffDis && targetDomRow !== 1){
           gestureEventDom.css('cursor',setCursor('row-resize'))
         }else if(targetDom.height() - evt.offsetY <= this.diffDis){
@@ -40,7 +44,7 @@ export class GesturePlugin implements IPlugin {
           gestureEventDom.css('cursor',setCursor('e-resize'))
         }
       }else if(targetDomCol > 0 && targetDomRow === 0){
-        // 左侧
+        // 顶部
         if(evt.offsetX <= this.diffDis && targetDomCol !== 1){
           gestureEventDom.css('cursor',setCursor('col-resize'))
         }else if(targetDom.width() - evt.offsetX <= this.diffDis){

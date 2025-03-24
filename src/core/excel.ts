@@ -13,6 +13,7 @@ import {
   ContextmenuPlugin,
   SettingPlugin,
   InputPlugin,
+  DragPlugin,
  } from '@/plugins'
 
 export class eSheet implements IExcel {
@@ -168,6 +169,7 @@ export class eSheet implements IExcel {
       contextmenu:new ContextmenuPlugin(this,store),
       setting:new SettingPlugin(this,store),
       input:new InputPlugin(this,store),
+      drag:new DragPlugin(this,store),
     }
 
     store.config.plugins = { ...store.config.plugins, ...plugins }

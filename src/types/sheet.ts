@@ -6,7 +6,9 @@ export interface ISheet{
   draw(left:number,top:number,forceLeft?:boolean,forceTop?:boolean):void
   scrollTop:number
   scrollLeft:number
-  textWrapType:string
+  textWrapType:string,
+  col:number,
+  row:number,
 }
 
 export interface ISheetOption{

@@ -18,6 +18,7 @@ interface IExcelConfig{
   scale:number
   lock:boolean,
   plugins:Record<string,IPlugin>
+  expandLock:boolean
 }
 
 interface IStoreCanvas{
@@ -47,6 +48,7 @@ export default {
     selectedBorderBgColor:'#0089FF',
     selectedBgColor:'#EBF4FF',
     borderColor:'#ECEDEE',
-    scale:1
+    scale:1,
+    expandLock:false
   }
 } as IStore
