@@ -23,7 +23,7 @@ export class DragPlugin implements IPlugin {
   
   diffDis:number = 6;
 
-  moveRectWidth:number = 200;
+  moveRectWidth:number = 0;
 
   colLineOom:Cash;
   rowLineOom:Cash;
@@ -45,13 +45,8 @@ export class DragPlugin implements IPlugin {
       zIndex:60,
       display:'flex',
       justifyContent:'center',
-    }).append(
-      u('<div>').css({
-        width:2,
-        height:'100%',
-        background:'blue', 
-      })
-    ).hide()
+      border:'1px dashed rgb(201, 201, 201)'
+    }).hide()
     this.colLineOom = colLineOom
 
     const rowLineOom = u('<div>').css({
@@ -63,13 +58,8 @@ export class DragPlugin implements IPlugin {
       zIndex:60,
       display:'flex',
       alignItems:'center',
-    }).append(
-      u('<div>').css({
-        width:'100%',
-        height:2,
-        background:'blue', 
-      })
-    ).hide()
+      border:'1px dashed rgb(201, 201, 201)'
+    }).hide()
     this.rowLineOom = rowLineOom
 
     gestureEventDom.append(colLineOom)
