@@ -1,6 +1,6 @@
 import { IStore } from "@/store";
 import { IExcel, IPlugin } from "@/types";
-import { EventEmitterIns, getExcelHeaderName, setCursor } from "@/utils";
+import { EventEmitterIns, getExcelHeaderName } from "@/utils";
 import u, { Cash } from 'cash-dom'
 
 export class DragPlugin implements IPlugin {
@@ -68,12 +68,10 @@ export class DragPlugin implements IPlugin {
     this.rowLineOom = rowLineOom
 
     const tempCloneDom = u('<div>').css({
-      position:'absolute',
       width:0,
       height:0,
       zIndex:111,
-      cursor:setCursor('crosshair')
-    })
+    }).addClass('e-sheet-ver-cell-border')
 
     this.topBorderDom = tempCloneDom.clone()
     this.leftBorderDom = tempCloneDom.clone()
@@ -151,10 +149,11 @@ export class DragPlugin implements IPlugin {
         gestureEventDom.off('mousemove',this.mouseMoveChange)
         this.excel.resize()
       }
+      gestureEventDom.off('mouseover',this.dragCell)
     })
 
     // 拖拽边框的宽度
-    const lineWidth = 2
+    const lineWidth = 4
 
     EventEmitterIns.on('selected-range',({x,y,width,height})=>{
 
@@ -163,6 +162,12 @@ export class DragPlugin implements IPlugin {
         top:y,
         width:width,
         height:lineWidth
+      }).on('mousedown',evt=>{
+        evt.stopPropagation()
+        evt.stopImmediatePropagation()
+        gestureEventDom.on('mouseover',this.dragCell)
+      }).on('contextmenu',evt=>{
+        evt.preventDefault();
       })
 
       this.leftBorderDom.css({
@@ -187,6 +192,11 @@ export class DragPlugin implements IPlugin {
       })
     })
 
+  }
+
+  // 拖拽替换单元格内容
+  dragCell=(evt:MouseEvent)=>{
+    console.log('dragCell')
   }
 
   mouseMoveChange=(evt:MouseEvent)=>{
