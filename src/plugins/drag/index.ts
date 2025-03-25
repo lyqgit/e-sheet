@@ -1,6 +1,6 @@
 import { IStore } from "@/store";
 import { IExcel, IPlugin } from "@/types";
-import { getExcelHeaderName } from "@/utils";
+import { EventEmitterIns, getExcelHeaderName, setCursor } from "@/utils";
 import u, { Cash } from 'cash-dom'
 
 export class DragPlugin implements IPlugin {
@@ -34,6 +34,11 @@ export class DragPlugin implements IPlugin {
   expandStartX:number = 0;
   expandStartY:number = 0;
 
+  topBorderDom:Cash;
+  leftBorderDom:Cash;
+  rightBorderDom:Cash;
+  bottomBorderDom:Cash;
+
   registryDom(){
     const { gestureEventDom } = this.store.canvas
     const colLineOom = u('<div>').css({
@@ -62,8 +67,26 @@ export class DragPlugin implements IPlugin {
     }).hide()
     this.rowLineOom = rowLineOom
 
+    const tempCloneDom = u('<div>').css({
+      position:'absolute',
+      width:0,
+      height:0,
+      zIndex:111,
+      cursor:setCursor('crosshair')
+    })
+
+    this.topBorderDom = tempCloneDom.clone()
+    this.leftBorderDom = tempCloneDom.clone()
+    this.rightBorderDom = tempCloneDom.clone()
+    this.bottomBorderDom = tempCloneDom.clone()
+
     gestureEventDom.append(colLineOom)
     gestureEventDom.append(rowLineOom)
+
+    gestureEventDom.append(this.topBorderDom)
+    gestureEventDom.append(this.leftBorderDom)
+    gestureEventDom.append(this.rightBorderDom)
+    gestureEventDom.append(this.bottomBorderDom)
   }
 
   eventListen(){
@@ -129,6 +152,41 @@ export class DragPlugin implements IPlugin {
         this.excel.resize()
       }
     })
+
+    // 拖拽边框的宽度
+    const lineWidth = 2
+
+    EventEmitterIns.on('selected-range',({x,y,width,height})=>{
+
+      this.topBorderDom.css({
+        left:x,
+        top:y,
+        width:width,
+        height:lineWidth
+      })
+
+      this.leftBorderDom.css({
+        left:x,
+        top:y,
+        width:lineWidth,
+        height:height
+      })
+
+      this.rightBorderDom.css({
+        left:x+width,
+        top:y,
+        width:lineWidth,
+        height:height
+      })
+
+      this.bottomBorderDom.css({
+        left:x,
+        top:y+height,
+        width:width,
+        height:lineWidth
+      })
+    })
+
   }
 
   mouseMoveChange=(evt:MouseEvent)=>{

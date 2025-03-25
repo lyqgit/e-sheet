@@ -211,7 +211,16 @@ export class Sheet implements ISheet{
           globalCompositeOperation:'destination-over',
           lineWidth:3
         })
+
+        EventEmitterIns.emit('selected-range',{
+          x: singleCell.xScale + left,
+          y: singleCell.yScale + top,
+          width:lastCell.xScale + lastCell.widthScale - singleCell.xScale,
+          height:lastCell.yScale + lastCell.heightScale - singleCell.yScale
+        })
+
       }else{
+
         ctx.drawStrokeRect({
           x: singleCell.xScale + left,
           y: singleCell.yScale + top,
@@ -220,6 +229,13 @@ export class Sheet implements ISheet{
           color:selectedBorderBgColor,
           globalCompositeOperation:'destination-over',
           lineWidth:3
+        })
+
+        EventEmitterIns.emit('selected-range',{
+          x: singleCell.xScale + left,
+          y: singleCell.yScale + top,
+          width:singleCell.widthScale,
+          height:singleCell.heightScale
         })
       }
       
@@ -264,6 +280,13 @@ export class Sheet implements ISheet{
         color:selectedBorderBgColor,
         globalCompositeOperation:'destination-over',
         lineWidth:3
+      })
+
+      EventEmitterIns.emit('selected-range',{
+        x: x + left,
+        y: y + top,
+        width,
+        height
       })
       
     }

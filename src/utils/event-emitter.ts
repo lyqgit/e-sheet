@@ -37,6 +37,7 @@ interface Events {
   'cell-label-input':string,
   'setting':ISettingEvents
   'contextmenu':ISettingEvents
+  'selected-range':Record<string,number>
 }
 
 // 使用 EventEmitter
