@@ -238,18 +238,18 @@ export class Sheet implements ISheet{
       // 先确定方向
       if(firstCell.xScale < lastCell.xScale){
         x = firstCell.xScale
-        width = lastCell.xScale - firstCell.xScale + firstCell.widthScale
+        width = lastCell.xScale - firstCell.xScale + lastCell.widthScale
       }else{
         x = lastCell.xScale
-        width = firstCell.xScale - lastCell.xScale + lastCell.widthScale
+        width = firstCell.xScale - lastCell.xScale + firstCell.widthScale
       }
 
       if(firstCell.yScale < lastCell.yScale){
         y = firstCell.yScale
-        height = lastCell.yScale - firstCell.yScale + firstCell.heightScale
+        height = lastCell.yScale - firstCell.yScale + lastCell.heightScale
       }else{
         y = lastCell.yScale
-        height = firstCell.yScale - lastCell.yScale + lastCell.heightScale
+        height = firstCell.yScale - lastCell.yScale + firstCell.heightScale
       }
 
       // console.log('width',width)
