@@ -118,6 +118,7 @@ export class SelectPlugin implements IPlugin{
 
     eventDom.on('mousedown',(evtA:MouseEvent)=>{
       // console.log('evtA',evtA)
+      evtA.preventDefault()
 
       const curSheet = this.excel.getCurSheet()
 
