@@ -329,7 +329,7 @@ export class Sheet implements ISheet{
     // 绘制左上角的cell
     if(isInit || forceUpdate){
       this.drawTotalRect()
-      drawDom && dfDom.append(this.totalCell.ctRowDom(0,0,100))
+      drawDom && dfDom.append(this.totalCell.ctRowDom(0,0,160))
     }
 
     // 绘制行
