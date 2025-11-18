@@ -120,6 +120,10 @@ export class SelectPlugin implements IPlugin{
       // console.log('evtA',evtA)
       evtA.preventDefault()
 
+      // 如果显示了输入框，处理输入框失去焦点
+      // @ts-ignore
+      this.store.config.plugins.input?.hideInput()
+
       const curSheet = this.excel.getCurSheet()
 
       // 首先单选

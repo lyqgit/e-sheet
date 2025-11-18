@@ -9,7 +9,7 @@ export class Sheet implements ISheet{
      * @description cut-截断  wrap-换行
      * @type {string}
      */
-  textWrapType = 'cut';
+  textWrapType:string = 'cut';
   data: Array<ICell>;
   constructor(option:ISheetOption){
     this.name = option.name
@@ -61,6 +61,10 @@ export class Sheet implements ISheet{
     this.contMap = new Map<string,Cell>();
     this.colMap = new Map<string,Cell>();
     this.rowMap = new Map<string,Cell>();
+
+    if(!Array.isArray(data)){
+      return
+    }
 
     if(data.length === 0){
       this.emptyData()
